@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+	<meta charset="UTF-8">
+	<title>商品管理系統 - 商品資訊 - [[${selectedProduct.productName}]]</title>
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/products/management/SingleProductDetail.css}">
+	<th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+
+</head>
+
+<body>
+	<div class="layout-wrapper layout-content-navbar">
+		<div class="layout-container">
+			<nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+			<div class="layout-page">
+				<header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+				<div class="content-wrapper">
+					<div class="container-xxl flex-grow-1 container-p-y d-flex justify-content-start align-items-center flex-column">
+						<div class="row justify-content-center w-100">
+							<div class="col">
+								<h1 class="text-center fw-bolder">商品資訊</h1>
+								<hr>
+							</div>
+						</div>
+						<div class="row d-flex justify-content-center align-items-center flex-row my-3 w-100">
+							<div id="carouselContainer" class="carousel slide col-6" data-bs-ride="carousel">
+								<div class="carousel-inner w-100">
+									<th:block th:each="image, iterStat : ${imageData}">
+										<div class="carousel-item w-100 h-100"
+											th:classappend="${iterStat.index == 0} ? 'active'">
+											<img th:src="@{/image?(id=${image.imageID})}" class="d-block w-100 h-100"
+												alt="${image.imageFileName}">
+										</div>
+									</th:block>
+								</div>
+								<button class="carousel-control-prev" type="button" data-bs-target="#carouselContainer"
+									data-bs-slide="prev">
+									<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+									<span class="visually-hidden">Previous</span>
+								</button>
+								<button class="carousel-control-next" type="button" data-bs-target="#carouselContainer"
+									data-bs-slide="next">
+									<span class="carousel-control-next-icon" aria-hidden="true"></span>
+									<span class="visually-hidden">Next</span>
+								</button>
+							</div>
+							<div class="details col-6 card py-3 h-100 gap-3 justify-content-center">
+								<div class="row">
+									<div class="col-6 column-name">商品編號：</div>
+									<div class="col-6 value">[[${selectedProduct.productID}]]</div>
+								</div>
+								<div class="row">
+									<div class="col-6 column-name">商品類別：</div>
+									<div class="col-6 value">[[${selectedProduct.productCategory.categoryName}]]</div>
+								</div>
+								<div class="row">
+									<div class="col-6 column-name">商品名稱：</div>
+									<div class="col-6 value">[[${selectedProduct.productName}]]</div>
+								</div>
+								<div class="row">
+									<div class="col-6 column-name">價格：</div>
+									<div class="col-6 value">[[${selectedProduct.price}]]</div>
+								</div>
+								<div class="row">
+									<div class="col-6 column-name">新增日期：</div>
+									<div class="col-6 value">[[${selectedProduct.addedDate}]]</div>
+								</div>
+								<div class="row">
+									<div class="col-6 column-name">庫存量：</div>
+									<div class="col-6 value">[[${selectedProduct.stock}]]</div>
+								</div>
+								<hr>
+								<div class="row d-flex flex-column">
+									<div class="col fw-bold text-center">商品特色：</div>
+									<div class="col text-center mt-3">[[${selectedProduct.productFeatures}]]</div>
+								</div>
+							</div>
+						</div>
+						<div class="row mt-3 d-flex w-100">
+							<div class="col text-end">
+								<a th:href="@{/admin/products/allList}">
+									<button class="functionBtn main-menu"><i class="fa-solid fa-house"></i> 回商品列表</button>
+								</a>
+							</div>
+							<div class="col text-start">
+								<a th:href="@{/admin/products/updateInfo?(productID=${selectedProduct.productID})}">
+									<button class="functionBtn update"><i class="fa-solid fa-wrench"></i> 更新商品資訊</button>
+								</a>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<th:block th:replace="~{back/NavBar :: js}"></th:block>
+</body>
+
+</html>

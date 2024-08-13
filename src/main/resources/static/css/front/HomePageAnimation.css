@@ -1,0 +1,59 @@
+body {
+	overflow: hidden;
+}
+
+body section.animationWrapper {
+	position: fixed;
+	width: 101%;
+	height: 100%;
+	background-color: white;
+	left: -5px;
+	top: -5px;
+}
+
+body section.animationWrapper section.animation {
+	margin-top: 10vh;
+	height: 80vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+body section.animationWrapper section.animation .hero {
+	width: 100%;
+	height: 0;
+}
+
+body section.animationWrapper section.animation .hero img {
+	width: 100%;
+	height: 100%;
+	-o-object-fit: cover;
+	object-fit: cover;
+}
+
+body section.animationWrapper .slider {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	background: linear-gradient(to right, rgb(144, 144, 144), black);
+	z-index: -1;
+}
+
+.content {
+	display: none;
+}
+
+body.loaded .content {
+	display: block;
+}
+
+body.loaded .animationWrapper {
+	display: none;
+}
+
+.logo {
+	width: 135px;
+	height: 135px;
+}

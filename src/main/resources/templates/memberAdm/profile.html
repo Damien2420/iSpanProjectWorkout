@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員中心</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+    <th:block th:replace="~{front/Layout :: css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/memberAdm/profile_style.css}">
+    <style>
+    	.imgDiv {
+			margin: 10px;
+			min-width: 100px;
+			min-height: 100px;
+		}
+		#birthdate {
+			display: inline;
+			margin: 10px;
+			border-radius: 5px;
+		}
+    </style>
+</head>
+<body>
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+    <!-- =============== HEADER-TITLE =============== -->
+	<section class="s-header-title" style="background-image: url(images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title fw-bold">會員中心</h1>
+			<ul class="breadcrambs">
+				<li><a th:href="@{/home}">Home</a></li>
+				<li>會員中心</li>
+			</ul>
+		</div>
+	</section>
+	<!-- ============= HEADER-TITLE END ============= -->
+    <div class="profile-container">
+    	<th:block th:fragment="profile-sidebar">
+	        <aside class="profile-sidebar">
+	            <ul>
+	                <li><a th:href="@{/profile.controller}"><i class="fa-solid fa-user"></i> 個人資料</a></li>
+	                <li><a th:href="@{/resetPassword-email(memNo=${member.memNo})}"><i class="fa-solid fa-key"></i> 修改密碼</a></li>
+	                <li><a th:href="@{/myOrders?(id=${member.memNo})}"><i class="fa-solid fa-box"></i> 我的訂單</a></li>
+	                <li><a th:href="@{/schedule/front/ScheduleShowByMemberId}"><i class="fa-solid fa-calendar-days"></i> 我的課表</a></li>
+	                <li><a th:href="@{/courseRegistration/front/CourseRegistrationGetByMemberId}"><i class="fa-solid fa-clipboard"></i> 選課紀錄</a></li>
+	                <li><a th:href="@{/forum/memcenterArticles}"><i class="fa-solid fa-heart"></i> 我的文章</a></li>
+	                <li><a th:href="@{/forum/memcenterComments}"><i class="fa-solid fa-comment"></i> 我的留言</a></li>
+	                <li><a th:href="@{/userChat}"><i class="fa-solid fa-headset"></i> 線上客服</a></li>
+	            </ul>
+	        </aside>
+        </th:block>
+        <main class="main-content">
+            <div class="content-header">
+                <h2>會員基本資料</h2>
+            </div>
+            <div class="content-body">
+                <form method="post" th:action="@{/member/updatemember.controller}" enctype="multipart/form-data">
+                    
+                    <div class="form-group"></div>
+                    <div class="form-group">
+			            <label for="memPic">個人圖片</label>
+			            <div class="memPicDiv">
+				            <div class="imgDiv" th:if="${member.memPic != null}">
+				                <img id="memPic" th:src="@{/showphoto(memNo=${member.memNo})}" width="150" />
+				            </div>
+				            <div class="imgDiv" th:if="${member.memPic == null || member.memPic == ''}">
+				            	<img id="memPic" th:src="@{/images/memberAdm/user-cover.jpg}" width="100" />
+				            </div>
+				            <div class="button-wrapper">
+	                          <label for="upload" class="btn memPicLabel" tabindex="0">
+	                            <span class="memPicSpan">上傳個人圖片</span>
+	                            <input type="file" name="file" accept="image/*" onchange="previewImage(event)" id="upload" class="account-file-input" hidden=""/>
+	                          </label>
+	                          <p class="sometext">Allowed JPG, GIF or PNG. Max size of 2MB</p>
+	                        </div>
+			        	</div>
+			        </div>
+                    
+                    <div class="form-group">
+			            <label for="memNo">會員編號</label>
+			            <span th:text="${member.memNo}"></span>
+			            <input type="hidden" id="memNo" name="memNo" th:value="${member.memNo}">
+			        </div>
+			        <div class="form-group">
+			            <label for="memName">姓名</label>
+			            <input type="text" id="memName" name="memName" th:value="${member.memName}">
+			        </div>
+			        <div class="form-group">
+			            <label for="memEmail">電子郵件</label>
+			            <input type="email" id="memEmail" name="memEmail" th:value="${member.memEmail}" class="form-control" aria-describedby="verify-btn">
+	                    <div th:if="${member.status == 0}">
+	                    	<a th:href="@{/test-email(memNo=${member.memNo})}" class="btn" id="verify-btn">驗證信箱</a>
+	                    	<span>信箱尚未驗證</span>
+	                    </div>
+	                    <div th:if="${member.status == 1}">
+	                    	<span style="color:green; font-size:0.8rem;"><i class="fa-solid fa-check"></i>信箱已驗證</span>
+	                    </div>
+			            <input name="memPassword" th:value="${member.memPassword}" type="hidden">
+			            <input name="isGoogleLogin" th:value="${member.isGoogleLogin}" type="hidden">
+			        </div>
+			        <div class="form-group">
+			            <label for="gender">性別</label>
+			            <div class="gender">
+			                <input id="male" type="radio" name="gender" value="0" th:checked="${member.gender == 0}" />
+			                <span>男性</span><span> </span>
+			                <input id="female" type="radio" name="gender" value="1" th:checked="${member.gender == 1}" />
+			                <span>女性</span>
+			            </div>
+			        </div>
+			        <div class="form-group">
+			            <label for="birth">生日</label>
+			            <input type="date" id="birth" name="birth" th:value="${member.birth}" th:max="${#dates.format(new java.util.Date(), 'yyyy-MM-dd')}">
+			            <input name="age" th:value="${member.age}" type="hidden">
+			        </div>
+			        <div class="form-group">
+			            <label for="phone">電話</label>
+			            <input type="text" id="phone" name="phone" th:value="${member.phone}">
+			        </div>
+			        <div class="form-group">
+			            <label for="regDate">註冊日期</label>
+			            <span th:text="${member.regDate}"></span>
+			            <input name="regDate" th:value="${member.regDate}" type="hidden">
+			            <input name="status" th:value="${member.status}" type="hidden">
+			        </div>
+			        <div class="form-group">
+			            <label for="nickName">暱稱</label>
+			            <input type="text" id="nickName" name="nickName" th:value="${member.nickName}">
+			        </div>
+                    <button type="submit" class="btn">保存</button>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <footer th:replace="~{front/Layout :: footer}"></footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script> -->
+    <script>
+		// 預覽圖片
+	    function previewImage(event) {
+	        var reader = new FileReader();
+	        reader.onload = function(){
+	            var output = document.getElementById('memPic');
+	            output.src = reader.result;
+	            output.style.display = 'inline-block'; // 顯示圖片
+	        }
+	        reader.readAsDataURL(event.target.files[0]);
+	    }
+	    
+	    // email驗證成功alert
+        document.addEventListener('DOMContentLoaded', () => {
+            // 檢查 URL 參數
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('verify')) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '信箱驗證成功！！',
+                    showConfirmButton: true,
+                    confirmButtonText: "確定",
+                }).then(() => {
+                    // 移除 URL 參數
+                    history.replaceState(null, '', window.location.pathname);
+                });
+            }
+        });
+	
+        $(document).ready(function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('insertInfo')) {
+                Swal.fire({
+                    title: '請輸入您的基本資料',
+                    html:
+                        '<div class="mb-4">' +
+                        	'<label>性別		</label>' + 
+                            '<label><input type="radio" name="gender" value="0" required> 男</label>' +
+                            '<label><input type="radio" name="gender" value="1"> 女</label>' +
+                        '</div>' +
+                        '<label>生日</label>' + 
+                        '<input type="date" id="birthdate" class="swal2-input" placeholder="Birthdate" required>',
+                    confirmButtonText: 'Save',
+                    confirmButtonColor: '#FF8000',  // 設置送出按鈕的底色
+                    focusConfirm: false,
+                    allowOutsideClick: false,  // 防止點擊外部時關閉alert
+                    preConfirm: () => {
+					    const gender = document.querySelector('input[name="gender"]:checked');
+					    const birthdate = document.getElementById('birthdate').value;
+					    if (!gender || !birthdate) {
+					        Swal.showValidationMessage('Please select gender and enter birthdate');
+					        return null;  // 確保在驗證失敗時返回 null
+					    }
+					    return { gender: gender.value, birthdate: birthdate };
+					}
+
+                }).then((result) => {
+				    if (result.isConfirmed && result.value) {  // 確保 result.value 存在
+				        $.ajax({
+				            type: 'POST',
+				            url: '/workout/updateMemberInfo',
+				            data: JSON.stringify({
+				                gender: result.value.gender,
+				                birthdate: result.value.birthdate
+				            }),
+				            contentType: 'application/json',
+				            success: function(response) {
+				                Swal.fire('Saved!', '', 'success').then(() => {
+				                    history.replaceState(null, '', window.location.pathname); // 移除 URL 參數
+                                    location.reload();  // 添加刷新頁面
+                                });
+				            },
+				            error: function(error) {
+				                Swal.fire('Error!', 'Failed to save your information.', 'error');
+				            }
+				        });
+				    }
+				});
+            }
+        });
+	</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" th:href="@{/css/memberAdm/style.css}">
+<th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+<title>更新會員資料</title>
+</head>
+<body>
+	<div class="layout-wrapper layout-content-navbar">
+		<div class="layout-container">
+			<nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+			<div class="layout-page">
+				<header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+				<div class="content-wrapper">
+					<main class="container-xxl flex-grow-1 container-p-y">
+						<div align="center">
+							<h2>更新會員資料</h2><p class="empty"></p>
+							<div class="table-container">
+								<form method="post" th:action="@{/admin/updatemember.controller}" enctype="multipart/form-data">
+								    <table class="member-table">
+								        <tr><td>會員編號<td><input type="text" name="memNo" readonly th:value="${member.memNo}">
+								        <tr><td>姓名<td><input type="text" name="memName" th:value="${member.memName}">
+								        <tr><td>Email<td><input type="text" name="memEmail" readonly th:value="${member.memEmail}">
+								        <tr><td>密碼<td><input type="password" name="memPassword" readonly th:value="${member.memPassword}">
+								        <tr><td>性別<td>
+								            <select name="gender" id="gender" th:value="${member.gender}">
+								                <option value="0" th:selected="${member.gender == 0}">男性</option>
+								                <option value="1" th:selected="${member.gender == 1}">女性</option>
+								            </select>
+								        <tr><td>生日<td><input type="date" name="birth" th:value="${member.birth}" th:max="${#dates.format(new java.util.Date(), 'yyyy-MM-dd')}">
+								                       <input name="age" th:value="${member.age}" type="hidden">
+								        <tr><td>電話<td><input type="text" name="phone" th:value="${member.phone}">
+								        <tr><td>註冊日期<td><input type="text" name="regDate" readonly th:value="${member.regDate}">
+								        <tr><td>狀態<td>
+								            <select name="status" id="status" th:value="${member.status}">
+								                <option value="0" th:selected="${member.status == 0}">未驗證</option>
+								                <option value="1" th:selected="${member.status == 1}">正常</option>
+								                <option value="2" th:selected="${member.status == 2}">封鎖</option>
+								            </select>
+								        <tr><td>暱稱<td><input type="text" name="nickName" th:value="${member.nickName}">
+								        <tr><td>個人圖片</td>
+											<td>
+												<div th:if="${member.memPic != null}">
+											        <img id="memPic" th:src="@{/showphoto(memNo=${member.memNo})}"  width="100" />
+											    </div>
+											    <div th:if="${member.memPic == null || member.memPic == ''}">
+											    	<img id="memPic" src="" width="100" style="display: none;" />
+											    </div>
+											    <input type="file" name="file" accept="image/*" onchange="previewImage(event)"/>
+											</td>
+								    </table>
+								    <input class="btn" type="submit" value="確定" />
+								    <p class="empty"></p>
+								</form>
+							</div>
+						</div>	
+					</main>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<th:block th:replace="~{back/Navbar :: js}"></th:block>
+	<script>
+		// 預覽圖片
+	    function previewImage(event) {
+	        var reader = new FileReader();
+	        reader.onload = function(){
+	            var output = document.getElementById('memPic');
+	            output.src = reader.result;
+	            output.style.display = 'inline-block'; // 顯示圖片
+	        }
+	        reader.readAsDataURL(event.target.files[0]);
+	    }
+	</script>
+	<script th:src="@{/js/axios/axios.min.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script th:src="@{/js/memberAdm/jquery-3.7.1.js}"></script>
+</body>
+</html>

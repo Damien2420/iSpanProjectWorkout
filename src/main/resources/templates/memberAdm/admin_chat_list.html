@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Chat List</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+    	body {
+		    background-color: #f8f9fa;
+		}
+		
+		.list-group-item {
+		    cursor: pointer;
+		}
+    </style>
+    <th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+</head>
+<body style="background-color:rgb(245, 244, 249)">
+	
+	<div class="layout-wrapper layout-content-navbar">
+		<div class="layout-container">
+			<nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+			<div class="layout-page">
+				<header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+				<div class="content-wrapper">
+	
+					<main  class="container-xxl flex-grow-1 container-p-y">
+						<div class="container mt-5">
+					        <div class="row">
+					            <div class="col-md-12">
+					                <h2>Chat List</h2>
+					                <div id="chat-list" class="list-group">
+					                    <!-- Chat list items will be appended here -->
+					                </div>
+					            </div>
+					        </div>
+					    </div>
+					</main>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<th:block th:replace="~{back/Navbar :: js}"></th:block>
+    <script>
+        function loadChatList() {
+            fetch('/workout/api/chat/list')
+                .then(response => response.json())
+                .then(data => {
+                    var chatList = document.getElementById('chat-list');
+                    chatList.innerHTML = '';
+                    
+                    data.forEach(chat => {
+                        var userName = chat.sender.memName !== 'admin' ? chat.sender.memName : chat.recipient.memName;
+                        var userMemNo = chat.sender.memNo !== 'admin' ? chat.sender.memNo : chat.recipient.memNo;
+                        
+                        var link = document.createElement('a');
+                        link.href = `/workout/agentChat?memNo=${userMemNo}`;
+                        link.classList.add('list-group-item', 'list-group-item-action');
+                        link.appendChild(document.createTextNode(userName + ': ' + chat.message));
+                        chatList.appendChild(link);
+                    });
+                });
+        }
+        
+        function connectAdminWebSocket() {
+            var socket = new SockJS('/workout/ws');
+            var stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/admin', function (notification) {
+                    console.log('New notification: ' + notification.body);
+                    loadChatList(); // 重新加載聊天列表
+                });
+            }, function (error) {
+                console.error('STOMP error: ', error);
+            });
+        }
+
+        loadChatList();
+        connectAdminWebSocket();
+    </script>
+</body>
+</html>

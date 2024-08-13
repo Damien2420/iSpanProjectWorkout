@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+	<meta charset="UTF-8">
+	<title>GYMNITY 感謝您的購買！</title>
+	<!-- <link rel="stylesheet" th:href="@{/css/products/mall/PurchaseSuccess.css}"> -->
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<style>
+		.righteous-font {
+			font-family: Righteous, sans-serif;
+			font-weight: 700;
+		}
+		
+		.theme-color {
+			color: var(--workout-theme-color);
+		}
+
+		.link-btn {
+			display: table-cell;
+			font-size: 20px;
+			padding: 10px 40px;
+			border: 2px solid var(--workout-theme-color);
+			background-color: var(--workout-theme-color);
+			font-weight: 600;
+			text-decoration: none;
+			text-align: center;
+			height: 50px;
+			display: inline-block;
+			transition: .25s ease-in;
+			color: #fff;
+			vertical-align: middle;
+		}
+
+		.link-btn:hover  {
+			background-color: transparent;
+    		color: var(--workout-theme-color);
+		}
+
+		.title {
+			margin: 15px 0;
+			font-size: 36px;
+			margin-top: 3rem;
+			font-weight: bold;
+		}
+
+		.flex-center {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.flex-between {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		p {
+			font-size: 20px;
+		}
+
+		.order-info-container,
+		.order-items-container,
+		.user-info-container {
+			width: 70%;
+			padding: 25px 0;
+			background-color: #272a31;
+			flex-direction: column;
+		}
+
+		.order-items-container:hover {
+			color: #fff !important;
+		}
+
+		.order-items-container .fa-chevron-down {
+			transition: transform 0.5s;
+		}
+
+		.cart-container {
+			width: 70%;
+			background-color: #272a31;
+			flex-direction: column;
+			border-top: 0.5px solid #bdbdbd;
+		}
+
+		.cart {
+			padding: 20px;
+		}
+
+		.cart-title div {
+			font-size: 20px;
+			font-weight: bold;
+			color: var(--workout-theme-color);
+		}
+
+		.cart-item {
+			padding: 10px 0;
+			border-top: 0.5px solid #bdbdbd;
+			border-bottom: 0.5px solid #bdbdbd;
+		}
+
+		.productImg {
+			width: 100px;
+			height: 100px;
+		}
+
+		.order-info-container h2 {
+			font-weight: bolder;
+		}
+
+		.order-status,
+		.order-date {
+			font-size: 20px;
+			font-weight: bolder;
+			margin-right: 20px;
+		}
+
+		.order-status #payment {
+			color: #DC143C;
+		}
+
+		.order-date span {
+			color: #0cce5d;
+		}
+		.backToMenu {
+			margin: 15px 0;
+			cursor: pointer;
+		}
+
+		.backToMenu button {
+			padding: 10px 20px;
+			font-size: 20px;
+			cursor: pointer;
+			border: none;
+			border-radius: 10px;
+			background-color: #196baf;
+		}
+
+		.backToMenu:hover button {
+			transition: all 0.5s ease-in-out;
+			background-color: #2087db;
+		}
+
+
+		.rating {
+			display: flex;
+			flex-direction: row;
+			gap: 0.3rem;
+			cursor: pointer;
+		}
+
+		.rating .fa-star:hover {
+			color: var(--workout-theme-color);
+		}
+
+		.rating .fa-solid {
+			color: var(--workout-theme-color);
+		}
+
+	</style>
+</head>
+
+<body id="home">
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<section class="s-header-title" style="background-image: url(../images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title fw-bold">感謝您的購買！！</h1>
+			<ul class="breadcrambs">
+				<li><a th:href="@{/home}">首頁</a></li>
+				<li><a th:href="@{/mall}">商城</a></li>
+				<li><a th:href="@{/mall/cart}">購物車</a></li>
+				<li>訂單成立</li>
+			</ul>
+		</div>
+	</section>
+	<div class="container main-block" th:data-review="${order.orderStatus.statusID == 4 && order.ratingStatus == false ? 'true' : 'false'}">
+		<div class="row my-3 rating-btn-block" th:if="${order.orderStatus.statusID == 4 && order.ratingStatus == false}">
+			<div class="col flex-center flex-column">
+				<p class="fw-bold mb-3">訂單已完成了，請給您購買的商品一個評價吧！</p>
+				<button class="link-btn flex-center review">商品評價</button>
+			</div>
+		</div>
+		<div class="row my-3">
+			<div class="col flex-center">
+				<div class="order-info-container flex-center"  th:data-sid="${order.orderStatus.statusID}">
+					<h2 class="title-decor fw-bold"><span>訂單資訊</span></h2>
+					<div class="mb-3 flex-center">
+						<p class="zh text-center">您的訂單編號 : <span class="theme-color righteous-font" id="oid">[[${order.orderID}]]</span></p>
+					</div>
+					<div class="flex-center">
+						<p class="order-status">訂單狀態 : <span id="payment">[[${order.orderStatus.status}]]</span></p>
+						<p th:if="${order.orderStatus.statusID == 1}"><button class="link-btn flex-center" id="pay">前往付款</button></p>
+					</div>
+					<div class="flex-center mt-3">
+						<p class="order-date">下單日期 : <span class="righteous-font">[[${#temporals.format(order.orderDate, 'yyyy年MM月dd日 HH:mm:ss')}]]</span></p>
+					</div>
+					<div class="flex-center mt-3">
+						<p>取貨方式 : <span>[[${order.shippingMethods.shippingMethod}]]</span></p>
+					</div>
+					<div class="flex-center mt-3" th:if="${order.shippingMethods.shippingMethodID == 1}">
+						<p>宅配地址 : <span style="color: var(--workout-theme-color);">[[${order.shippingAddress}]]</span></p>
+					</div>
+					<div class="flex-center mt-3 rating-status-block" th:if="${order.orderStatus.statusID == 4}">
+						<p>評價狀態 : 
+							<span th:if="${order.ratingStatus}" class="theme-color fw-bold">已評價</span>
+							<span th:unless="${order.ratingStatus}" class="theme-color fw-bold">未評價</span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row my-3">
+			<div class="col flex-center">
+				<div class="user-info-container flex-center">
+					<h2 class="title-decor fw-bold"><span>顧客資訊</span></h2>
+					<div class="mb-3 flex-center">
+						<p class="fw-bold">顧客名稱 : <span class="theme-color fw-bold">[[${member.memName}]]</span></p>
+					</div>
+					<div class="mb-3 flex-center">
+						<p class="fw-bold">電子郵件 : <span>[[${member.memEmail}]]</span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row my-3">
+			<div class="col flex-center flex-column">
+				<a class="order-items-container flex-center fs-3 fw-bold" data-bs-toggle="collapse" href="#collapseExample">
+					<p>訂單金額 : <span class="theme-color">NT$[[*{order.totalPrice + order.shippingMethods.shippingFee}]]</span></p>
+					<p class="mt-2">查看訂單商品<span class="ms-1">([[${order.orderDetails.size()}]])</span><i class="fa-solid fa-chevron-down ms-2"></i></p>
+				</a>
+				<div class="collapse cart-container" id="collapseExample">
+					<div class="cart">
+						<div class="cart-title row mb-3">
+							<div class="col-6 flex-center">商品</div>
+							<div class="col-1 flex-center">單價</div>
+							<div class="col-3 flex-center">數量</div>
+							<div class="col-2 flex-center">小計</div>
+						</div>
+						<div class="row cart-item" th:each="item : ${order.orderDetails}">
+							<div class="col-6 flex-center flex-row">
+								<div class="col-5 flex-center">
+									<img th:src="@{/image/product?(id=${item.product.productID})}" alt="商品圖片" class="productImg">
+								</div>
+								<div class="col-7 text-center">
+									<input type="hidden" id="productID" th:value="${item.product.productID}">
+									<h3 class="fw-bold">[[${item.product.productName}]]</h3>
+								</div>
+							</div>
+							<div class="col-1 flex-center">
+								<p class="originalPrice righteous-font">NT$[[${item.product.price}]]</p>
+							</div>
+							<div class="col-3 flex-center">
+								<p class="righteous-font">[[${item.quantity}]]</p>
+							</div>
+							<div class="col-2 flex-center">
+								<p class="p-total-price righteous-font fs-5">NT$[[${item.unitPrice}]]</p>
+							</div>
+						</div>
+						<div class="row cart-sum d-flex my-3">
+							<div class="col-4 ms-auto flex-center flex-column">
+								<div class="totalPrice flex-between w-100">
+									<p class="label">商品總金額：</p>
+									<p class="righteous-font">NT$[[${order.totalPrice}]]</p>
+								</div>
+								<div class="flex-between w-100">
+									<p class="label">運費：</p>
+									<p class="righteous-font" th:if="${order.shippingMethods.shippingFee == 0}">免運費</p>
+									<p class="righteous-font" th:if="${order.shippingMethods.shippingFee != 0}">NT$[[${order.shippingMethods.shippingFee}]]</p>
+								</div>
+								<div class="flex-between w-100">
+									<p class="label">訂單總金額：</p>
+									<p class="righteous-font">NT$[[*{order.totalPrice + order.shippingMethods.shippingFee}]]</p>
+								</div>
+							</div>
+						</div>
+						<a class="flex-center" data-bs-toggle="collapse" href="#collapseExample">
+							<i class="fa-solid fa-chevron-up"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row mb-3 flex-center">
+			<div class="col flex-center">
+				<a class="link-btn  flex-center" th:href="@{/mall}">回到商品列表</a>
+			</div>
+		</div>
+	</div>
+
+	
+
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+	<script th:src="@{/js/bootstrap/bootstrap.bundle.min.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+	<script th:src="@{/js/axios/axios.min.js}"></script>
+	<script>
+		document.querySelectorAll('.order-items-container').forEach(container => {
+			container.addEventListener('click', () => {
+				const icon = container.querySelector('.fa-chevron-down');
+				if (icon.style.transform === 'rotate(180deg)') {
+					icon.style.transform = 'rotate(0deg)';
+				} else {
+					icon.style.transform = 'rotate(180deg)';
+				}
+			});
+		});
+		
+
+		if(Number(document.querySelector('.order-info-container').dataset.sid) == 1){
+			document.querySelector('#pay').addEventListener('click', function() {
+				const orderID = document.querySelector('#oid').innerText;
+				axios.post(`../ecpay/payment?id=${orderID}`)
+				.then(response => {
+					console.log(response);
+					const formHtml = response.data;
+
+					const parser = new DOMParser();
+					const doc = parser.parseFromString(formHtml, 'text/html');
+					const form = doc.getElementById('allPayAPIForm');
+
+					document.body.appendChild(form);
+					form.submit();
+				})
+				.catch(err => {
+					console.error(err); 
+				})
+			});
+		};
+
+		const main = document.querySelector('.main-block');
+		const reviewStatus = JSON.parse(main.dataset.review);
+		if(reviewStatus) {
+			document.querySelector('.review').addEventListener('click', () => {
+				reviewSwal(main);
+			});
+		}
+
+
+		function reviewSwal(block) {
+			const cartItems = block.querySelectorAll('.cart-item');
+			const itemCounts = cartItems.length;
+			const orderID = block.querySelector('#oid').innerText;
+			let htmlTemplate = '';
+			cartItems.forEach(item => {
+				const productName = item.querySelector('.col-7 h3').innerText;
+				const productID = item.querySelector('#productID').value;
+
+				htmlTemplate += `
+				<div class="my-3 flex-center rating-block">
+					<div class="col-4">
+						<p class="me-3" data-id="${productID}">${productName}</p>
+					</div>
+					<div class="col-6 rating">
+						<span class="fa-regular fa-star" data-score="1"></span>
+						<span class="fa-regular fa-star" data-score="2"></span>
+						<span class="fa-regular fa-star" data-score="3"></span>
+						<span class="fa-regular fa-star" data-score="4"></span>
+						<span class="fa-regular fa-star" data-score="5"></span>
+					</div>
+				</div>
+				`
+			});
+
+			Swal.fire({
+				html: htmlTemplate,
+				showCancelButton: true,
+				confirmButtonText: "確認",
+				cancelButtonText: "取消",
+				didOpen: () => {
+					setTimeout(() => {
+						ratingStarEvent();
+					}, 0);
+				},
+				preConfirm: () => {
+					const ratings = Array.from(document.querySelectorAll('.rating-block')).map(block => {
+						const id = block.querySelector('p').getAttribute('data-id');
+						const selectedStars = block.querySelectorAll('.fa-solid');
+						const score = selectedStars.length > 0 ? selectedStars.length : null;
+						return { id, score };
+					});
+					return ratings;  // 將結果傳遞給 then 函數使用
+				}
+			}).then(result => {
+				if (result.isConfirmed) {
+					// result.value = ratings
+					console.log(result.value);
+					axios.post(`../rating?oid=${orderID}`,result.value)
+					.then(res => {
+						if(res.status == 200) {
+							Swal.fire({
+								icon: 'success',
+								title: '感謝您的評價',
+								timer: 2000,
+								timerProgressBar: true,
+								toast: true,
+								showConfirmButton: false,
+								position: 'top',
+							});
+							afterRating(block);
+						}
+					})
+					.catch(err => {
+						console.error(err); 
+					})
+				}
+			});
+		}
+
+		function ratingStarEvent() {
+			document.querySelectorAll('.rating').forEach(ratingBlock => {
+				const stars = ratingBlock.querySelectorAll('.fa-star');
+				
+				stars.forEach((star, index) => {
+					star.addEventListener('click', (event) => {
+						const clickedStar = event.target;
+						
+						if (clickedStar.classList.contains('fa-star')) {
+							const clickedIndex = index;
+
+							stars.forEach((s, i) => {
+								if (i <= clickedIndex) {
+									s.classList.remove('fa-regular');
+									s.classList.add('fa-solid');
+								} else {
+									s.classList.remove('fa-solid');
+									s.classList.add('fa-regular');
+								}
+							});
+						}
+					});
+				});
+			});
+		};
+
+		function afterRating(element) {
+			element.querySelector('.rating-btn-block .col').innerHTML = '<p class="fw-bold mb-3">已收到您的評價！</p>';
+			element.querySelector('.rating-status-block p span').innerText = '已評價';
+		};
+	</script>
+</body>
+
+</html>

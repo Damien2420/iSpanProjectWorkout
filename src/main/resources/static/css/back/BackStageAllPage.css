@@ -1,0 +1,7 @@
+.main-block{
+	margin-top: 60px !important;
+	margin-left: 200px !important;
+	width: calc(100% - 200px) !important;
+	padding: 20px 20px 3.6% 20px !important;
+	height: calc(100% - 60px) !important;
+}

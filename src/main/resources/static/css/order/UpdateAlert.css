@@ -1,0 +1,60 @@
+.swal2-custom-button {
+	margin: 5px;
+	padding: 10px 20px;
+	background-color: #42a4ff;
+	color: black;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+	font-weight: bolder;
+}
+
+#payment:hover {
+	background-color: #2c7bcf;
+}
+
+.swal2-custom-button:focus {
+	outline: none;
+	box-shadow: none;
+}
+
+#created {
+	background-color: #b940f1;
+}
+
+#created:hover {
+	background-color: #8a2fb5;
+}
+
+#shipping {
+	background-color: #f0f048;
+}
+
+#shipping:hover {
+	background-color: #bebe51;
+}
+
+#complete {
+	background-color: #49bb6d;
+}
+
+#complete:hover {
+	background-color: #33834c;
+}
+
+#cancel {
+	background-color: #f34f4f;
+}
+
+#cancel:hover {
+	background-color: #b63c3c;
+}
+
+.swal-word {
+	color: #36935b;
+}
+
+#cancel-word {
+	color: #ba2323;
+}

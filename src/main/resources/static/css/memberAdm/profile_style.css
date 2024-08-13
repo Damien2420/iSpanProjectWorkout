@@ -1,0 +1,136 @@
+@charset "UTF-8";
+
+.profile-container {
+    display: flex;
+    /* height: calc(100vh - 20px);  減去 header 的高度 */
+    overflow: hidden;
+} 
+
+.profile-sidebar {
+    width: 180px;
+    background-color: #202020;
+    padding: 20px;
+    overflow-y: auto;
+    height: 100%;
+    display: flex; /* 使用 flexbox 進行佈局 */
+    justify-content: center; /* 將 sidebar 內的內容水平置中 */
+}
+
+.profile-sidebar ul {
+    list-style: none;
+    display: flex; /* 使用 flexbox 進行佈局 */
+    flex-direction: column; /* 垂直佈局 */
+    align-items: flex-start; /* 將列表項內容左對齊 */
+}
+
+.profile-sidebar ul li {
+    margin-bottom: 10px;
+}
+.profile-sidebar ul li a:hover {
+	color: #F5672B;
+}
+
+.profile-sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+}
+
+.profile-sidebar ul li a i {
+    margin-right: 10px;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 30px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.content-header {
+    margin-bottom: 10px;
+}
+
+.content-header h2 {
+    font-size: 28px;
+    color: rgb(252, 255, 255);
+}
+
+.content-body {
+    background-color: rgb(54, 54, 54);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#memPic {
+	border-radius: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.form-group span {
+	padding: 10px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 2px 0px;
+}
+.form-group .gender input {
+	width: auto;
+}
+input[type="date"] {
+	background-color: #272a31;
+	color: #fff;
+}
+
+.memPicDiv {
+	display: flex;
+    align-items: center;
+}
+
+.button-wrapper {
+	margin: 10px 20px;
+}
+.memPicLabel {
+	width: 150px;
+    text-align: center;
+    height: auto;
+}
+.memPicSpan{
+	font-weight: normal;
+}
+.sometext {
+	color: gray;
+	font-size: 0.8rem;
+}
+
+.btn {
+    /* background-color: #FFA042; */
+    color: #fff;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: normal;
+    height: auto;
+}
+
+.btn:hover {
+	color: #fff;
+    background-color: #FF8000;
+}

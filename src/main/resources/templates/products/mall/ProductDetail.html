@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+	<meta charset="UTF-8">
+	<title>GYMNITY - [[${selectedProduct.productName}]]</title>
+	<link rel="stylesheet" th:href="@{/css/products/mall/Detail.css}">
+	<link rel="stylesheet" th:href="@{/css/products/mall/QuantitySet.css}">
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+</head>
+
+<body id="home">
+    <th:block th:replace="~{front/Layout :: header}"></th:block>
+    <section class="main-section mt-4"  th:data-user="${session.user != null ? 'true' : 'false'}">
+		<section class="s-header-title" style="background-image: url(../images/front/bg-1-min.png);">
+			<div class="container">
+				<h1 class="title fw-bold">GYMNITY 商城</h1>
+				<ul class="breadcrambs">
+					<li><a th:href="@{/home}">首頁</a></li>
+					<li><a th:href="@{/mall}">商城</a></li>
+					<li>[[${selectedProduct.productName}]]</li>
+				</ul>
+			</div>
+		</section>
+        <div class="container d-flex align-items-center flex-column">
+			<nav class="breadcrubs-nav w-85 my-3">
+				<a th:href="@{/mall/cart}" class="cart ms-auto">
+					<i class="fa-solid fa-cart-shopping fa-lg me-1"></i>購物車<span class="ms-1">([[${session.cart == null ? 0 : session.cart.size()}]])</span>
+				</a>
+			</nav>
+			<div class="content w-85">
+				<section class="row h-100">
+					<div class="col-xxl-6 col-xl-6 col-lg-12 col-sm-12 d-flex justify-content-center align-items-center flex-column">
+						<div class="img-container">
+							<img th:src="@{/image?(id=${productImage.get(0).imageID})}" alt="${productImage.get(0).imageFileName}">
+						</div>
+						<div class="gallery gy-2">
+							<img class="gallery-img" th:each="image : ${productImage}" th:src="@{/image?(id=${image.imageID})}" alt="${image.imageFileName}">
+						</div>
+					</div>
+					<div class="col-xxl-6 col-xl-6 col-lg-12 col-sm-12 d-flex justify-content-center align-items-center flex-column">
+						<input type="hidden" id="id" name="productID" th:value="${selectedProduct.productID}">
+						<div class="description">
+							<h1 class="productName">[[${selectedProduct.productName}]]</h1>
+							<h4 class="price">NT$[[${selectedProduct.price}]]</h4>
+							<div class="stock-status">
+								<p>庫存狀況 :</p>
+								<p th:if="${selectedProduct.stock <= 10}" class="badge" id="less">貨量偏少</p>
+								<p th:if="${selectedProduct.stock > 10}" class="badge" id="enough">貨量充足</p>
+							</div>
+							<div class="quantitySet">
+								<button class="func-btn quantity minus">-</button>
+								<input type="text" name="quantity" class="number" value="0">
+								<button class="func-btn quantity add">+</button>
+							</div>
+							<div class="btns">
+								<button type="button" id="purchase" class="func-btn">直接購買</button>
+								<button type="button" id="cart" class="func-btn">加入購物車</button>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="row my-5">
+					<div class="col d-flex align-items-center flex-column">
+						<div class="tab-nav w-100">
+							<h3 class="active">商品特色描述</h3>
+							<h3 id="review" th:data-review="${allReviews.size() != 0 ? 'true' : 'false'}">商品評價</h3>
+						</div>
+						<div class="features mt-4 w-100">
+							<p>[[${selectedProduct.productFeatures}]]</p>
+						</div>
+						<div class="ratings mt-4 w-100 hide" th:if="${allReviews.size() == 0}">
+							<div class="total-rating row w-100">
+								<div class="col d-flex flex-column justify-content-center align-items-center">
+									<h3 class="fw-bold">這個產品目前還沒有任何評價喔！</h3>
+								</div>
+							</div>
+						</div>
+						<div class="ratings mt-4 w-100 hide" th:unless="${allReviews.size() == 0}">
+							<div class="total-rating row w-100">
+								<div class="col-xxl-4 col-xl-4 col-lg-12 col-sm-12 d-flex flex-column justify-content-center align-items-center">
+									<h3 class="my-3">[[${allReviews.size()}]]個評價</h3>
+									<div class="stars">
+										<div class="rating">
+											<span><i class="fa-solid fa-star"></i></span>
+											<span><i class="fa-solid fa-star"></i></span>
+											<span><i class="fa-solid fa-star"></i></span>
+											<span><i class="fa-solid fa-star"></i></span>
+											<span><i class="fa-solid fa-star"></i></span>
+										</div>
+										<div class="ms-3 d-flex justify-content-center align-items-center">
+											<p class="rating-num fs-4 w-100 h-100">[[${avgRating}]]分</p>
+										</div>
+									</div>							  
+								</div>
+								<div class="col-xxl-8 col-xl-8 col-lg-12 col-sm-12">
+									<div class="rating-number row">
+										<p class="col-2">5分</p>
+										<div class="percentage-bar col-8" id="five" th:style="'width:'+${ratingGroup['5'] == null?0:ratingGroup['5']} + '%'"></div>
+										<p class="col-2">[[${ratingGroup['5'] == null?0:ratingGroup['5']}]]%</p>
+									</div>
+									<div class="rating-number row">
+										<p class="col-2">4分</p>
+										<div class="percentage-bar col-8" id="four" th:style="'width:'+${ratingGroup['4'] == null?0:ratingGroup['4']} + '%'"></div>
+										<p class="col-2">[[${ratingGroup['4'] == null?0:ratingGroup['4']}]]%</p>
+									</div>
+									<div class="rating-number row">
+										<p class="col-2">3分</p>
+										<div class="percentage-bar col-8" id="three" th:style="'width:'+${ratingGroup['3'] == null?0:ratingGroup['3']} + '%'"></div>
+										<p class="col-2">[[${ratingGroup['3'] == null?0:ratingGroup['3']}]]%</p>
+									</div>
+									<div class="rating-number row">
+										<p class="col-2">2分</p>
+										<div class="percentage-bar col-8" id="two" th:style="'width:'+${ratingGroup['2'] == null?0:ratingGroup['2']} + '%'"></div>
+										<p class="col-2">[[${ratingGroup['2'] == null?0:ratingGroup['2']}]]%</p>
+									</div>
+									<div class="rating-number row">
+										<p class="col-2">1分</p>
+										<div class="percentage-bar col-8" id="one" th:style="'width:'+${ratingGroup['1'] == null?0:ratingGroup['1']} + '%'"></div>
+										<p class="col-2">[[${ratingGroup['1'] == null?0:ratingGroup['1']}]]%</p>
+									</div>
+								</div>
+							</div>
+							<hr class="w-100">
+							<ul class="ratings-container w-100">
+								<th:block th:each="review, iterStat : ${allReviews}">
+								<li class="user-rating w-75">
+									<img class="rating-user-img me-auto" th:if="${review.member.memPic != null}" th:src="@{/showphoto?(memNo=${review.member.memNo})}">
+									<img class="rating-user-img me-auto" th:if="${review.member.memPic == null}" th:src="@{/images/memberAdm/user-cover.jpg}">
+									<div class="rating-info">
+										<h4>[[${review.member.memName}]]</h4>
+										<h4>[[${#temporals.format(review.reviewDate, 'MMMM dd, yyyy')}]]</h4>
+									</div>
+									<div class="stars ms-auto">
+										<div class="rating">
+											<span><i class="fa-solid fa-star"></i></span>
+											<span><i class="fa-solid fa-star"></i></span>
+											<span><i class="fa-solid fa-star"></i></span>
+											<span><i class="fa-solid fa-star"></i></span>
+											<span><i class="fa-solid fa-star"></i></span>
+										</div>
+										<div class="ms-3 d-flex justify-content-center align-items-center">
+											<p class="rating-num fs-4 w-100 h-100">[[${review.rating}]]分</p>
+										</div>
+									</div>
+								</li>
+								<hr class="w-100" th:unless="${iterStat.last}">
+								</th:block>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section class="row mt-5 mb-4">
+					<div class="recommend-block col">
+						<h3>推薦商品</h3>
+						<div class="recommend-container mt-3">
+							<a class="recommand-item" th:href="@{/mall/productDetails?(id=${rItem.productID})}" th:each="rItem : ${recommend}">
+								<img th:src="@{/image?(id=${rItem.productImage.get(0).imageID})}" class="recommend-img" alt="">
+								<h4 class="mt-3 fw-bold">[[${rItem.productName}]]</h4>
+								<h5 class="mt-3">NT$[[${rItem.price}]]</h5>
+							</a>
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+	</section>
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+	<script th:src="@{/js/axios/axios.min.js}"></script>
+	<script th:src="@{/js/products/mall/QuantitySet.js}"></script>
+	<script th:src="@{/js/products/mall/ProductDetail.js}"></script>
+</body>
+
+</html>

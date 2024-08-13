@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>留言資料</title>
+    <th:block th:replace="~{back/Navbar :: navBarCss}"></th:block>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.0/css/dataTables.dataTables.min.css">
+    <link rel="stylesheet" th:href="@{/js/article/vendor/css/core.css}" class="template-customizer-core-css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+		.comment-time-column{
+			width: 210px;
+		}
+		.four-word-column{
+			width: 110px;
+		}
+	</style>
+</head>
+
+<body>
+
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <nav th:replace="~{back/Navbar :: #layout-menu}"></nav>
+            <div class="layout-page">
+                <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+                <div class="content-wrapper">
+                    <main class="container-xxl flex-grow-1 container-p-y">
+
+                        <!-- <div class="card"> -->
+                        <!-- <h5 class="card-header">所有文章</h5> -->
+                        <h2>全部留言</h2>
+                        <!-- <div class="table-responsive text-nowrap"> -->
+                        <table id="commentTable" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+
+                                    <th class="four-word-column">留言編號</th>
+                                    <th class="four-word-column">文章編號</th>
+                                    <th class="four-word-column">會員編號</th>
+                                    <th class="comment-time-column">留言時間</th>
+                                    <th>留言內容</th>
+                                    <!-- <th>按讚數</th> -->
+                                    <th class="four-word-column">顯示狀態</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="comment : ${comments}">
+
+                                    <td th:text="${comment.commentId}"></td>
+                                    <td th:text="${comment.articleId.articleId}">
+                                    </td>
+                                    <td th:text="${comment.memberId.memNo}"></td>
+                                    <td th:text="${comment.commentTime}"></td>
+                                    <td th:text="${comment.commentContent}"></td>
+                                    <!-- <td th:text="${article.likeAmount}"></td> -->
+                                    <td th:switch="${comment.commentDisplay}">
+                                        <span th:case=1 class="badge bg-label-info me-1">顯示</span>
+                                        <span th:case=0 class="badge bg-label-warning me-1">不顯示</span>
+                                    </td>
+
+                                    <!-- <td th:text="${article.articleDisplay}"></td> -->
+                                    <td>
+                                        <div class="dropdown">
+                                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
+                                                data-bs-toggle="dropdown">
+                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <!-- <p th:switch="${article.articleDisplay}">
+                                                    <span th:case="1">
+                                                        <form
+                                                            th:action="@{/article/updateStatus(articleId=${article.articleId})}"
+                                                            method="post">
+                                                            <button type="submit" class="dropdown-item">
+                                                                <i class="bx bx-edit-alt me-1"></i> 修改顯示狀態(0)
+                                                            </button>
+                                                        </form>
+                                                    </span>
+                                                    <span th:case="0">
+                                                        <a class="dropdown-item" href="javascript:void(0);">
+                                                            <i class="bx bx-edit-alt me-1"></i> 修改顯示狀態(1)</a>
+                                                    </span>
+                                                </p> -->
+
+                                                <button class="dropdown-item" th:data-comment-id="${comment.commentId}"
+                                                    onclick="updateStatus(this)">
+                                                    <i class="bx bx-edit-alt me-1"></i> 修改狀態
+                                                </button>
+
+
+
+                                                <!-- <a class="dropdown-item" href="javascript:void(0);"><i
+                                                        class="bx bx-trash me-1"></i> Delete</a> -->
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- </div> -->
+                        <!-- </div> -->
+
+
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:replace="~{back/NavBar :: js}"></th:block>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.0/js/dataTables.min.js"></script>
+    <script>
+        let table = new DataTable('#commentTable')
+
+        function updateStatus(button) {
+            const commentId = button.getAttribute('data-comment-id');
+
+            axios.put(`/workout/article/updateStatusComment?commentId=${commentId}`)
+                .then(response => {
+                    console.log('Success:', response.data);
+                    // alert('Status updated successfully!');
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating status.');
+                });
+        }
+    </script>
+</body>
+
+</html>

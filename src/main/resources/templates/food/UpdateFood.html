@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>更新食品</title>
+    <!-- CSS路徑 -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/food/foodPage.css}" />
+    <!-- CDN路徑 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+
+<body id="foodList">
+	<div th:replace="~{back/NavSide}"></div>
+    <div align="center" class="main-block">
+        <h1>更 新 食 品 資 料</h1>
+        <h2>以100克含量紀錄</h2>
+        <form method="post" th:action="@{/food/UpdateFood}" accept-charset="UTF-8" class="insertFood">
+            <input type="hidden" name="foodID" th:value="${food.foodID}" />
+            <label for="foodName">食品名稱：</label><br>
+            <input type="text" name="foodName" th:value="${food.foodName}" required /><br>
+
+            <label for="protein">蛋白值含量：</label><br>
+            <input type="number" step="0.1" name="protein" th:value="${food.protein}" required /><br>
+
+            <label for="carbohydrates">碳水化合物含量：</label><br>
+            <input type="number" step="0.1" name="carbohydrates" th:value="${food.carbohydrates}" required /><br>
+
+            <label for="fat">脂肪含量：</label><br>
+            <input type="number" step="0.1" name="fat" th:value="${food.fat}" required /><br>
+
+            <input type="submit" value="確定" />
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+
+</html>

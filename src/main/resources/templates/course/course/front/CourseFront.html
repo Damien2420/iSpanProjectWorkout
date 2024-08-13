@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	<title>Gymnity - 課程</title>
+	<!-- =================== META =================== -->
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" th:href="@{/css/course/CoursePage.css}">
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">	
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.min.css">
+</head>
+
+<body id="home" class="page-program">
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<!-- =============== HEADER-TITLE =============== -->
+	<section class="s-header-title" style="background-image: url(../../images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title fw-bold">課程</h1>
+				<ul class="breadcrambs">
+					<li><a th:href="@{/home}">主頁</a></li>
+					<li><a th:href="@{/coach/front/CoachFront}">教練</a></li>
+					<li>課程</li>
+				</ul>
+		</div>
+	</section>
+	<!-- ============= HEADER-TITLE END ============= -->
+	<!-- =========== S-TRAINING-SCHEDULE =========== -->
+	<section class="s-training-schedule" style="background-image: url(../../images/front/bg-table-1.svg);">
+		<div class="container">
+			<h2 class="title-decor">正在進行中的<span>課程</span> 目前時間 : <span id="currentDate"></span></h2>
+        	<p class="slogan">了解我們提供的各種課程，包括基礎課程、進階課程和專業課程。我們致力於提供最優質的教學內容，幫助學員達成學習目標。</p>
+					
+					<div class="mb-3 d-flex justify-content-center">
+						<select id="courseTypeSelect" name="courseType" required>
+							<option value="">依據類型查詢</option>
+						</select>
+					</div>
+					
+					<div id="courseList"></div>
+		</div>
+		<div class="container mt-5">
+			<h2 class="title-decor">預覽<span>課表</span></h2>
+        	<p class="slogan">查看我們的完整課表，讓您可以輕鬆安排每一天的學習計劃。我們提供多種課程選擇，以滿足不同學員的需求。</p>
+	        <img class="" th:src="@{/images/course/schedule3.png}">		
+		</div>	
+	</section>
+	<!-- ========= S-TRAINING-SCHEDULE END ========= -->	
+	<!-- ============== S-ABOUT-PROGRAM ============== -->
+	<section class="s-about">
+	    <div class="container">
+	        <img class="about-effect-tringle" th:src="@{/images/front/tringle-about-top.svg}" alt="圖像">
+	        <div class="row about-row">
+	            <div class="col-md-5 about-img-col">
+	                <div class="about-img-cover">
+	                    <div class="about-img-1">
+	                        <img class="about-img-effect-2" th:src="@{/images/front/group-circle-2.svg}" alt="圖像">
+	                        <img th:src="@{/images/front/about-top-1.jpg}" alt="圖像">
+	                    </div>
+	                    <div class="about-img-2">
+	                        <img th:src="@{/images/front/about-top-2.jpg}" alt="圖像">
+	                    </div>
+	                </div>
+	            </div>
+	            <div class="col-md-7 about-info-cover">
+					<h2 class="title-decor">關於 <span>課程</span></h2>
+					<div class="text">
+					    <p>我們的課程設計旨在幫助每位學員達到最佳的學習效果。我們提供多樣化的課程選擇，包括基礎課程、高級課程及專業課程，滿足不同層次學員的需求。每一門課程都由經驗豐富的專業講師授課，並且定期更新課程內容，以確保學員能夠學到最新的知識和技能。</p>
+					    <p>我們的課程不僅涵蓋理論知識，還注重實踐操作，讓學員能夠在實際環境中應用所學。通過精心設計的課程結構和實踐環節，我們致力於幫助學員提升實際能力，從而在工作中取得更好的表現。</p>
+					    <p>無論您是剛入門的新手，還是希望進一步提升技能的專業人士，我們的課程都能為您提供所需的支持和指導。請隨時聯繫我們了解更多課程詳情。</p>
+					    <p><a th:href="@{/contacts}">點擊這裡</a> 了解更多信息。</p>
+					</div>
+	                <ul class="about-cont">
+	                    <li><i class="fa fa-phone" aria-hidden="true"></i><a href="tel:18004886040">03-666 7177</a></li>
+	                    <li><i class="fa fa-envelope" aria-hidden="true"></i><a href="mailto:fitmax@gmail.com">gymnity@gmail.com</a></li>
+	                </ul>
+	                <ul class="social-list">
+	                    <li><a target="_blank" href=""><i class="fa-brands fa-facebook" aria-hidden="true"></i></a></li>
+	                    <li><a target="_blank" href=""><i class="fa-brands fa-twitter" aria-hidden="true"></i></a></li>
+	                    <li><a target="_blank" href=""><i class="fa-brands fa-youtube" aria-hidden="true"></i></a></li>
+	                    <li><a target="_blank" href=""><i class="fa-brands fa-instagram" aria-hidden="true"></i></a></li>
+	                </ul>
+	            </div>
+	        </div>
+	    </div>
+	</section>
+	<!-- ============ S-ABOUT-PROGRAM END ============ -->
+
+	<!-- ============== S-ABOUT-BOTTOM ============== -->
+	<section class="s-about-bottom">
+		<div class="container">
+			<div class="row">
+			 
+				<div class="col-md-4">
+				    <div class="about-bottom-item">
+				        <div class="date-cover">
+				            <div class="date">10</div>
+				            <h4>年</h4>
+				        </div>
+				        <div class="about-bottom-info">我們擁有超過十年的專業經驗，致力於提供最優質的服務。</div>
+				    </div>
+				</div>
+				<div class="col-md-4">
+				    <div class="about-bottom-item">
+				        <div class="date-cover">
+				            <div class="date">27</div>
+				            <h4>名教練</h4>
+				        </div>
+				        <div class="about-bottom-info">團隊由27名專業教練組成，每位教練都擁有豐富經驗。</div>
+				    </div>
+				</div>
+				<div class="col-md-4">
+				    <div class="about-bottom-item">
+				        <div class="date-cover">
+				            <div class="date">18</div>
+				            <h4>個據點</h4>
+				        </div>
+				        <div class="about-bottom-info">我們在18個地區設有據點，為會員提供便捷的服務。</div>
+				    </div>
+				</div>
+				
+			</div>
+		</div>
+	</section>
+	<!-- ============ S-ABOUT-BOTTOM END ============ -->
+	<!-- ================ S-CONTACTS ================ -->
+	<section class="s-contacts" style="background-image: url(../../images/front/bg-contacts.svg);">
+		<div class="container">
+			<h2 class="title-decor">Contact <span>Us</span></h2>
+			<p class="slogan">如果您有任何問題或建議，請隨時聯絡我們。我們的客戶服務團隊將竭誠為您提供幫助！</p>
+			<div class="row">
+				<div class="col-md-5 col-lg-4">
+					<div class="contact-item">
+						<div class="contact-item-left">
+							<img th:src="@{/images/front/icon-1.svg}" alt="img">
+							<h4>TELEPHONE</h4>
+						</div>
+						<div class="contact-item-right">
+							<ul class="contact-item-list">
+								<li><a href="tel:0912345678">0912-345-678</a></li>
+								<li><a href="tel:0212345678">02-1234-5678</a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="contact-item">
+						<div class="contact-item-left">
+							<img th:src="@{/images/front/icon-2.svg}" alt="img">
+							<h4>E-MAILS</h4>
+						</div>
+						<div class="contact-item-right">
+							<ul class="contact-item-list">
+								<li><a href="mailto:Gymnity@gmail.com">Gymnity@gmail.com</a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="contact-item">
+						<div class="contact-item-left">
+							<img th:src="@{/images/front/icon-3.svg}" alt="img">
+							<h4>ADDRESS</h4>
+						</div>
+						<div class="contact-item-right">
+							<ul class="contact-item-list">
+								<li>桃園市中壢區新生路二段421號</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-7 col-lg-8">
+					<form id='contactform' name="contactform">
+						<ul class="form-cover">
+							<li class="inp-name">
+								<label>姓名 (必填)</label>
+								<input id="name" type="text" name="your-name" required>
+							</li>
+							<li class="inp-email">
+								<label>E-mail (必填)</label>
+								<input id="email" type="email" name="your-email" required>
+							</li>
+							<li class="inp-text">
+								<label>訊息 (必填)</label>
+								<textarea id="comments" name="your-text" required></textarea>
+							</li>
+						</ul>
+						<div class="checkbox-wrap">
+							<div class="checkbox-cover">
+								<input type="checkbox" required>
+								<p>使用此服務即表示您同意本網站存儲和處理您的資料。</p>
+							</div>
+						</div>
+						<div class="btn-form-cover">
+							<button id="submit" type="submit" class="btn">送出訊息</button>
+						</div>
+					</form>
+					<div id="message"></div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- ============== S-CONTACTS-END ============== -->
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+	
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		window.onload = async function() {
+			await updateCourseTypeSelector();
+			onLoadData();
+		};
+		const currentDate = new Date().toISOString().split('T')[0];
+		document.getElementById("currentDate").innerHTML = currentDate ;
+		const courseListContainer = document.getElementById("courseList");
+		let courseType = 'all';
+		document.getElementById('courseTypeSelect').addEventListener('change',e=>{
+			courseType = e.target.value;
+			onLoadData();
+		})
+		async function updateCourseTypeSelector(){
+			const courseTypes = new Set();
+			axios.get('api/CourseFindAll')
+			.then(res => {
+				const courses = res.data;
+				courses.forEach(course =>{
+					courseTypes.add(course.courseType);
+				})
+				const courseTypeSelect = document.getElementById('courseTypeSelect');
+				courseTypeSelect.innerHTML = '';
+				courseTypeSelect.innerHTML +=`<option value="" disabled selected>依據課程類型查詢</option>`;
+				courseTypeSelect.innerHTML +=`<option value="all">全部類型</option>`;
+				courseTypes.forEach(courseType=>{
+					courseTypeSelect.innerHTML +=`<option value="${courseType}">${courseType}</option>`
+				})
+			}).catch(err => {console.error(err);})
+		}
+		function onLoadData(){
+			axios.get('api/CourseFindByCurrentDate',{params:{currentDate:currentDate}})
+			.then(res => {
+				courseListContainer.innerHTML = '';
+				const course = res.data;
+				course.forEach(course => {
+					if (courseType === course.courseType) {
+						courseListContainer.innerHTML += `
+							<div class="course-item">
+								<h3 class="course-name">${course.courseName}</h3>
+								<div class="course-details">
+									<div class="course-details-courseType">課程類型:${course.courseType}</div>
+									<div class="course-details-coach">授課教練:${course.coach.coachName}</div>
+									<div class="course-details-coursePrice">課程價格:${course.coursePrice}</div>
+									<div class="course-details-date">開始時間:${course.courseStartDate}</div>
+									<div class="course-details-date">結束時間:${course.courseEndDate}</div>
+								</div>
+							</div>
+						`;
+					}else if (courseType === 'all') {
+						courseListContainer.innerHTML += `
+							<div class="course-item">
+								<h3 class="course-name">${course.courseName}</h3>
+								<div class="course-details">
+									<div class="course-details-courseType">課程類型:${course.courseType}</div>
+									<div class="course-details-coach">授課教練:${course.coach.coachName}</div>
+									<div class="course-details-coursePrice">課程價格:${course.coursePrice}</div>
+									<div class="course-details-date">開始時間:${course.courseStartDate}</div>
+									<div class="course-details-date">結束時間:${course.courseEndDate}</div>
+								</div>
+							</div>
+						`;
+					}
+				});
+			}).catch(err => {console.error(err);})
+		}	
+
+
+	</script>	
+</html>

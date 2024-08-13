@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gymnity - 購物車</title>
+    
+    <link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+    <!-- <link rel="stylesheet" th:href="@{/css/products/mall/ShoppingCart.css}"> -->
+    <link rel="stylesheet" th:href="@{/css/products/mall/QuantitySet.css}">
+    <th:block th:replace="~{front/Layout :: css}"></th:block>
+    <style>
+        .righteous-font {
+			font-family: Righteous, sans-serif;
+			font-weight: 700s;
+		}
+
+        .disable {
+            border: 2px solid #4d4c4c !important;
+            color: #4d4c4c !important;
+            pointer-events: none;
+        }
+
+        .product-cart-title div {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--workout-theme-color);
+        }
+
+        .productImg {
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px black;
+        }
+
+        .cart-item {
+            background-color: #747373;
+            border-radius: 8px;
+            color: black;
+        }
+
+        .originalPrice,
+        .p-totalprice {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .deliver-block h4 {
+            color: #fff;
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .address-card .content p {
+            width: 25%;
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .cart-submit-block {
+            color: #bdbdbd;
+            font-size: 18px;
+        }
+
+        .total,
+        .fee,
+        .ft-num {
+            color: var(--workout-theme-color);
+        }
+
+        .orderSubmit {
+            display: table-cell;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #fff;
+            font-weight: bold;
+            font-size: 20px;
+            background-color: transparent;
+            text-align: center;
+            vertical-align: middle;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .orderSubmit:hover {
+            border: 2px solid #105186;
+            background-color: #105186;
+        }
+
+        .radio-container {
+            margin: 0 auto;
+            max-width: 300px;
+            color: white;
+        }
+
+        .radio-wrapper {
+            margin-bottom: 20px;
+        }
+
+        .radio-button {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .radio-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .radio-button input[type="radio"] {
+            display: none;
+        }
+
+        .radio-checkmark {
+            display: inline-block;
+            position: relative;
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            border: 2px solid #333;
+            border-radius: 50%;
+        }
+
+        .radio-checkmark:before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #FDB338;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .radio-button input[type="radio"]:checked ~ .radio-checkmark:before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .radio-label {
+            font-size: 18px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body id="home">
+    <th:block th:replace="~{front/Layout :: header}"></th:block>
+    <section class="main-section">
+        <section class="s-header-title" style="background-image: url(../images/front/bg-1-min.png);">
+			<div class="container">
+				<h1 class="title fw-bold">GYMNITY 商城</h1>
+				<ul class="breadcrambs">
+					<li><a th:href="@{/home}">首頁</a></li>
+                    <li><a th:href="@{/mall}">商城</a></li>
+					<li>購物車</li>
+				</ul>
+			</div>
+		</section>
+        <main class="container mb-3 d-flex flex-column align-items-center justify-content-start">
+            <div class="product-cart-title mt-4 row text-center border-bottom border-light pb-3 w-100">
+                <div class="col-6">商品</div>
+                <div class="col-1">單價</div>
+                <div class="col-3">數量</div>
+                <div class="col-2">小計</div>
+            </div>
+            <th:block th:if="${session.cart != null}">
+                <div th:each="item : ${session.cart}" class="cart-item row w-100 mt-4 py-3">
+                    <div class="col-6 d-flex justify-content-center align-items-center flex-row">
+                        <div class="col-5 d-flex justify-content-center align-items-center">
+                            <img th:src="@{/image?(id=${item.image.imageID})}" alt="商品圖片" class="productImg">
+                        </div>
+                        <div class="col-7 text-center">
+                            <input type="hidden" class="productID" th:value="${item.product.productID}">
+                            <h5 class="productCategory mb-3 fw-bold">[[${item.product.productCategory.categoryName}]]</h5>
+                            <h3 class="productName fw-bold">[[${item.product.productName}]]</h3>
+                        </div>
+                    </div>
+                    <div class="col-1 d-flex justify-content-center align-items-center">
+                        <p class="originalPrice righteous-font">$[[${item.product.price}]]</p>
+                    </div>
+                    <div class="col-3  d-flex justify-content-center align-items-center">
+                        <div class="quantitySet">
+                            <button class="func-btn quantity minus">-</button>
+                            <input type="text" name="quantity" class="number" th:value="${item.quantity}">
+                            <button class="func-btn quantity add">+</button>
+                        </div>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center align-items-center">
+                        <p class="p-total-price zh fs-5 righteous-font">$[[${item.product.price * item.quantity}]]</p>
+                    </div>
+                </div>
+            </th:block>
+            <div th:unless="${session.cart != null}" class="message row w-100 d-flex justify-content-center align-items-center mt-4 py-3 fs-3">購物車是空的喔！</div>
+            <div class="row w-100 mt-3 py-3">
+                <div class="col-9 d-flex justify-content-start align-items-center">
+                    <a th:href="@{/mall}">
+                        <button class="func-btn py-2 px-5 fs-6">繼續購物</button>
+                    </a>
+                </div>
+                <div class="col-3 d-flex justify-content-end align-items-center">
+                    <div class="empty">
+                        <button class="func-btn emptybtn py-2 px-5 fs-6">清空購物車</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row w-100 mt-5 pt-3 pb-5">
+                <div class="deliver-block col-6 d-flex justify-content-start align-items-center flex-column">
+                    <h4 class="fw-bold w-75 text-center">取貨方式</h4>
+                    <hr class="border border-light w-50 mb-4">
+                    <div class="radio-container">
+                        <div class="radio-wrapper">
+                        <label class="radio-button">
+                            <input id="option1" name="method" type="radio" value="1">
+                            <span class="radio-checkmark"></span>
+                            <span class="radio-label">宅配到府</span>
+                        </label>
+                        </div>
+                    
+                        <div class="radio-wrapper">
+                        <label class="radio-button">
+                            <input id="option2" name="method" type="radio" value="2">
+                            <span class="radio-checkmark"></span>
+                            <span class="radio-label">門市取貨</span>
+                        </label>
+                        </div>
+                    </div>
+                    <div class="collapse address-card w-75" id="address-collapse">
+                        <div class="content">
+                            <p>送貨地址</p>
+                            <input type="text" name="address" value="台北市大安區敦化南路一段123號">
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-submit-block col-6 d-flex flex-column align-items-center gap-3">
+                    <div class="totalPrice d-flex justify-content-between align-items-center w-100">
+                        <p class="ps-totalCN fw-bolder">商品總金額：</p>
+                        <p class="total righteous-font">$0</p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <p class="deliver-fee fw-bolder">運費：</p>
+                        <p class="fee righteous-font">$0</p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <p class="final-total fw-bolder">訂單總金額：</p>
+                        <p class="ft-num righteous-font">$0</p>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center w-100">
+                        <button class="orderSubmit py-3 px-5 fs-5">訂單送出</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+    <footer th:replace="~{front/Layout :: footer}"></footer>
+    <script th:src="@{/js/bootstrap/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/js/axios/axios.min.js}"></script>
+    <script>
+        $(function () {
+            const add = $('.add');
+            const minus = $('.minus');
+            let action;
+
+            updateTotal();
+
+            $('.number').on('change', function () {
+                updatePrice($(this), 'change');
+            });
+
+            const radioInputs = document.querySelectorAll('.radio-container input[type="radio"]');
+            const fee = document.querySelector('.fee');
+
+            radioInputs.forEach(function(input) {
+                input.addEventListener('change', function() {
+                    if (input.checked) {
+                        switch(input.id) {
+                            case "option1":
+                                fee.innerText = '$100';
+                                $('#address-collapse').collapse('show');
+                                break;
+                            case "option2":
+                                fee.innerText = '$0';
+                                $('#address-collapse').collapse('hide');
+                                break;
+                        }
+                        updateTotal();
+                    }
+                });
+            });
+
+            function updateItemInfo(item, action) {
+                const productID = item.find('.productID').val();
+                const quantity = item.find('.number').val();
+                axios.post('updateCart',{
+                    productID: productID,
+                    quantity: quantity,
+                    action: action
+                })
+                .then(res => {
+                    console.log(res)
+                })
+                .catch(err => {
+                    console.error(err); 
+                })
+            }
+
+            function increase(quantityBox) {
+                let value = parseInt(quantityBox.val());
+                quantityBox.val(value + 1);
+                updatePrice(quantityBox, 'add');
+            }
+
+            function decrease(quantityBox) {
+                let value = parseInt(quantityBox.val());
+                if (value > 0) {
+                    quantityBox.val(value - 1);
+                    updatePrice(quantityBox, 'minus');
+                }
+            }
+
+            function startIncrease(event, quantityBox) {
+                event.preventDefault();
+                action = setInterval(function (event) {
+                    increase(quantityBox);
+                }, 100);
+            }
+
+            function startDecrease(event, quantityBox) {
+                event.preventDefault();
+                action = setInterval(function (event) {
+                    decrease(quantityBox);
+                }, 100);
+            }
+
+            function stop(event) {
+                event.preventDefault();
+                clearInterval(action);
+            }
+
+            add.on('click', function (event) {
+                event.preventDefault();
+                let quantityBox = $(this).siblings('.number');
+                increase(quantityBox);
+            });
+            minus.on('click', function (event) {
+                event.preventDefault();
+                let quantityBox = $(this).siblings('.number');
+                decrease(quantityBox);
+            });
+
+            add.on('mousedown', function (event) {
+                let quantityBox = $(this).siblings('.number');
+                startIncrease(event, quantityBox);
+            }).on('mouseup', function (event) {
+                stop(event);
+            });
+
+            minus.on('mousedown', function (event) {
+                let quantityBox = $(this).siblings('.number');
+                startDecrease(event, quantityBox);
+            }).on('mouseup', function (event) {
+                stop(event);
+            });
+
+            //如果購物車商品數量是0就移除商品
+            function ifZero(element) {
+                const num = parseInt(element.val());
+                if(num === 0) {
+                    element.closest('.cart-item').remove();
+                    if($('.cart-item').length === 0){
+                        const emptyCartMsg = $('<div class="message zh row w-100 d-flex justify-content-center align-items-center mt-4 py-3 fs-3">購物車是空的喔！</div>');
+                        $('.product-cart-title').after(emptyCartMsg);
+                    }
+                }
+            }
+
+            //如果購物車內沒有商品或還沒選擇取貨方式，就取消送出訂單的按鈕
+            function updateOrderButton() {
+                const orderSubmitButton = document.querySelector('.orderSubmit');
+                const selfPickUp = document.querySelector('#option2').checked;
+                let totalIsEmpty = parseInt($('.total').text().substring(1)) === 0;
+                let cartIsEmpty = $('.cart-item').length === 0;
+                let finalTotalIsZero = parseInt($('.ft-num').text().substring(1)) === 0;
+                let deliverfee = parseInt($('.fee').text().substring(1)) === 0 && !selfPickUp;
+                if(totalIsEmpty || cartIsEmpty || finalTotalIsZero || deliverfee) {
+                    $('.orderSubmit').prop('disabled', true);
+                    orderSubmitButton.classList.add('disable');
+                } else {
+                    $('.orderSubmit').prop('disabled', false);
+                    orderSubmitButton.classList.remove('disable');
+                }
+            }
+
+            //更新單個商品總金額 & 傳送ajax請求
+            function updatePrice(input, action) {
+                if(input.val() != "") {
+                    const quantity = parseInt(input.val());
+                    const item = input.closest('.cart-item');
+                    const price = parseFloat(item.find('.originalPrice').text().substring(1));
+                    if (isNaN(quantity)) {
+                        item.find('.price').text('$0');
+                    } else {
+                        const totalPrice = quantity * price;
+                        item.find('.p-total-price').text('$' + totalPrice);
+                    }
+                    ifZero(input);
+                    updateTotal();
+
+                    const currentItem = input.closest('.cart-item');
+                    updateItemInfo(currentItem, action);
+                }
+            }
+            
+            //總金額更新
+            function updateTotal() {
+                let totalPrice = 0;
+                $('.cart-item').each(function () {
+                    const singleItemPrice = parseInt($(this).find('.p-total-price').text().substring(1));
+                    totalPrice += singleItemPrice;
+                });
+                $('.total').text('$' + totalPrice);
+                const fee = parseInt($('.fee').text().substring(1));
+                const finalTotal = totalPrice + fee;
+                $('.ft-num').text('$' + finalTotal);
+                updateOrderButton();
+            }          
+
+            $('.orderSubmit').on('click', function () {
+                const finalTotal = parseInt($('.total').text().substring(1));
+                const shippingMethod = document.querySelector('.radio-container input[type="radio"]:checked');
+                const addressInput = document.querySelector('.address-card .content input');
+
+                const form = document.createElement('form');
+                form.setAttribute('action', '../order/createOrder');
+                form.setAttribute('method', 'POST');
+
+                const total = document.createElement('input');
+                total.setAttribute('type', 'text');
+                total.setAttribute('name', 'orderTotal');
+                total.value = finalTotal;
+
+                const method = document.createElement('input');
+                method.setAttribute('type', 'hidden');
+                method.setAttribute('name', shippingMethod.name);
+                method.value = shippingMethod.value;
+
+                form.appendChild(total)
+                form.appendChild(method);
+                form.appendChild(addressInput)
+                document.body.appendChild(form);
+                form.submit();
+            })
+
+            $('.emptybtn').on('click', function() {
+                axios.delete('emptyCart')
+                .then(response => {
+                    console.log(response);
+                    const emptyMsg = `<div class="message row w-100 d-flex justify-content-center align-items-center mt-4 py-3 fs-3">購物車是空的喔！</div>`;
+                    $('.product-cart-title').after(emptyMsg);
+                    $('.cart-item').remove();
+                })
+                .catch(err => {
+                    console.error(err); 
+                })
+            });
+        })
+    </script>
+</body>
+
+</html>
+

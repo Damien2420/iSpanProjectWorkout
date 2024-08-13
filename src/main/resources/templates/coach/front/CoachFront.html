@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	<title>Gymnity - 教練</title>
+	<!-- =================== META =================== -->
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" th:href="@{/css/coach/CoachPage.css}">
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">	
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.min.css">
+</head>
+
+<body id="home" class="page-trainer">
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<!-- =============== HEADER-TITLE =============== -->
+	<section class="s-header-title" style="background-image: url(../../images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title fw-bold">教練</h1>
+				<ul class="breadcrambs">
+					<li><a th:href="@{/home}">主頁</a></li>
+					<li>教練</li>
+				</ul>
+		</div>
+	</section>
+	<!-- ============= HEADER-TITLE END ============= -->
+	<!-- ============= TRAINER-Info ============= -->
+	<section class="s-our-trainer">
+		<div class="container" id="coachContainer"> <!-- CoachContainer -->
+			<img class="about-effect-tringle" th:src="@{/images/front/tringle-about-top.svg}" alt="img">
+			<h2 class="title-decor">GYMNITY <span>教練</span></h2>
+			<p class="slogan">激發潛能，成就自我 – GYMNITY，實現健康與美麗的雙重目標</p>
+		</div>
+	</section>
+	<!-- ============= TRAINER-Info END ============= -->
+	
+
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+	
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>	
+    <script>
+    	const CoachFindAll = "api/DTO/CoachFindAllDTOByCurrentDate";
+		const coachContainer = document.getElementById('coachContainer');
+		axios.get(CoachFindAll)
+		.then(res => {
+			const coachs = res.data;
+			coachs.forEach(coach => {
+			const coachInfo = `	
+			<div class="row coachInfoContainer">
+				<div class="col-md-5 coachImgCol">
+					<div class="coachImgCover">
+						<img class="decorationImg-1" src="../../images/front/line-red-1.svg" alt="img1">
+						<img class="decorationImg-2" src="../../images/front/line-red-2.svg" alt="img2">
+						<img class="decorationImg-3" src="../../images/front/square-yellow.svg" alt="img3">
+						<img class="coach-Img" src="api/coachPhotos?coachId=${coach.coachId}">
+					</div>
+				</div>
+				<div class="col-md-7 coachInforation">
+					<h3 class="coachName">${coach.coachName}</h3>
+					<ul class="socialList">
+						<li><a href="#"><i class="fa-brands fa-facebook" aria-hidden="true"></i></a></li>
+						<li><a href="#"><i class="fa-brands fa-twitter" aria-hidden="true"></i></a></li>
+						<li><a href="#"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a></li>
+						<li><a href="#"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a></li>
+					</ul>
+					<div class="col-md-5 coachDetails">
+						<div class="fs-3 CoachColorSet-y">教學課程項目</div>
+						<ul>
+							${coach.courses.map(course => `
+								<li><div class="CoachColorSet-o">${course.courseName}</div></li>
+								<li>
+									<div>教學類型: ${course.courseType}</div>
+									<div>結束時間: ${course.courseEndDate}</div>
+								</li>
+							`).join('')}
+						</ul>
+					</div>
+					<div class="col-md-5 coachDetails">
+						<div class="fs-3 CoachColorSet-y">教練專長</div>
+						<ul>
+							${coach.coachSpecialties.map(coachSpecialtie => `
+								<li><div>${coachSpecialtie.specialty}</div></li>
+							`).join('')}
+						</ul>
+					</div>
+				</div>
+			</div>`;
+			coachContainer.innerHTML += coachInfo;
+			});
+
+		}).catch(err => {console.error(err);})
+
+    
+    </script>
+</body>
+</html>

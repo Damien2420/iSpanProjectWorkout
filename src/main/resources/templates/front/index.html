@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+	<meta charset="UTF-8">
+	<title>GYMNITY</title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<style>
+		.bg-black {
+			background-color: rgba(0, 0, 0, 0.522);
+		}
+
+		.padding-x {
+			padding: 20px 0;
+		}
+	</style>
+</head>
+
+<body id="home">
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<section class="s-crossfit-slider">
+		<div class="crossfit-slider">
+			<div class="crossfit-slide">
+				<div class="crossfit-slider-effect effect-1">
+					<div data-hover-only="true" class="scene">
+						<span class="scene-item" data-depth="0.2"
+							style="background-image: url(images/front/effect-1.svg);"></span>
+					</div>
+				</div>
+				<div class="crossfit-slider-effect effect-2">
+					<div data-hover-only="true" class="scene">
+						<span class="scene-item" data-depth="0.4"
+							style="background-image: url(images/front/effect-2.svg);"></span>
+					</div>
+				</div>
+				<div class="crossfit-slide-bg" style="background-image: url(images/front/slide-1.jpg);"></div>
+				<div class="container">
+					<div class="crossfit-slide-cover">
+						<h2 class="title fw-bold">現代化 <span>健身環境</span></h2>
+						<p>GYMNITY擁有現代化的設施和寬敞明亮的空間，讓每一次訓練都成為愉快的體驗。享受舒適的訓練環境和優質的器材，感受前所未有的運動樂趣。立即加入我們，開始您的健康生活旅程，並探索更多健身的可能性！</p>
+					</div>
+				</div>
+			</div>
+			<div class="crossfit-slide">
+				<div class="crossfit-slider-effect effect-1">
+					<div data-hover-only="true" class="scene">
+						<span class="scene-item" data-depth="0.2"
+							style="background-image: url(images/front/effect-1.svg);"></span>
+					</div>
+				</div>
+				<div class="crossfit-slider-effect effect-2">
+					<div data-hover-only="true" class="scene">
+						<span class="scene-item" data-depth="0.4"
+							style="background-image: url(images/front/effect-2.svg);"></span>
+					</div>
+				</div>
+				<div class="crossfit-slide-bg" style="background-image: url(images/front/slide-2.jpg);"></div>
+				<div class="container">
+					<div class="crossfit-slide-cover">
+						<h2 class="title fw-bold">多功能 <span>訓練器材</span></h2>
+						<p>GYMNITY提供多功能的訓練器材，適合各種訓練需求。從力量訓練到有氧運動，這裡的一切都為您的健康目標而設計。無論您是健身新手還是有經驗的運動員，我們的設備和設施都能滿足您的需求。來加入我們，體驗全面而專業的健身服務！</p>
+					</div>
+				</div>
+			</div>
+			<div class="crossfit-slide">
+				<div class="crossfit-slider-effect effect-1">
+					<div data-hover-only="true" class="scene">
+						<span class="scene-item" data-depth="0.2"
+							style="background-image: url(images/front/effect-1.svg);"></span>
+					</div>
+				</div>
+				<div class="crossfit-slider-effect effect-2">
+					<div data-hover-only="true" class="scene">
+						<span class="scene-item" data-depth="0.4"
+							style="background-image: url(images/front/effect-2.svg);"></span>
+					</div>
+				</div>
+				<div class="crossfit-slide-bg" style="background-image: url(images/front/slide-3.jpg);"></div>
+				<div class="container">
+					<div class="crossfit-slide-cover">
+						<h2 class="title">自我 <span>訓練</span></h2>
+						<p>在GYMNITY裡，您將會找到最專業的設備和訓練環境。我們的教練團隊隨時準備好協助您達成健身目標，無論是增肌、減脂還是提升耐力，這裡都有您所需的一切。歡迎您來體驗我們的專業訓練課程，讓我們一起塑造更好的自己！</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="slider-navigation">
+			<div class="container">
+				<div class="slider-navigation-cover"></div>
+			</div>
+		</div>
+	</section>
+
+	<section class="s-crossfit">
+		<div class="container">
+			<img th:src="@{/images/front/placeholder-all.png}" data-src="images/front/line-red-1.svg" alt="img"
+				class="crossfit-icon-2 rx-lazy">
+			<img th:src="@{/images/front/placeholder-all.png}" data-src="images/front/tringle-about-top.svg" alt="img"
+				class="crossfit-icon-3 rx-lazy">
+			<h2 class="title-decor fw-bold">健身<span>課程</span></h2>
+			<p class="slogan">歡迎查看我們的完整課表，讓您可以輕鬆安排每一天的學習計劃。我們提供多種課程選擇，以滿足不同學員的需求。</p>
+			<img class="" th:src="@{/images/course/schedule3.png}">
+		</div>
+	</section>
+
+	<section class="s-our-programs" style="background-image: url(images/front/bg-programs.jpg);">
+		<div class="mask"></div>
+		<div class="our-programs-effect" style="background-image: url(images/front/bg-programs.svg);"></div>
+		<div class="container">
+			<h2 class="title-decor">RECOMMEND <span>PRODUCT</span></h2>
+			<p class="slogan">歡迎光臨我們的健身商城！我們專注於提供高品質的健身器材和配件，幫助您在健身之路上獲得最佳體驗。無論您是健身新手還是資深健身愛好者，我們都有適合您的產品。以下是我們精選推薦的幾款商品：</p>
+			<div class="row">
+				<div class="col-sm-6 col-md-3 program-col" th:each="product : ${recommend}">
+					<div class="program-item">
+						<div class="program-item-front"
+							 th:style="|background-image: url(@{/image(id=${product.productImage[0].imageID})});|">
+							<div class="program-item-inner">
+								<h3 class="fw-bold bg-black padding-x">[[${product.productName}]]</h3>
+							</div>
+						</div>
+						<div class="program-item-back" 
+						th:style="|background-image: url(@{/image(id=${product.productImage[0].imageID})});|">
+							<div class="program-item-inner">
+								<h3 class="fw-bold bg-black padding-x">[[${product.productName}]]</h3>
+								<a th:href="@{/mall/productDetails?(id=${product.productID})}" class="btn fw-bold">查看商品</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="s-contacts" style="background-image: url(images/front/bg-contacts.svg);">
+		<div class="container">
+			<h2 class="title-decor">Contact <span>Us</span></h2>
+			<p class="slogan">如果您有任何問題或建議，請隨時聯絡我們。我們的客戶服務團隊將竭誠為您提供幫助！</p>
+			<div class="row">
+				<div class="col-md-5 col-lg-4">
+					<div class="contact-item">
+						<div class="contact-item-left">
+							<img th:src="@{/images/front/icon-1.svg}" alt="img">
+							<h4>TELEPHONE</h4>
+						</div>
+						<div class="contact-item-right">
+							<ul class="contact-item-list">
+								<li><a href="tel:0912345678">0912-345-678</a></li>
+								<li><a href="tel:0212345678">02-1234-5678</a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="contact-item">
+						<div class="contact-item-left">
+							<img th:src="@{/images/front/icon-2.svg}" alt="img">
+							<h4>E-MAILS</h4>
+						</div>
+						<div class="contact-item-right">
+							<ul class="contact-item-list">
+								<li><a href="mailto:Gymnity@gmail.com">Gymnity@gmail.com</a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="contact-item">
+						<div class="contact-item-left">
+							<img th:src="@{/images/front/icon-3.svg}" alt="img">
+							<h4>ADDRESS</h4>
+						</div>
+						<div class="contact-item-right">
+							<ul class="contact-item-list">
+								<li>桃園市中壢區新生路二段421號</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-7 col-lg-8">
+					<form id='contactform' name="contactform">
+						<ul class="form-cover">
+							<li class="inp-name">
+								<label>姓名 (必填)</label>
+								<input id="name" type="text" name="your-name" required>
+							</li>
+							<li class="inp-email">
+								<label>E-mail (必填)</label>
+								<input id="email" type="email" name="your-email" required>
+							</li>
+							<li class="inp-text">
+								<label>訊息 (必填)</label>
+								<textarea id="comments" name="your-text" required></textarea>
+							</li>
+						</ul>
+						<div class="checkbox-wrap">
+							<div class="checkbox-cover">
+								<input type="checkbox" required>
+								<p>使用此服務即表示您同意本網站存儲和處理您的資料。</p>
+							</div>
+						</div>
+						<div class="btn-form-cover">
+							<button id="submit" type="submit" class="btn">送出訊息</button>
+						</div>
+					</form>
+					<div id="message"></div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>確認信箱</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+    <style>
+    	body {
+		    font-family: Arial, sans-serif;
+		    background-color: #2e3a46;
+		    color: #fff;
+		    margin: 0;
+		    padding: 0;
+		}
+		
+		.container {
+		    display: flex;
+		    justify-content: center;
+		    align-items: center;
+		    height: 100vh;
+		    padding: 20px;
+		}
+		
+		.email-confirmation {
+		    text-align: center;
+		    background-color: #1c2b36;
+		    padding: 40px;
+		    border-radius: 10px;
+		    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+		}
+		
+		.icon-container {
+		    margin-bottom: 20px;
+		}
+		
+		.email-icon {
+		    font-size: 3rem;
+		}
+		
+		h1 {
+		    margin-bottom: 20px;
+		    font-size: 24px;
+		}
+		
+		p {
+		    margin: 20px 0;
+		}
+		
+		.email-address {
+		    font-weight: bold;
+		    font-size: 18px;
+		}
+		
+		button {
+		    background-color: #FFA042;
+		    color: #2e3a46;
+		    border: none;
+		    padding: 10px 20px;
+		    font-size: 16px;
+		    border-radius: 5px;
+		    cursor: pointer;
+		    transition: background-color 0.3s ease;
+		}
+		
+		button:hover {
+		    background-color: #FF8000;
+		}
+	</style>
+</head>
+<body>
+    <div class="container">
+        <div class="email-confirmation">
+            <div class="icon-container">
+                <i class="fa-solid fa-envelope-circle-check email-icon" alt="Email Icon"></i>
+            </div>
+            <h1>請確認是否收到確認信</h1><p>
+            <p>已發送至以下電子信箱</p>
+            <p class="email-address" th:text="${member.memEmail}"></p>
+            <p>確認信將於五分鐘內發至信箱，請儘速點選信件中的附加連結，以完成確認設定。</p>
+            <p>尚未收到電子郵件嗎？</p>
+            <button onclick="resendEmail()">重新寄送</button>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function resendEmail() {
+            //alert("確認信已重新寄送！");
+            // var memNo = /*[[${member.memNo}]]*/
+            var memNo = [[${member.memNo}]];
+            $.ajax({
+                url: '/workout/resend-email?memNo=' + memNo,
+                type: 'GET',
+                success: function(data) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '驗證信已重新寄送！',
+                        text: 'Email sent successfully!'
+                    });
+                },
+                error: function(error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to send email!'
+                    });
+                }
+            });
+        }
+        
+    </script>
+    
+</body>
+</html>

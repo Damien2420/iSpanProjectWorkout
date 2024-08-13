@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+	<meta charset="UTF-8">
+	<title>商品管理系統 - 查詢商品</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/products/management/AllProducts.css}">
+	<link rel="stylesheet" th:href="@{/css/products/management/QueryResult.css}">
+	<link rel="stylesheet" th:href="@{/css/products/management/Table.css}">
+	<link rel="stylesheet" th:href="@{/css/products/management/ui-checkbox.css}">
+	<th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+
+</head>
+
+<body>
+	<div class="layout-wrapper layout-content-navbar">
+		<div class="layout-container">
+			<nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+			<div class="layout-page">
+				<header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+				<div class="content-wrapper">
+					<main class="container-xxl flex-grow-1 container-p-y" th:data-search-status="${searchBegin}">
+						<div class="searchBar">
+							<form method="get" th:action="@{/admin/products/fuzzySearch}" class="search-form">
+								<input class="query-input validate" type="text" name="query" id="query"
+									placeholder="請輸入商品名稱或類別名稱">
+								<input class="functionBtn" type="submit" value="查詢資料庫" id="search-submit">
+							</form>
+						</div>
+						<div class="row d-flex justify-content-center">
+							<div class="buttons d-flex justify-content-center flex-row">
+								<div class="col d-flex justify-content-center align-items-center">
+									<a th:href="@{/admin/products/allList}">
+										<button class="functionBtn main-menu">
+											<i class="fa-solid fa-house"></i> 回商品列表
+										</button>
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="table-container">
+							<form method="post" class="delete-form">
+								<table>
+									<thead>
+										<tr>
+											<td>商品編號</td>
+											<td>商品類別</td>
+											<td>商品名稱</td>
+											<td>價格</td>
+											<td>庫存</td>
+											<td>新增日期</td>
+											<td>上架狀態</td>
+											<td>修改資料</td>
+											<td class="delete-column delete-title">刪除</td>
+										</tr>
+									</thead>
+									<tbody>
+										<th:block th:each="product : ${productsFound}">
+											<tr>
+												<td><a
+														th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${product.productID}]]</a>
+												</td>
+												<td><a
+														th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${product.productCategory.categoryName}]]</a>
+												</td>
+												<td><a
+														th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${product.productName}]]</a>
+												</td>
+												<td><a
+														th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${product.price}]]</a>
+												</td>
+												<td><a
+														th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${product.stock}]]</a>
+												</td>
+												<td><a
+														th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${product.addedDate}]]</a>
+												</td>
+												<td class="launch-status">
+													<label class="switch">
+														<input type="checkbox" th:checked="${product.launchStatus}">
+														<span class="slider"></span>
+													</label>
+												</td>
+												<td>
+													<a th:href="@{/admin/products/updateInfo?(productID=${product.productID})}"
+														id="modified">
+														<i class="fa-solid fa-wrench"></i>
+													</a>
+												</td>
+												<td class="delete-column">
+													<input type="checkbox" class="ui-checkbox" name="delete"
+														id="delete-checkbox" th:value="${product.productID}">
+												</td>
+											</tr>
+										</th:block>
+									</tbody>
+								</table>
+							</form>
+							<div class="totalmsg"></div>
+							<div th:if="${productsFound != null}" id="data-row-count" style="display: none;">
+								[[${productsFound.size()}]]</div>
+						</div>
+					</main>
+				</div>
+			</div>
+		</div>
+	</div>
+	<th:block th:replace="~{back/NavBar :: js}"></th:block>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+	<script th:src="@{/js/products/management/QueryResult.js}"></script>
+	<script th:src="@{/js/products/management/Table.js}"></script>
+	<script th:src="@{/js/products/management/ValidateForm.js}"></script>
+	<script th:src="@{/js/products/management/DeleteAlert.js}"></script>
+	<script th:src="@{/js/axios/axios.min.js}"></script>
+</body>
+
+</html>

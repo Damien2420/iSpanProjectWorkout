@@ -1,0 +1,62 @@
+  .dark-theme-datatable {
+    background-color: #202020;
+    color: #ffff;
+  }
+
+  .dark-theme-datatable #menuTable th,
+  .dark-theme-datatable #menuTable td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    background-color: #2a2a2a;
+    color: #ffff;
+  }
+
+  .dark-theme-datatable #menuTable th:nth-child(1),
+  .dark-theme-datatable #menuTable td:nth-child(1) {
+    width: 15%;
+  }
+
+  .dark-theme-datatable #menuTable th:nth-child(2),
+  .dark-theme-datatable #menuTable td:nth-child(2) {
+    width: 25%;
+  }
+
+  .dark-theme-datatable #menuTable th:nth-child(3),
+  .dark-theme-datatable #menuTable td:nth-child(3) {
+    width: 15%;
+  }
+
+  .dark-theme-datatable #menuTable th:nth-child(4),
+  .dark-theme-datatable #menuTable td:nth-child(4) {
+    width: 50%;
+  }
+
+  .dark-theme-datatable .dataTables_wrapper .dataTables_length,
+  .dark-theme-datatable .dataTables_wrapper .dataTables_filter,
+  .dark-theme-datatable .dataTables_wrapper .dataTables_info,
+  .dark-theme-datatable .dataTables_wrapper .dataTables_processing,
+  .dark-theme-datatable .dataTables_wrapper .dataTables_paginate {
+    color: #ecf0f1;
+  }
+
+  .dark-theme-datatable .dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #ecf0f1 !important;
+  }
+
+  .dark-theme-datatable .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+  .dark-theme-datatable .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: #2c3e50 !important;
+    background: #ecf0f1;
+    border-color: #bdc3c7;
+  }
+
+  .dark-theme-datatable .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    color: #2c3e50 !important;
+    background: #bdc3c7;
+    border-color: #bdc3c7;
+  }
+
+  .dark-theme-datatable .btn-primary:hover {
+    border: 2px solid;
+  }
+

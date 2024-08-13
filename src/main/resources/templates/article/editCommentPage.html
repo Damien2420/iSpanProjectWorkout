@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>編輯留言頁面</title>
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<style>
+		h2 {
+			margin-left: 25%;
+		}
+
+		textarea {
+			width: 50%;
+			margin: 10px auto;
+		}
+		
+		.btn{
+			
+			margin: 0px 25% 40px 0px;
+		}
+	</style>
+</head>
+
+<body>
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<div class="reviews-form">
+		<br>
+		<h2 class="title">編輯留言</h2>
+		<form th:action="@{/forum/editComment}" method="POST" >
+			<input type="hidden" name="commentId" th:value="${comment.commentId}"><br>
+			<ul class="form-cover">
+				<li class="inp-text">
+					<label style="font-size: 16px;"></label>
+					<textarea placeholder="請輸入留言" style="font-size: 16px;" name="commentContent"
+						th:text="${comment.commentContent}"></textarea>
+				</li>
+			</ul>
+			<input type="hidden" name="postTime" id="postTime"><br>
+			<div class="btn-form-cover">
+				<button type="submit" class="btn" onclick="fillLocalTime()">確認</button>
+			</div>
+		</form>
+	</div>
+
+
+
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+	<script>
+		function fillLocalTime() {
+			// 取得當前時間
+			const now = new Date();
+			// 將本地時間格式化為 yyyy-mm-dd HH:MM:SS 格式
+			const formattedTime = now.toLocaleString();
+			// 將格式化後的時間填入發文時間欄位
+			document.getElementsByName("postTime")[0].value = formattedTime;
+
+		}
+	</script>
+</body>
+
+</html>

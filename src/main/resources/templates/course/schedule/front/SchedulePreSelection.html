@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	<title>Gymnity - 選課系統</title>
+	<link rel="stylesheet" th:href="@{/css/schedule/SchedulePage.css}">
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/memberAdm/profile_style.css}">
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.min.css">
+</head>
+<body id="home" class="page-schedule">
+	<div th:attr="data-memberId=${member.memNo}" id="iniMemberId" hidden></div>
+	<div th:attr="data-memberName=${member.memName}" id="iniMemberName" hidden></div>	
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<!-- =============== HEADER-TITLE =============== -->
+	<section class="s-header-title" style="background-image: url(../../images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title fw-bold">選課系統</h1>
+				<ul class="breadcrambs">
+					<li><a th:href="@{/home}">主頁</a></li>
+					<li><a th:href="@{/coach/front/CoachFront}">教練</a></li>
+					<li><a th:href="@{/course/front/CourseFront}">課程</a></li>
+					<li>選課系統</li>
+				</ul>
+		</div>
+	</section>
+	<!-- ============= HEADER-TITLE END ============= -->
+		<div class="schedulePageContainer">
+			<h2>課程預選</h2>
+			
+			<div class="row my-3 d-flex justify-content-center align-items-center flex-row gap-3">
+				<div class="col-3">
+					<a th:href="@{/schedule/front/ScheduleShowByMemberId}" class=" btn">我的課表</a>
+				</div>
+				<div class="col-3">
+					<a th:href="@{/courseRegistration/front/CourseRegistrationGetByMemberId}" class="btn">選課紀錄</a>
+				</div>
+			</div>
+			
+			<table class="scheduleTableFront" id="scheduleList">
+				<thead>
+					<tr>
+						<th>開始時間</th>
+						<th>結束時間</th>
+						<th>課程名稱</th>
+						<th>課程價格</th>
+						<th>星期一</th>
+						<th>星期二</th>
+						<th>星期三</th>
+						<th>星期四</th>
+						<th>星期五</th>
+						<th>星期六</th>
+						<th>星期日</th>
+						<th>教練編號</th>
+						<th>教練名稱</th>
+						<th>新增</th>
+				</thead>
+				<tbody id="scheduleTableBody"></tbody>
+			</table>
+		</div>
+
+		<div class="scheduleShow" style="display: none;">
+			<div class="scheduleShowTable">
+				<div class="scheduleShowTable-Top row d-flex justify-content-center"></div>
+				<div class="scheduleShowTable-Head row">
+					<div class="col">&nbsp;</div>
+					<div class="col">星期一</div>
+					<div class="col">星期二</div>
+					<div class="col">星期三</div>
+					<div class="col">星期四</div>
+					<div class="col">星期五</div>
+					<div class="col">星期六</div>
+					<div class="col">星期日</div>
+				</div>
+				<div class="scheduleShowTable-Body" id="scheduleShowTable-Body"></div>
+			</div>
+		</div>  
+		
+		<div class="scheduleFunctionRow" id="previewData">
+			<a href="#" class="btn newRegister">送出表單</a>
+			<a href="#" class="btn previewA">預覽已選課程</a>
+		</div>
+		
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>	
+	<script>
+
+		window.onload = function() {onLoadData(CourseFindByFutureDate);};
+		const currentDate = new Date().toISOString().split('T')[0];
+    const scheduleFindAllGroupByCourseIdUrl = "api/ScheduleFindAllGroupByCourseId";
+		const CourseFindAllWithSchedule = 'api/DTO/CourseFindAllWithSchedule';
+		const CourseFindByFutureDate = `api/DTO/CourseFindByFutureDatelWithSchedule?currentDate=${currentDate}`;
+		const memberId = document.getElementById('iniMemberId').getAttribute('data-memberId');
+		const memberName = document.getElementById('iniMemberName').getAttribute('data-memberName');
+		const daytimes = ["Morning", "Afternoon", "Evening", "Night"];
+		const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+		const courseMap = new Map();
+		document.getElementById("scheduleTableBody").addEventListener("change",function(event){
+			if(event.target.type === 'checkbox'){
+				if (event.target.checked === true) {
+					var targetrow = event.target.closest('tr')
+					var courseId = targetrow.children[0].innerHTML;
+					courseMap.set(courseId,targetrow);
+					courseMap.forEach(function(compareRow,compareID){
+						if(compareRow !== targetrow){
+							for (index = 0; index < 7; index++) {
+								const targetStringArray = targetrow.children[index+4].innerHTML.split(' , ');
+								const CompareStringArray = compareRow.children[index+4].innerHTML.split(' , ');
+								CompareStringArray.forEach(e1 =>{
+									targetStringArray.forEach(e2 =>{
+										if(e1 === e2 && e2!== ''){
+											var errorText1 = "發生重複!課程ID:"+courseId+"&"+compareID;
+											var errorText2 = "在"+weekdays[index]+" :"+e2;
+											Swal.fire({
+												title: errorText1+"<br/>"+errorText2+"<br/>"+'是否刪除最新選擇??',
+												showDenyButton: true,
+												icon: 'warning',
+												cancelButtonText: '取消',
+												cancelButtonColor: '#d33',
+												confirmButtonText: '是',
+												confirmButtonColor: '#3085d6',
+												denyButtonText: '否',
+											}).then((result) => {
+												if (result.isConfirmed) {
+													Swal.fire('已刪除最新選擇!', '', 'success')
+													event.target.checked = false;
+													courseMap.delete(courseId);
+												} else if (result.isDenied) {
+													Swal.fire('未刪除重複時間課程!!', '', 'info')
+												}
+											})
+										}
+									})
+								})
+							}
+						}
+					})
+				}else if(event.target.checked ===  false){
+					var targetrow = event.target.closest('tr')
+					var courseId = targetrow.children[0].innerHTML;
+					courseMap.delete(courseId);
+				}
+			}
+		})
+		document.getElementById("previewData").addEventListener("click",async function(event){
+			if(event.target.classList.contains('newRegister')){
+				courseMap.forEach(function(row,courseId){
+					axios.post('../../courseRegistration/front/api/CourseRegistrationInsert',null,{params:{courseId:courseId,memberId:memberId}}
+					).then(res => {
+						if(res.data === 1){
+							showAlert('新增成功!!','success',() => {})
+						}else{
+							showAlert('新增失敗!!已有重複時間!!','error',() => {})
+						}
+					}).catch(err => {console.error(err);})
+
+				})
+			}
+			if(event.target.classList.contains('previewA')){
+				event.preventDefault();
+				const scheduleShowContainerTemp=await scheduleTableShowPreview();
+				Swal.fire({
+					html: scheduleShowContainerTemp,
+				    showConfirmButton: false,
+				    customClass: {popup: 'swal-class'},
+					didOpen: () => {}
+				});
+			}
+		})
+		async function scheduleTableShowPreview(){
+			var previewUrlApi = "api/ScheduleFindByCourseIds" ;
+			var ids = Array.from(courseMap.keys());
+			var courseIds = ids.join(',');
+			await axios.get(previewUrlApi, {params: {courseIds: courseIds}})
+			.then(res => {
+				const schedules = res.data;
+				const daytimes = ["Morning (06:00-12:00)", "Afternoon (12:00-18:00)", "Evening (18:00-22:00)", "Night (22:00-02:00)"];
+				const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+				const scheduleShowTable = document.getElementById("scheduleShowTable-Body");
+				scheduleShowTable.innerHTML = '';
+				daytimes.forEach(daytime => {
+					const row = document.createElement("div");
+					row.className = "row";
+					const broadside = document.createElement("div");
+					broadside.className = "col";
+					broadside.innerHTML = ` <div class="clock-name">${daytime.split(" ")[0]}</div><div class="clock-num">${daytime.substring(daytime.indexOf('('), daytime.indexOf(')') + 1)}</div>`;
+					row.appendChild(broadside);                        
+					weekdays.forEach(weekday => {
+						const rowdata = document.createElement("div");
+						rowdata.className = "col";
+						let courseName = "";
+						let courseId = 0;
+						for (const schedule of schedules) {
+							if (schedule.weekday === weekday && schedule.daytime === daytime.split(" ")[0]) {
+								courseName = schedule.course.courseName;
+								courseId = schedule.courseId;
+								break;
+							}
+						}
+						if (courseName) {
+							rowdata.innerHTML = `${courseName}`;
+						}
+						else {rowdata.innerHTML = "&nbsp;"; }
+						row.appendChild(rowdata);
+					});
+					scheduleShowTable.appendChild(row);
+				});
+			}).catch(err => {console.error(err);})
+			const scheduleShowContainer = document.querySelector('.scheduleShow');
+			const scheduleShowContainerTemp = scheduleShowContainer.cloneNode(true);
+			scheduleShowContainerTemp.style.display = 'block';
+			return scheduleShowContainerTemp;
+		}
+		function onLoadData(url){
+			axios.get(url).then(res => {
+				const courses = res.data;
+				const scheduleTableBody = document.getElementById("scheduleTableBody");
+				scheduleTableBody.innerHTML = '';
+				courses.forEach(course => {
+					const row = document.createElement("tr");
+					const startDate = course.courseStartDate;
+					const startDatePart = startDate.split('-');
+					const endDate = course.courseEndDate;
+					const endDatePart = endDate.split('-');
+					row.innerHTML += `<td hidden>${course.courseId}</td>`;
+					row.innerHTML += `<td>${startDatePart[1]}-${startDatePart[2]}</td>`;
+					row.innerHTML += `<td>${endDatePart[1]}-${endDatePart[2]}</td>`;
+					row.innerHTML += `<td>${course.courseName}</td>`;
+					row.innerHTML += `<td>${course.coursePrice}</td>`;
+					weekdays.forEach(day =>{
+						const dayTd = document.createElement("td");
+						course.schedules.forEach(schedule=>{
+							if (schedule.weekday === day) {
+								if (dayTd.innerHTML === "") {
+									dayTd.innerHTML += `${schedule.daytime}`;
+								}else{
+									dayTd.innerHTML += ` , ${schedule.daytime}`;
+								}
+							}
+						})
+						row.appendChild(dayTd);
+					})
+					row.innerHTML += `<td>${course.coach.coachId}</td>`;
+					row.innerHTML += `<td>${course.coach.coachName}</td>`;
+					row.innerHTML += `<td><input type="checkbox" class="selectCourseId" id="${course.courseId}" name="${course.courseId}" value="${course.courseId}" /></td>`;
+					scheduleTableBody.appendChild(row);
+				});
+			}).catch(err => {console.error(err);})
+		}
+		function showAlert(title, icon, callback) {
+			Swal.fire({
+				title: title,
+				icon: icon,
+				willClose:()=>{callback();},
+				confirmButtonText: '確定',
+				confirmButtonColor: '#3085d6',
+			});
+		}
+
+    </script>
+</body>
+</html>
+

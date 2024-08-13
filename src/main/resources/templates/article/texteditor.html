@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>GYMNITY - 新增文章</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/26.0.0/classic/ckeditor.js"></script>
+
+    <th:block th:replace="~{front/Layout :: css}"></th:block>
+    <style>
+        #articleForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: row;
+            /* 水平排列 input 和 select 元素 */
+            align-items: center;
+            margin-bottom: 10px;
+            /* 調整間距 */
+        }
+
+        /* 設置 input 元素的寬度和間距 */
+        input[type="text"] {
+            width: 500px;
+            margin: 10px 0;
+            margin-right: 50px;
+            background-color: rgb(32, 32, 32);
+            font-size: inherit;
+        }
+
+        /* 針對 select 元素設定寬度 */
+        select {
+            width: 150px;
+            height: 35px;
+            /* 或其他適當的百分比 */
+            margin: 10px 0;
+            background-color: rgb(32, 32, 32);
+            color: white;
+            font-size: inherit;
+
+        }
+
+
+
+
+        /* 使 textarea 也居中 */
+        textarea {
+            width: 60%;
+            /* 或其他適當的百分比 */
+            margin: 10px auto;
+        }
+
+
+        h2 {
+            margin-left: 20%;
+        }
+
+        textarea {
+            width: 50%;
+            margin: 10px auto;
+        }
+
+        .ck-editor {
+            width: 60% !important;
+            height: 300px !important;
+            color: white !important;
+            border-color: #f36100;
+        }
+
+
+        .ck-toolbar {
+            background-color: rgb(32, 32, 32) !important;
+        }
+
+        .ck-icon {
+            color: gray !important;
+        }
+
+        .ck-content {
+            background-color: rgb(32, 32, 32) !important;
+            height: 300px;
+        }
+
+
+
+        .button-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+
+        }
+
+        .btn {
+            margin-top: 20px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <th:block th:replace="~{front/Layout :: header}"></th:block>
+    <section class="s-header-title" style="background-image: url(../images/front/bg-1-min.png);">
+        <div class="container">
+            <h1 class="title fw-bold">論壇</h1>
+            <ul class="breadcrambs">
+                <li><a th:href="@{/home}">首頁</a></li>
+                <li>論壇</li>
+            </ul>
+        </div>
+    </section>
+    <br>
+    <h2>發表新文章</h2>
+    <br>
+    <div class="form-container">
+        <form id="articleForm" method="POST" action="/workout/forum/insertArticle">
+            <div class="form-group">
+                <input type="text" name="articleTitle" placeholder="請輸入文章標題">
+                <select name="category" id="" class="">
+                    <option value="問題">問題</option>
+                    <option value="討論">討論</option>
+                    <option value="心得">心得</option>
+                    <option value="飲食">飲食</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <br>
+            <textarea name="articleContent" id="editor" required></textarea>
+            <br>
+            <input type="hidden" name="postTime">
+            <div class="button-container">
+                <button type="button" onclick="fillLocalTime()" class="btn">發布文章</button>
+            </div>
+        </form>
+    </div>
+    <br>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'))
+            .then(editor => {
+                console.log('Editor was initialized', editor);
+
+                // 在表單提交前手動更新 textarea 的內容
+                document.getElementById('articleForm').addEventListener('submit', function () {
+                    editor.updateSourceElement(); // 將編輯器內容更新到 textarea 元素中
+                });
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+
+        function fillLocalTime() {
+            // 取得當前時間
+            const now = new Date();
+            // 將本地時間格式化為 yyyy-mm-dd HH:MM:SS 格式
+            const formattedTime = now.toLocaleString();
+            //const formattedTime = now.toISOString().slice(0, 19).replace('T', ' ');
+            // 將格式化後的時間填入發文時間欄位
+            document.getElementsByName("postTime")[0].value = formattedTime;
+
+            document.getElementById('articleForm').submit();
+
+        }
+
+
+
+
+    </script>
+
+    <footer th:replace="~{front/Layout :: footer}"></footer>
+</body>
+
+</html>

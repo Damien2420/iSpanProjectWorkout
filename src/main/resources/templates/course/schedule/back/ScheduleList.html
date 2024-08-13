@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	<title>課表資料</title>
+    <link rel="stylesheet" th:href="@{/css/schedule/SchedulePage.css}">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  
+  	<th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+</head>
+<body>
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      <!-- Layout container -->
+      <nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+      <div class="layout-page">
+        <!-- Content wrapper -->
+        <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+        <div class="content-wrapper">
+        
+        
+	<div class="schedulePageContainer">
+			<h2>周表視圖</h2>			
+			<div class="btn-like position-absolute top-0 start-50">
+			  <div class="row">
+			    <a th:href="@{../course/CourseGetAll}" class="col">查詢課程</a>
+				<a th:href="@{../schedule/ScheduleGetAll}" class="col">課程列表</a>	 
+			  </div>
+			</div>			
+			<div id="FindByTime" class="btn-like2">
+				<span>依照時間進行查詢</span>
+				<a href="#" class="CourseFindByPastDate">已結束課表</a>
+				<a href="#" class="CourseFindByCurrentDate">進行中課表</a>
+				<a href="#" class="CourseFindByFutureDate">預定中課表</a>
+				<a href="#" class="FindAll">完整資料</a>
+			</div>					
+			<table class="scheduleTable">
+                <thead>
+					<tr>
+						<th>課程編號</th>
+						<th>結束時間</th>
+						<th>課程名稱</th>
+						<th>星期一</th>
+						<th>星期二</th>
+						<th>星期三</th>
+						<th>星期四</th>
+						<th>星期五</th>
+						<th>星期六</th>
+						<th>星期日</th>
+						<th>教練編號</th>
+						<th>教練名稱</th>
+					</tr>
+                </thead>
+                <tbody id="scheduleTableBody"></tbody>
+            </table>
+    </div>
+
+
+        <!-- Content wrapper -->
+        </div>
+      </div>
+    </div>
+    <div class="layout-overlay layout-menu-toggle"></div>
+  </div>
+  <th:block th:replace="~{back/NavBar :: js}"></th:block>
+  <script th:src="@{/js/lib/dashboards-analytics.js}"></script>		
+  <!-- Page JS -->
+
+
+    
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>	
+    <script>
+		window.onload = function() {onLoadData(CourseFindAllWithSchedule);};
+		const currentDate = new Date().toISOString().split('T')[0];
+		const CourseFindAllWithSchedule = 'api/DTO/CourseFindAllWithSchedule';
+		document.getElementById("FindByTime").addEventListener('click',e=>{
+			const currentDate = new Date().toISOString().split('T')[0];
+			if (e.target.classList.contains("CourseFindByCurrentDate")) {onLoadData(`api/DTO/CourseFindByCurrentDatelWithSchedule?currentDate=${currentDate}`)}
+			if (e.target.classList.contains("CourseFindByPastDate")) 	{onLoadData(`api/DTO/CourseFindByPastDatelWithSchedule?currentDate=${currentDate}`)}
+			if (e.target.classList.contains("CourseFindByFutureDate")) 	{onLoadData(`api/DTO/CourseFindByFutureDatelWithSchedule?currentDate=${currentDate}`)}
+			if (e.target.classList.contains("FindAll")) {onLoadData(CourseFindAllWithSchedule)}
+		})
+		function onLoadData(url){
+			axios.get(url)
+			.then(res => {
+				const courses = res.data;
+				const daytimes = ["Morning", "Afternoon", "Evening", "Night"];
+				const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+				const scheduleTableBody = document.getElementById("scheduleTableBody");
+				scheduleTableBody.innerHTML = '';
+				courses.forEach(course => {
+					course.schedules = Array.isArray(course.schedules) ? course.schedules : [];
+					const row = document.createElement("tr");
+					row.innerHTML += `<td>${course.courseId}</td>`;
+					row.innerHTML += `<td>${course.courseEndDate}</a></td>`;
+					row.innerHTML += `<td>${course.courseName}</a></td>`;
+					weekdays.forEach(day =>{
+						const dayTd = document.createElement("td");
+						course.schedules.forEach(schedule=>{
+							if (schedule.weekday === day) {
+								if (dayTd.innerHTML === "") {
+									dayTd.innerHTML += `${schedule.daytime}`;
+								}else{
+									dayTd.innerHTML += ` , ${schedule.daytime}`;
+								}
+							}
+						})
+						row.appendChild(dayTd);
+					})
+					row.innerHTML += `<td>${course.coach.coachId}</td>`;
+					row.innerHTML += `<td>${course.coach.coachName}</a></td>`;
+					scheduleTableBody.appendChild(row);
+				});
+			}).catch(err => {console.error(err);})
+		}
+
+
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zxx">
+<head>
+	<meta charset="UTF-8">
+	<title>GYMNITY - 聯絡管道</title>
+	<!-- =================== META =================== -->
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<style>
+		.s-map {
+			padding: 30px;
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body id="home">
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<!-- =============== HEADER-TITLE =============== -->
+	<section class="s-header-title" style="background-image: url(images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title">聯絡管道</h1>
+			<ul class="breadcrambs">
+				<li><a th:href="@{/home}">首頁</a></li>
+				<li>聯絡我們</li>
+			</ul>
+		</div>
+	</section>
+	<!-- ============= HEADER-TITLE END ============= -->
+
+	<!-- ================== S-MAP ================== -->
+	<section class="s-map">
+		<!-- <div id="map" class="cont-map google-map"></div> -->
+		<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3616.4410903586613!2d121.21913877472011!3d24.985123640259168!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x34682183e7b783c3%3A0xf0ebfba2069b6158!2z6IGW5b635Z-6552j5a246Zmi!5e0!3m2!1szh-TW!2stw!4v1722319245625!5m2!1szh-TW!2stw" width="800" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+	</section>
+	<!-- ================ S-MAP END ================ -->
+	
+
+	<!-- ================ S-CONTACTS ================ -->
+	<section class="s-contacts" style="background-image: url(images/front/bg-contacts.svg);">
+		<div class="container">
+			<h2 class="title-decor">Contact <span>Us</span></h2>
+			<p class="slogan">如果您有任何問題或建議，請隨時聯絡我們。我們的客戶服務團隊將竭誠為您提供幫助！</p>
+			<div class="row">
+				<div class="col-md-5 col-lg-4">
+					<div class="contact-item">
+						<div class="contact-item-left">
+							<img th:src="@{/images/front/icon-1.svg}" alt="img">
+							<h4>TELEPHONE</h4>
+						</div>
+						<div class="contact-item-right">
+							<ul class="contact-item-list">
+								<li><a href="tel:0912345678">0912-345-678</a></li>
+								<li><a href="tel:0212345678">02-1234-5678</a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="contact-item">
+						<div class="contact-item-left">
+							<img th:src="@{/images/front/icon-2.svg}" alt="img">
+							<h4>E-MAILS</h4>
+						</div>
+						<div class="contact-item-right">
+							<ul class="contact-item-list">
+								<li><a href="mailto:Gymnity@gmail.com">Gymnity@gmail.com</a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="contact-item">
+						<div class="contact-item-left">
+							<img th:src="@{/images/front/icon-3.svg}" alt="img">
+							<h4>ADDRESS</h4>
+						</div>
+						<div class="contact-item-right">
+							<ul class="contact-item-list">
+								<li>桃園市中壢區新生路二段421號</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-7 col-lg-8">
+					<form id='contactform' name="contactform">
+						<ul class="form-cover">
+							<li class="inp-name">
+								<label>姓名 (必填)</label>
+								<input id="name" type="text" name="your-name" required>
+							</li>
+							<li class="inp-email">
+								<label>E-mail (必填)</label>
+								<input id="email" type="email" name="your-email" required>
+							</li>
+							<li class="inp-text">
+								<label>訊息 (必填)</label>
+								<textarea id="comments" name="your-text" required></textarea>
+							</li>
+						</ul>
+						<div class="checkbox-wrap">
+							<div class="checkbox-cover">
+								<input type="checkbox" required>
+								<p>使用此服務即表示您同意本網站存儲和處理您的資料。</p>
+							</div>
+						</div>
+						<div class="btn-form-cover">
+							<button id="submit" type="submit" class="btn">送出訊息</button>
+						</div>
+					</form>
+					<div id="message"></div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- ============== S-CONTACTS-END ============== -->
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+	
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+        $(document).ready(function() {
+            $('#contactform').submit(function(event) {
+                event.preventDefault();
+                var formData = {
+                    name: $('#name').val(),
+                    email: $('#email').val(),
+                    comments: $('#comments').val()
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: '/workout/sendContactEmail',
+                    data: JSON.stringify(formData),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        // $('#message').text(response);
+                        // 使用 SweetAlert 顯示成功消息
+		                Swal.fire({
+		                    title: 'Success!',
+		                    text: '您的留言已成功送出！！',
+		                    icon: 'success',
+		                    confirmButtonText: 'OK'
+		                });
+                    },
+                    error: function(error) {
+                        $('#message').text('Error sending email.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

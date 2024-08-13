@@ -1,0 +1,45 @@
+.container{
+	margin-top: 111px;
+	min-height: calc(100vh - 159px);
+}
+
+.message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.title {
+    margin: 15px 0;
+    font-size: 36px;
+}
+
+p {
+    margin: 15px 0;
+    font-size: 20px;
+}
+
+.title,
+p {
+    color: #bdbdbd;
+}
+
+.backToMenu {
+    margin: 15px 0;
+    cursor: pointer;
+}
+
+.backToMenu button {
+    padding: 10px 20px;
+    font-size: 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    background-color: #196baf;
+}
+
+.backToMenu:hover button {
+    transition: all 0.5s ease-in-out;
+    background-color: #2087db;
+}

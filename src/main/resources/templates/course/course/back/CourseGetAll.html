@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	<title>課程資料</title>
+	<link rel="stylesheet" th:href="@{/css/course/CoursePage.css}">
+  	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.min.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  
+  	<th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+</head>
+<body>
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      <!-- Layout container -->
+      <nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+      <div class="layout-page">
+        <!-- Content wrapper -->
+        <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+        <div class="content-wrapper">
+        
+
+		<div class="coursePageContainer">
+			<h2>課程資料</h2>			
+			<div class="btn-like position-absolute top-0 start-50">
+			  <div class="row">
+				<a href="#" class="getAll col">查詢全部</a>
+				<a th:href="@{../coach/CoachGetAll}" class="col">查詢教練</a>
+				<a th:href="@{../schedule/ScheduleGetAll}" class="col">課程列表</a>
+				<a th:href="@{../schedule/ScheduleList}" class="col">周表視圖</a>
+				<a th:href="@{../courseRegistration/CourseRegistrationGetAll}" class="col">選課記錄</a>
+			  </div>
+			</div>			
+			<div class="courseFunctionRow">
+	   			<a href="#" id="newcoursebtn">新增課程</a>
+				<div id="FindByTime" class="btn-like2">
+					<span>依照時間進行查詢</span>
+					<a href="#" class="CourseFindByPastDate">已結束課程</a>
+					<a href="#" class="CourseFindByCurrentDate">進行中課程</a>
+					<a href="#" class="CourseFindByFutureDate">預定中課程</a>
+				</div>
+	   			<form method="post" action="#" class="getBylikeword">
+	           		<input type="text" placeholder="輸入關鍵字" name="likeword"/>
+	           		<input type="submit" value="查詢"/>
+	   			</form>
+			</div>			
+			<table class="courseTable">
+				<thead>
+					<tr><th>課程編號<th>課程名稱<th>課程類型<th>課程價格<th>開始日期<th>結束日期<th>教練編號<th>教練姓名<th>修改<th>刪除</tr>
+				</thead>
+				<tbody id="courseTableBody">
+				</tbody>
+			</table>
+			<div id="pgbtn"></div>
+		</div>
+		
+		
+        <!-- Content wrapper -->
+        </div>
+      </div>
+    </div>
+    <div class="layout-overlay layout-menu-toggle"></div>
+  </div>
+  <th:block th:replace="~{back/NavBar :: js}"></th:block>
+  <script th:src="@{/js/lib/dashboards-analytics.js}"></script>		
+  <!-- Page JS -->		
+				
+		
+  	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>	
+	<script>
+		window.onload = function() {updatePgBtVisibility();};
+		let CourseFindAll = "api/CourseFindAll";
+		let CourseFindByLike = "api/CourseFindByLike";
+		var pageStatus = 'getAll';
+		var rowsPerPage = 20;
+		var nowPage = 1;
+		document.getElementById("courseTableBody").addEventListener('click',e=>{
+			if (e.target.classList.contains('deleteBtn')) {
+				e.preventDefault();
+				Swal.fire({title: '確定要刪除嗎？',icon: 'warning',showCancelButton: true ,cancelButtonText: '取消',cancelButtonColor: '#d33',confirmButtonText: '確定',confirmButtonColor: '#3085d6',
+				}).then((result) => {
+					if (result.isConfirmed) {
+						const courseId = e.target.getAttribute('data-id');
+						const deleteurl = `api/CourseDelete?courseId=${courseId}`;
+						axios.get(deleteurl)
+						.then(res => {
+							if(res.data === 1){
+								showAlert('資料已成功刪除。','success',()=>{updatePgBtVisibility();})
+							}else{
+								showAlert('不可刪除有課表之課程!!請先刪除課表!!','error',() => {})
+							}
+						})
+						.catch(err => {console.error(err);})
+					}
+				});
+			}
+			if (e.target.classList.contains("updateBtn")) {
+				const courseId = e.target.getAttribute("data-id");
+				axios.get('api/CourseUpdate',{params: {courseId: courseId}})
+				.then(res => {
+					const course = res.data;
+					const formatDate = date => {
+            			const [year, month] = date.split('-');
+            			return `${year}-${month}`;
+        			};
+        			const formattedStartDate = formatDate(course.courseStartDate);
+					var updateHtml = `<div class="form-container">
+										<form method="post" action="#" id="saveForm" enctype="multipart/form-data">
+											<p class="form-field">
+												<label for="courseId">課程編號:</label>
+												<input type="text" name="courseId" id="courseId" value="${course.courseId}" readonly />
+											</p>
+											<p class="form-field">
+												<label for="courseName">輸入課程名稱 :</label>
+												<input type="text" name="courseName" id="courseName" value="${course.courseName}" />
+											</p>
+											<p class="form-field">
+												<label for="courseType">輸入課程類型 :</label>
+												<input type="text" name="courseType" id="courseType" value="${course.courseType}" />
+											</p>
+											<p class="form-field">
+												<label for="coursePrice">輸入課程價格 :</label>
+												<input type="text" name="coursePrice" id="coursePrice" value="${course.coursePrice}" />
+											</p>
+											<p class="form-field">
+												<label for="courseStartDate">輸入開始時間 :</label>
+												<input type="month" id="courseStartDate" name="courseStartDate" value="${formattedStartDate}" />
+											</p>
+											<p class="form-field">
+												<label for="courseProfile">輸入課程簡介 :</label>
+												<textarea name="courseProfile" id="courseProfile">${course.courseProfile}</textarea>
+											</p>
+											<p class="form-field">
+												<label for="coachId">輸入教練 :</label>
+												<select id="coachId" name="coachId" required>
+													<option value="" disabled selected hidden>請選擇</option>
+												</select>
+											</p>
+										</form>
+									</div>`;
+					const coachIdValue = course.coachId
+					showForm(updateHtml,'api/CourseUpdateMain','修改成功',coachIdValue)
+				}).catch(err => {console.error(err);})
+			}
+		})
+		document.getElementById("newcoursebtn").addEventListener('click', e=>{
+			e.preventDefault();
+			const insertHtml = `<div class="form-container">
+								<form method="post" action="#" id="saveForm" enctype="multipart/form-data">
+									<p class="form-field">
+										<label for="courseName">輸入課程名稱 :</label>
+										<input type="text" name="courseName" id="courseName" />
+									</p>
+									<p class="form-field">
+										<label for="courseType">輸入課程類型 :</label>
+										<input type="text" name="courseType" id="courseType" />
+									</p>
+									<p class="form-field">
+										<label for="coursePrice">輸入課程價格 :</label>
+										<input type="text" name="coursePrice" id="coursePrice" />
+									</p>
+									<p class="form-field">
+										<label for="courseStartDate">輸入開始時間 :</label>
+										<input type="month" id="courseStartDate" name="courseStartDate" />
+									</p>
+									<p class="form-field">
+										<label for="courseProfile">輸入課程簡介 :</label>
+										<textarea name="courseProfile" id="courseProfile"></textarea>
+									</p>
+									<p class="form-field">
+										<label for="coachId">輸入教練 :</label>
+										<select id="coachId" name="coachId" required>
+											<option value="" disabled selected hidden>請選擇</option>
+										</select>
+									</p>
+									<button type="submit" id="QuickInput" class="QuickInput">一鍵輸入</button>
+								</form>
+							</div>`;	
+			showForm(insertHtml,'api/CourseInsertmain','新增成功')
+		})
+		document.querySelector(".getAll").addEventListener('click',e=>{
+			e.preventDefault();
+			document.querySelector('.getBylikeword input[name="likeword"]').value = '';
+			pageStatus = 'getAll';
+			updatePgBtVisibility();
+		});
+		document.querySelector(".getBylikeword").addEventListener('submit', e=> {
+			e.preventDefault();
+			const formData = new FormData(e.target);
+			const likeword = formData.get('likeword').trim();
+			if(likeword != ''){
+				CourseFindByLike = `api/CourseFindByLike?likeword=${likeword}`;
+				pageStatus = 'likeword';
+			}
+			updatePgBtVisibility();
+		});
+		document.getElementById("FindByTime").addEventListener('click',e=>{
+			if (e.target.classList.contains("CourseFindByCurrentDate")) {
+				pageStatus = 'CurrentDate';
+				updatePgBtVisibility();
+			}
+			if (e.target.classList.contains("CourseFindByPastDate")) {
+				pageStatus = 'PastDate';
+				updatePgBtVisibility();
+			}
+			if (e.target.classList.contains("CourseFindByFutureDate")) {
+				pageStatus = 'FutureDate';
+				updatePgBtVisibility();
+			}
+		})
+		function updatePgBtVisibility() {
+			const currentDate = new Date().toISOString().split('T')[0];
+      if (pageStatus === 'getAll') {
+				onLoadData(CourseFindAll);
+      }else if (pageStatus === 'likeword') {
+				onLoadData(CourseFindByLike);
+      }else if (pageStatus === 'CurrentDate') {
+				onLoadData(`api/CourseFindByCurrentDate?currentDate=${currentDate}`)
+      }else if (pageStatus === 'PastDate') {
+				onLoadData(`api/CourseFindByPastDate?currentDate=${currentDate}`)
+      }else if (pageStatus === 'FutureDate') {
+				onLoadData(`api/CourseFindByFutureDate?currentDate=${currentDate}`)
+      }
+    }
+		function onLoadData(url) {
+			axios.get(url)
+			.then(res => {
+				const courses=res.data;
+				const ctb = document.getElementById("courseTableBody");
+				ctb.innerHTML = "";
+				courses.forEach(course => {
+					ctb.innerHTML += `
+					<tr>
+						<td>${course.courseId}</td>
+						<td><a href="CourseGetById?courseId=${course.courseId}">${course.courseName}</a></td>
+						<td>${course.courseType}</td>
+						<td>${course.coursePrice}</td>
+						<td>${course.courseStartDate}</td>
+						<td>${course.courseEndDate}</td>
+						<td>${course.coachId}</td>
+						<td><a href="../coach/CoachGetById?coachId=${course.coachId}">${course.coach.coachName}</a></td>
+						<td><a href="#" class="updateBtn" data-id="${course.courseId}"">修改</a></td>
+						<td><a href="#" class="deleteBtn" data-id="${course.courseId}">刪除</a></td>
+					</tr>	
+					`
+				});
+				rows = Array.from(document.querySelectorAll('.courseTable tbody tr'));
+				getPage(rows)(nowPage);
+			})
+			.catch(err => {
+				console.error(err);
+			})
+		}
+		function showAlert(title, icon, callback) {
+			Swal.fire({
+				title: title,
+				icon: icon,
+				willClose:()=>{callback();},
+				confirmButtonText: '確定',
+				confirmButtonColor: '#3085d6',
+			});
+		}
+		function showForm(html,url,alert,coachIdValue){
+			Swal.fire({
+				html: html,
+				confirmButtonText: '確定',
+				confirmButtonColor: '#3085d6',
+			    customClass: {popup: 'swal-class'},
+				didOpen: () => {
+					const coachIdSelect = document.getElementById("coachId");
+					axios.get('../coach/api/CoachFindAll')
+						.then(res => {
+							let coachs = res.data
+							coachs.forEach(coach => {
+								const coachIdOption = document.createElement('option');
+								coachIdOption.value = coach.coachId;
+								coachIdOption.innerHTML = `教練編號:${coach.coachId},教練名稱:${coach.coachName}`;
+								if (parseInt(coachIdValue) === parseInt(coach.coachId)) {
+									coachIdOption.setAttribute('selected', 'selected');
+								}
+								coachIdSelect.appendChild(coachIdOption);
+							});
+						})
+					.catch(err => {console.error(err);})
+
+					document.getElementById('QuickInput').addEventListener('click', e => {
+						e.preventDefault();
+						const Form = document.getElementById('saveForm');
+						Form.querySelector('input[name="courseName"]').value = '無情訓練：鋼鐵挑戰';
+						Form.querySelector('input[name="courseType"]').value = '鐵人訓練';
+						Form.querySelector('input[name="coursePrice"]').value = '3000';
+						Form.querySelector('textarea[name="courseProfile"]').value = '極度挑戰性的訓練課程';
+						Form.querySelector('input[name="courseStartDate"]').value = '2024-09';
+					});
+				}
+			}).then((result) => {
+				if (result.isConfirmed) {
+					const formContainer = document.getElementById('saveForm');
+					const formData = new FormData(formContainer);
+					axios.post(url,formData,{headers:{'Content-Type':'multipart/form-data'}})
+					.then(res => {
+						showAlert(alert, 'success', ()=>{updatePgBtVisibility();})
+					}).catch(err => {console.error(err);})
+				}
+			});
+		}
+		function getPage(rows){
+			var totalPages = Math.ceil(rows.length / rowsPerPage);
+			var pgbtn = document.getElementById('pgbtn');
+			pgbtn.innerHTML='';
+			for (var i = 1; i <= totalPages; i++) {
+						var button = document.createElement('button');
+						button.textContent = i;
+						button.addEventListener('click', function() {showPage(this.textContent);nowPage=this.textContent;});
+						pgbtn.appendChild(button);
+			}
+			function showPage(pageNumber){
+				var startIndex = (pageNumber - 1) * rowsPerPage;
+				var endIndex = startIndex + rowsPerPage;
+				rows.forEach(function(row, index) {
+						if (index >= startIndex && index < endIndex) {
+								row.style.display = '';
+						} else {
+								row.style.display = 'none';
+						}
+				});
+			};
+			return function(pageNumber){
+				showPage(pageNumber);
+			};
+		}
+
+</script>	
+</body>
+</html>

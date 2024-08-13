@@ -1,0 +1,103 @@
+@charset "UTF-8";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+p.empty {
+	min-height: 10px;
+}
+a {
+	text-decoration: none;
+}
+a.abtn, form button, form .btn {
+	text-decoration: none;
+	padding: 5px 8px;
+	/* border: 1px solid lightgray; */
+	border: none;
+	border-radius: 5px;
+	color: black;
+	background-color: #FFEEDD;
+}
+a.insBtn {
+	/* float: right; */
+	text-align: right;
+	margin-bottom: 5px;
+	padding: 5px 10px;
+}
+/* 使用 flexbox 將 insBtn 靠右 */
+.btn-container {
+    display: flex;
+    justify-content: flex-end; /* 將内容靠右 */
+    /* width: 85%; */
+}
+a.updBtn {
+	color: rgb(0, 118, 209);
+}
+a.delBtn {
+	color: red;
+}
+
+/* table, tr, th, td {
+	border: 1px solid black;
+    border-collapse: collapse; 邊框合併
+} */
+#memberTable {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	border-radius: 10px;
+	overflow: hidden;
+    background-color: #fff;
+}
+#memberTable thead {
+	background-color: #FFEEDD;
+}
+#memberTable th, #memberTable td {
+	padding: 8px 10px;
+	border-bottom: 1px solid #ddd;
+}
+#memberTable tr:hover {
+    background-color: #f1f1f1;
+}
+#memberTable thead tr:hover {
+	background-color: #FFEEDD;
+}
+
+.table-container {
+    width: 50%;
+    margin: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+}
+.member-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.member-table th, .member-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    min-width: 150px;
+}
+.member-table th {
+    background-color: #CAF4FF;
+    color: #333;
+    font-weight: bold;
+}
+.member-table tr:hover {
+    background-color: #f1f1f1;
+}
+.member-table img {
+    border-radius: 5px;
+}
+.member-table tr:last-child td {
+    border-bottom: none;
+}
+td input, td select {
+	font-size: 1.1rem;
+	min-width: 250px;
+}

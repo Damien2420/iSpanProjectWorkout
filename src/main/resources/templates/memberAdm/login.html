@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Register</title>
+    <link th:href="@{/css/memberAdm/login_style.css}" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<style>
+		.swal2-input {
+			width: auto !important; 
+		}
+		.half_btn {
+			width: 40%;
+			padding: 10px;
+		}
+		.block_btn {
+			width: 17%;
+			padding: 0px;
+			font-size: 0.8rem;
+		}
+	</style>
+</head>
+<body>
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<div class="login-container">
+        <div class="form-container">
+            <div class="form-toggle">
+                <button id="loginBtn" class="active" onclick="showLogin()">Login</button>
+                <button id="registerBtn" onclick="showRegister()">Register</button>
+            </div>
+            
+            <form id="loginForm" class="form active" th:action="@{/loginPost.controller}" method="post">
+                <h2>Login</h2>
+                <div class="form-group">
+                    <label for="loginEmail">Email address</label>
+                    <input type="email" id="loginEmail" placeholder="Enter email" name="admEmail">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Password" name="admPassword">
+                </div>
+                <div><a class="forgetPassword" href="#" >忘記密碼？</a></div>
+                <button type="button" class="btn half_btn" onclick="autoFillMem()">使用者登入</button> 
+                <button type="button" class="btn block_btn" onclick="autoFillBlockMem()">block</button> 
+                <button type="button" class="btn half_btn" onclick="autoFillAdm()">管理員登入</button>
+                <button type="submit" class="btn">Login</button>
+	            <div class="btn googleDiv">
+					<a class="googleBtn" th:href="@{/google-login}"><i class="fa-brands fa-google"></i>  使用Google登入</a>
+				</div>
+            </form>
+            
+            <form id="registerForm" class="form" th:action="@{/registerPost.controller}" method="post">
+                <h2>Register</h2>
+                <div class="form-group">
+                    <label for="registerName">姓名</label>
+                    <input type="text" id="registerName" placeholder="Enter name" name="memName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email address</label>
+                    <input type="email" id="registerEmail" placeholder="Enter email" name="memEmail" required>
+                    <span id="emailError" class="text-danger" style="color:red; font-size:0.8rem;"></span>
+                    <input type="hidden" id="emailRegValid" value="true">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" placeholder="Password" name="memPassword" required>
+                </div>
+                <!-- <div class="form-group">
+                    <label for="registerConfirmPassword">Confirm Password</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="Confirm Password" required>
+                </div> -->
+                <div class="form-group">
+                    <label for="registerGender">性別</label>
+					<select name="gender" id="registerGender" required>  <!--下拉式選單-->
+						<option value="0">男性</option>
+						<option value="1">女性</option>
+					</select>
+                </div>
+                <div class="form-group">
+                    <label for="registerBirth">生日</label>
+                    <input type="date" id="registerBirth" name="birth" required th:max="${#dates.format(new java.util.Date(), 'yyyy-MM-dd')}">
+                </div>
+                <div class="form-group">
+                    <label for="registerPhone">電話</label>
+                    <input type="text" id="registerPhone" placeholder="Enter phone" name="phone" required>
+                </div>
+                <button type="button" class="btn" onclick="autoFill()">自動填入會員資料</button>
+                <button type="submit" class="btn" >Register</button>
+            </form>
+
+        </div>
+    </div>
+    
+    <footer th:replace="~{front/Layout :: footer}"></footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+    <script th:src="@{/js/lib/jquery-3.7.1.js}"></script>
+    <script>
+        function showLogin() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+
+            loginForm.classList.add('active');
+            registerForm.classList.remove('active');
+            
+            document.getElementById('loginBtn').classList.add('active');
+            document.getElementById('registerBtn').classList.remove('active');
+        }
+
+        function showRegister() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+
+            registerForm.classList.add('active');
+            loginForm.classList.remove('active');
+            
+            document.getElementById('loginBtn').classList.remove('active');
+            document.getElementById('registerBtn').classList.add('active');
+        }
+
+		// 自動填入會員、管理員登入資料
+        function autoFillMem() {
+            document.getElementById('loginEmail').value = 'dawen.chen0521@gmail.com';
+            document.getElementById('loginPassword').value = 'dawenchen';
+        }
+        function autoFillBlockMem() {
+            document.getElementById('loginEmail').value = 'amy@mail.com';
+            document.getElementById('loginPassword').value = 'amy';
+        }
+        function autoFillAdm() {
+            document.getElementById('loginEmail').value = 'admin@mail.com';
+            document.getElementById('loginPassword').value = 'admin';
+        }
+        // 自動填入會員註冊資料
+        function autoFill() {
+            document.getElementById('registerName').value = '陳大文';
+            document.getElementById('registerEmail').value = 'dawen.chen0521@gmail.com';
+            document.getElementById('registerPassword').value = 'dawenchen';
+            document.getElementById('registerGender').value = 1;
+            document.getElementById('registerBirth').value = '1992-05-21';
+            document.getElementById('registerPhone').value = '0933567890';
+        }
+        
+        // 忘記密碼
+        $(document).ready(function() {
+		    // 點擊忘記密碼連結時觸發事件
+		    $('.forgetPassword').click(function() {
+		        // SweetAlert2 提示框
+		        Swal.fire({
+		            title: '請輸入您的電子郵件地址',
+		            input: 'email',
+		            inputAttributes: {
+		                autocapitalize: 'off'
+		            },
+		            showCancelButton: true,
+		            confirmButtonText: '送出',
+		            cancelButtonText: '取消',
+		            confirmButtonColor: '#FF8000',  // 設置送出按鈕的底色
+		            showLoaderOnConfirm: true,
+		            preConfirm: (email) => {
+		                // 使用者按下送出時的處理函數
+		                return $.ajax({
+		                    url: '/workout/forgetPassword',  // 替換成後端控制器的路徑
+		                    method: 'POST',
+		                    data: {
+		                        email: email
+		                    }
+		                });
+		            },
+		            allowOutsideClick: () => !Swal.isLoading()
+		        }).then((result) => {
+		            if (result.isConfirmed) {
+		                Swal.fire({
+		                    title: '已送出',
+		                    icon: 'success',
+		                    text: '重設密碼郵件已發送至您的信箱！'
+		                });
+		            }
+		        });
+		    });
+		});
+		// 重設密碼成功alert
+        document.addEventListener('DOMContentLoaded', () => {
+            // 檢查 URL 參數
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('resetPwdSuccess')) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '密碼重設成功！！',
+                    text: '請重新登入',
+                    showConfirmButton: true,
+                    confirmButtonText: "確定",
+                }).then(() => {
+                    // 移除 URL 參數
+                    history.replaceState(null, '', window.location.pathname);
+                });
+            }
+        });
+        
+        // 封鎖alert
+        document.addEventListener('DOMContentLoaded', () => {
+            // 檢查 URL 參數
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('block')) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '您的帳號已被封鎖！',
+                    text: '若有任何疑問，請聯絡客服信箱：eeit83group4@gmail.com',
+                    showConfirmButton: true,
+                    confirmButtonText: "確定",
+                }).then(() => {
+                    // 移除 URL 參數
+                    history.replaceState(null, '', window.location.pathname);
+                });
+            }
+        });
+        
+        // 帳號或密碼錯誤
+        document.addEventListener('DOMContentLoaded', () => {
+            // 檢查 URL 參數
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('error')) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '帳號或密碼錯誤！',
+                    text: '請重新登入',
+                    showConfirmButton: true,
+                    confirmButtonText: "確定",
+                }).then(() => {
+                    // 移除 URL 參數
+                    history.replaceState(null, '', window.location.pathname);
+                });
+            }
+        });
+        
+        // 註冊成功alert
+        document.addEventListener('DOMContentLoaded', () => {
+            // 檢查 URL 參數
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success')) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '註冊成功！！',
+                    text: '請驗證信箱以啟用帳號',
+                    showConfirmButton: true,
+                    confirmButtonText: "寄送驗證信",
+                }).then((result) => {
+		            if (result.isConfirmed) {
+		                const memberNo = urlParams.get('memNo');  // 從 URL 中獲取 memNo 參數
+		                window.location.href = `/workout/test-email?memNo=${memberNo}`;
+		                // 移除 URL 參數
+		                history.replaceState(null, '', window.location.pathname);
+		            }
+		        });
+            }
+        });
+        
+        // 帳號已被註冊
+        document.getElementById('registerEmail').addEventListener('blur', function() {
+	        var email = this.value;
+	        var emailError = document.getElementById('emailError');
+	        var emailValid = document.getElementById('emailRegValid');
+	        
+	        emailError.textContent = ''; // 清除之前的錯誤訊息
+	
+	        // 發送 AJAX 請求檢查 email 是否已註冊
+	        fetch('/workout/checkEmail', {
+	            method: 'POST',
+	            headers: {
+	                'Content-Type': 'application/json'
+	            },
+	            body: JSON.stringify({ email: email })
+	        })
+	        .then(response => response.json())
+	        .then(data => {
+	            if (data.exists) {
+	                // 如果 email 已註冊，顯示錯誤訊息
+	                emailError.textContent = '此帳號已被註冊';
+	                emailValid.value = 'false';
+	            } else {
+	            	emailValid.value = 'true';
+	            }
+	        })
+	        .catch(error => {
+	            console.error('Error:', error);
+	        });
+	    });
+	    // 若email已被註冊禁止提交表單
+	    document.getElementById('registerForm').addEventListener('submit', function(event) {
+	        var emailValid = document.getElementById('emailRegValid').value;
+	        if (emailValid === 'false') {
+	            event.preventDefault();
+	            alert('Please use a different email address.');
+	        }
+	    });
+	    
+	    // email驗證成功alert
+        document.addEventListener('DOMContentLoaded', () => {
+            // 檢查 URL 參數
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('verify')) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '信箱驗證成功！！',
+                    showConfirmButton: true,
+                    confirmButtonText: "確定",
+                }).then(() => {
+                    // 移除 URL 參數
+                    history.replaceState(null, '', window.location.pathname);
+                });
+            }
+        });
+        
+    </script>
+	    
+
+</body>
+</html>

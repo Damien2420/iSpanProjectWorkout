@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+	<meta charset="UTF-8">
+	<title>商品管理系統 - 新增商品</title>
+	<link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+	<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet"/>
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/products/management/InsertProduct.css}">
+	<th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+</head>
+
+<body>
+	<div class="layout-wrapper layout-content-navbar">
+		<div class="layout-container">
+			<nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+			<div class="layout-page">
+				<header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+				<div class="content-wrapper">
+					<div class="container-xxl flex-grow-1 container-p-y" th:data-category-add="${categoryAdded}">
+						<div class="row">
+							<div class="col">
+								<h1 class="text-center fw-bolder">新增商品</h1>
+								<hr>
+							</div>
+						</div>
+						<div class="row d-flex justify-content-center">
+							<div class="col-5 main-form py-3 me-2">
+								<form action="" method="post" enctype="multipart/form-data">
+									<div class="row">
+										<div class="msg col text-center fw-bold mb-1"><span>紅色星號為必填項目</span></div>
+									</div>
+									<div class="row">
+										<div class="col-3 label">
+											<label for="productCategory"><span>*</span>商品類別</label>
+										</div>
+										<div class="col-8 d-flex flex-row">
+											<select name="productCategory" class="validate flex-fill" id="category-select">
+												<option value="">----</option>
+												<option th:each="category : ${allCategories}" th:value="${category.categoryID}"
+													th:text="${category.categoryName}"></option>
+											</select>
+											<button class="func addcate">新增類別</button>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-3 label">
+											<label for="productName"><span>*</span>商品名稱</label>
+										</div>
+										<div class="col-8">
+											<input name="productName" class="validate" type="text" id="name">
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-3 label">
+											<label for="price"><span>*</span>價錢</label>
+										</div>
+										<div class="col-8">
+											<input name="price" class="validate" type="number" id="price">
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-3 label">
+											<label for="stock"><span>*</span>數量</label>
+										</div>
+										<div class="col-8">
+											<input name="stock" class="validate" type="number" id="stock">
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-3 label">
+											<label for="productFeatures" class="featurelabel">商品特色</label>
+										</div>
+										<div class="col-8">
+											<textarea name="productFeatures" id="features"></textarea>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-3 label">
+											<label for="image"><span>*</span>商品圖片</label>
+										</div>
+										<div class="col-8 filepond-container">
+											<input type="file" class="filepond" name="image" multiple>
+											<p class="filepond--warning"></p>
+										</div>
+									</div>
+									<div class="row mt-3">
+										<div class="col d-flex justify-content-center align-items-center flex-row">
+											<input class="func reset me-2" type="reset" value="清除資料">
+											<input class="func insert ms-2" type="submit" value="加入列表"></input>
+										</div>
+									</div>
+								</form>
+								<div class="row mt-3">
+									<div class="col d-flex justify-content-center align-items-center flex-row gap-3">
+										<button class="func one-click" id="p1">商品1</button>
+										<button class="func one-click" id="p2">商品2</button>
+										<button class="func one-click" id="p3">商品3</button>
+									</div>
+								</div>
+							</div>
+							<div class="queue col-5 ms-2 p-3 d-flex justify-content-start align-items-center flex-column">
+								<div class="row w-100">
+									<div class="queue-list col w-100">
+										<h3 class="fw-bold text-center">待新增商品列表</h3>
+										<hr id="queue-hr">
+										<div class="item-container justify-content-center">
+											<div class="row item card" th:each="entry : ${session.saveList}" th:data-t="${entry.key}">
+												<div class="col d-flex align-items-center flex-row">
+													<img th:each="image : ${entry.value.productImage}"
+														 th:if="${image.imageSequence == 1}"
+														 th:src="@{/imageBeforeSave?(t=${entry.key})}" alt="">
+													<span class="name">[[${entry.value.productName}]]</span>
+													<div class="d-flex flex-column justify-content-center">
+														<div class="d-flex flex-row">
+															<span class="price-label">價格 : </span>
+															<span class="value"> $ [[${entry.value.price}]]</span>
+														</div>
+														<div class="d-flex flex-row">
+															<span class="stock-label">數量 : </span>
+															<span class="value">[[${entry.value.stock}]]</span>
+														</div>
+													</div>
+													<a class="remove">
+														<button><i class="fa-solid fa-circle-xmark"></i></button>
+													</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col d-flex justify-content-center mt-2">
+										<button class="func save-all">新增全部商品</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col text-center">
+								<a th:href="@{/admin/products/allList}">
+									<button class="func main-menu mt-3"><i class="fa-solid fa-house"></i> 回商品列表</button>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<th:block th:replace="~{back/NavBar :: js}"></th:block>
+	<script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+	<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+	<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+	<script th:src="@{/js/axios/axios.min.js}"></script>
+	<script th:src="@{/js/products/management/ValidateForm.js}"></script>
+	<script>
+		let tempID = 1;
+		let sequence = 1;
+		//設定暫定商品ID&綁定移除事件
+		window.addEventListener('DOMContentLoaded', () => {
+			removeFromListEvent();
+			oneClick();
+			const itemsCount = document.querySelectorAll('.item').length;
+			tempID += itemsCount;
+		})
+
+		//alert模板
+		const alert = Swal.mixin({
+			customClass: {
+				confirmButton: 'btn btn-success ms-2',
+				cancelButton: 'btn btn-danger'
+			},
+			buttonsStyling: false,
+			confirmButtonText: "確定",
+			cancelButtonText: "取消"
+		});
+
+		document.querySelector('.reset').addEventListener('click', function () {
+			filePond.removeFiles();
+		});
+
+		FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateSize);
+		const imgUpload = document.querySelector('.filepond');
+		const filePond = FilePond.create(imgUpload, {
+			allowMultiple: true,
+			instantUpload: false,
+            credits: false,
+			maxFiles: 4,
+			maxFileSize: '10MB',
+			required:  true,
+			maxParallelUploads: 4,
+            labelIdle: `
+            <span class="filepond--label-action">拖曳或點擊此處上傳圖片<br>
+				最多可以上傳<span class="filepond-msg">4</span>個檔案<br>
+				單個檔案上限為<span class="filepond-msg">10MB</span></span>
+			`,
+			labelTapToUndo: ''
+        });
+
+		filePond.on('warning', (error) => {
+			const container = filePond.element.parentNode;
+			container.classList.add('filepond-padding');
+			let warningElement = container.querySelector('p.filepond--warning');
+			warningElement.textContent = '已超過4個檔案上限，請重新上傳！';
+
+			requestAnimationFrame(() => {
+				warningElement.style.opacity = '1';
+				warningElement.style.zIndex = 'auto';
+			});
+			
+			setTimeout(() => {
+				warningElement.style.opacity = '0';
+				warningElement.style.zIndex = '-1';
+				container.classList.remove('filepond-padding');
+			}, 5000);
+		});
+
+		filePond.on('addfile', (error, file) => {
+			const container = filePond.element.parentNode;
+			const warningElement = container.querySelector('p.filepond--warning');
+			if (warningElement) {
+				warningElement.style.opacity = '0';
+				warningElement.style.zIndex = '-1';
+				container.classList.remove('filepond-padding');
+			}
+			file.setMetadata('sequence', sequence++);
+		});
+
+		//左邊新增商品
+		document.querySelector('.insert').addEventListener('click', event => {
+			event.preventDefault();
+			//取得filepond選擇的檔案
+			const isImgUpload = filePond.getFiles().length > 0;
+			if (validateForm() && isImgUpload) {
+				alert.fire({
+					icon: "question",
+					title: "確定要新增商品到列表嗎?",
+					showCancelButton: true,
+					reverseButtons: true,
+				}).then(async result => {
+					if (result.isConfirmed) {
+						const productInfo = await getMainFormData();
+						saveProductToList(productInfo);
+					}
+				});
+			} else {
+				event.preventDefault();
+				alert.fire({
+					icon: 'warning',
+					title: '請填入所有必填項目',
+					showConfirmButton: true,
+				});
+			}
+		});
+
+		function oneClick() {
+			const form = document.querySelector('.main-form');
+			document.querySelector('#p1').addEventListener('click', function () {
+				form.querySelector('#category-select').selectedIndex = 1;
+				form.querySelector('#name').value = '搖搖杯';
+				form.querySelector('#price').value = 300;
+				form.querySelector('#stock').value = 153;
+				form.querySelector('#features').value = '採用高品質不鏽鋼材質，耐用且防漏，設計輕巧便攜，內附攪拌球，能輕鬆混合蛋白粉，助你快速補充營養。';
+			});
+
+			document.querySelector('#p2').addEventListener('click', function() {
+				form.querySelector('#category-select').selectedIndex = 2;
+				form.querySelector('#name').value = '臥推健腹椅';
+				form.querySelector('#price').value = 6599;
+				form.querySelector('#stock').value = 38;
+				form.querySelector('#features').value = '具備可調整的斜度設計，讓您輕鬆調整運動角度，針對胸部和腹部肌群進行精準訓練。其堅固框架和舒適坐墊確保運動過程中的穩定性和舒適度，適合各種強度的健身需求。';
+			});
+
+			document.querySelector('#p3').addEventListener('click', function() {
+				form.querySelector('#category-select').selectedIndex = 1;
+				form.querySelector('#name').value = '健身競技護腕';
+				form.querySelector('#price').value = 590;
+				form.querySelector('#stock').value = 48;
+				form.querySelector('#features').value = '採用高強度彈性材質，有效支撐腕部，減少運動時的受傷風險。透氣設計舒適貼合，無論是舉重還是有氧運動，都能提供穩定支持。';
+			});
+		};
+
+		function generateTempID() {
+			const now = new Date();
+			const hours = String(now.getHours()).padStart(2, '0');
+			const minutes = String(now.getMinutes()).padStart(2, '0');
+			const seconds = String(now.getSeconds()).padStart(2, '0');
+			return tempID+hours+minutes+seconds;
+		}
+
+		//打包新增的商品資料
+		function getMainFormData() {
+			const allFiles = filePond.getFiles();
+			const firstPic = allFiles[0].file;
+			const productInfo = {
+				tempId: generateTempID(),
+				productCategory: document.querySelector('select[name="productCategory"]').value,
+				productName: document.querySelector('input[name="productName"]').value,
+				price: document.querySelector('input[name="price"]').value,
+				stock: document.querySelector('input[name="stock"]').value,
+				productFeatures: document.querySelector('textarea[name="productFeatures"]').value,
+				firstPic: firstPic
+			}
+			return productInfo;
+		}
+
+		async function saveProductToList(productInfo) {
+
+		    await productInfoSend(productInfo);
+
+			//設定新增表單上傳資料
+			filePond.setOptions({
+				server: {
+                    process: (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
+                        const formData = new FormData();
+						formData.append('id', productInfo.tempId)
+                        formData.append('image', file);
+						formData.append('sequence', metadata.sequence);
+            
+                        const request = new XMLHttpRequest();
+                        request.upload.onprogress = (event) => {
+                            progress(event.lengthComputable, event.loaded, event.total);
+                        };
+                        request.onload = () => {
+                            if (request.status >= 200 && request.status < 300) {
+                                load(request.responseText);
+                            } else {
+                                error('Upload failed with status: ' + request.status);
+                            }
+                        };
+                        request.onerror = () => {
+                            error('Upload failed');
+                        };
+                        request.onabort = () => {
+                            abort();
+                        };
+						request.open('POST', 'saveNewImg', true);
+                        request.send(formData);
+                        return {
+                            abort: () => {
+                                request.abort();
+                                abort();
+                            }
+                        };
+                    }
+                }
+			});
+
+
+			//執行上傳&全部檔案上傳完成執行動作
+			filePond.processFiles().then( () => {
+				tempID++;
+				sequence = 1;
+				document.querySelector('select[name="productCategory"]').value = '';
+				document.querySelector('input[name="productName"]').value = '';
+				document.querySelector('input[name="price"]').value = '';
+				document.querySelector('input[name="stock"]').value = '';
+				document.querySelector('textarea[name="productFeatures"]').value = '';
+				filePond.removeFiles();
+				buildList(productInfo);
+			});
+		};
+
+		function productInfoSend(data) {
+			const formData = new FormData();
+			formData.append('id', data.tempId);
+			formData.append('productCategory', data.productCategory);
+			formData.append('productName', data.productName);
+			formData.append('price', data.price);
+			formData.append('stock', data.stock);
+			formData.append('productFeatures', data.productFeatures);
+
+			axios.post('saveProduct', formData)
+			.then(res => {
+				console.log(res);
+			})
+			.catch(err => {
+				console.error(err); 
+			})
+		}
+
+		//將新增的商品資訊放到右邊列表上
+		function buildList(productInfo) {
+			const imgUrl = URL.createObjectURL(productInfo.firstPic);
+
+			const itemContainer = document.querySelector('.item-container');
+			const template = `
+			<div class="row item card" data-t="${productInfo.tempId}">
+				<div class="col d-flex align-items-center flex-row">
+					<img src="${imgUrl}" alt="">
+					<span class="name">${productInfo.productName}</span>
+					<div class="d-flex flex-column justify-content-center">
+						<div class="d-flex flex-row">
+							<span class="price-label">價格 : </span>
+							<span class="value">$ ${productInfo.price}</span>
+						</div>
+						<div class="d-flex flex-row">
+							<span class="stock-label">數量 : </span>
+							<span class="value">${productInfo.stock}</span>
+						</div>
+					</div>
+					<a class="remove">
+						<button><i class="fa-solid fa-circle-xmark"></i></button>
+					</a>
+				</div>
+			</div>
+			`;
+			itemContainer.innerHTML += template;
+			removeFromListEvent();
+		}
+
+		function removeFromListEvent() {
+			document.querySelectorAll('.remove').forEach((element) => {
+				element.addEventListener('click', function() {
+					const currentItem = this.closest('.item');
+					const id = currentItem.dataset.t;
+					currentItem.outerHTML = '';
+					axios.post('saveListRemove', id, {
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					})
+					.catch(err => {
+						console.error(err); 
+					})
+				})
+			})
+		};
+		
+		document.querySelector('.save-all').addEventListener('click', () => {
+			axios.get('saveAll')
+			.then(res => {
+				document.querySelector('.item-container').innerHTML = '';
+				window.location.href = 'allList';
+			})
+			.catch(err => {
+				console.error(err); 
+			})
+		})
+
+		const addCategory = document.querySelector('.addcate');
+
+		addCategory.addEventListener('click', event => {
+			event.preventDefault();
+
+			alert.fire({
+				title: "新增類別",
+				inputLabel: "商品類別",
+				input: "text",
+				showCancelButton: true,
+				reverseButtons: true,
+				inputValidator: value => {
+					if (!value) {
+						return "請先輸入要新增的商品類別！！！";
+					}
+				}
+			}).then(result => {
+				if (result.isConfirmed) {
+					axios.post('saveCategory', { categoryName: result.value })
+						.then(response => {
+							console.log(response);
+							const newOption = document.createElement('option');
+							newOption.value = response.data.categoryID;
+							newOption.text = response.data.categoryName;
+							newOption.selected = true;
+							const categorySelectInput = document.querySelector('#category-select').appendChild(newOption);
+							alert.fire({
+								icon: 'success',
+								title: '新增類別成功',
+								timer: 2000,
+								timerProgressBar: true,
+								toast: true,
+								showConfirmButton: false,
+								position: 'top'
+							});
+						})
+						.catch(error => {
+							alert.fire({
+								icon: 'error',
+								title: '新增失敗',
+								text: error,
+								showCancelButton: false
+							})
+						})
+				}
+			});
+		})
+	</script>
+</body>
+
+</html>

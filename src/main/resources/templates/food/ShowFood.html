@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>食品列表</title>
+    <!-- foodPage.css路徑 -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      th:href="@{/css/food/foodPage.css}"
+    />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}" />
+    <!-- 動畫 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/food/animate.css}" />
+
+    <th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+  </head>
+
+  <body id="foodList">
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+        <div class="layout-page">
+          <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+          <div class="content-wrapper">
+            <main class="container-xxl flex-grow-1 container-p-y">
+              <h2>食 品 列 表</h2>
+              <h4>(每100克含量)</h4>
+
+              <div class="foodtable-container table-responsive text-nowrap">
+                <div class="insertbtn foodtable-container">
+                  <!-- 新增 -->
+                  <button
+                    type="submit"
+                    class="btn btn-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addModal"
+                  >
+                    <i class="fa-solid fa-cart-arrow-down"></i>新增
+                  </button>
+                  <!-- 新增 Modal -->
+                  <form
+                    th:action="@{/admin/food/InsertFood}"
+                    method="post"
+                    class="insertFood"
+                  >
+                    <div
+                      class="modal fade"
+                      id="addModal"
+                      tabindex="-1"
+                      aria-hidden="true"
+                    >
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div
+                            class="modal-header d-flex justify-content-center"
+                          >
+                            <div>
+                              <h3
+                                class="modal-title text-center"
+                                id="exampleModalLabel1"
+                              >
+                                新 增 食 品 項 目
+                              </h3>
+                              <h5
+                                class="modal-title text-center"
+                                id="exampleModalLabel2"
+                              >
+                                (每100克含量)
+                              </h5>
+                            </div>
+                          </div>
+
+                          <div class="modal-body">
+                            <div class="row">
+                              <div class="col mb-3">
+                                <label for="addFoodName" class="form-label fs-5"
+                                  >食品名稱</label
+                                >
+                                <input
+                                  type="text"
+                                  id="addFoodName"
+                                  name="foodName"
+                                  class="form-control"
+                                  placeholder="請輸入名稱"
+                                  required
+                                />
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col category">
+                                <label for="addCategory" class="form-label fs-5"
+                                  >食品分類</label
+                                >
+                                <select
+                                  id="addCategory"
+                                  name="category"
+                                  class="form-select color-dropdown"
+                                  required
+                                >
+                                  <option value="1">食品</option>
+                                  <option value="2">飲品</option></select
+                                ><br />
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col mb-3">
+                                <label for="addProtein" class="form-label fs-5"
+                                  >蛋白質含量</label
+                                >
+                                <input
+                                  type="number"
+                                  id="addProtein"
+                                  name="protein"
+                                  class="form-control"
+                                  step="0.1"
+                                  placeholder="請輸入數值"
+                                  required
+                                />
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col mb-3">
+                                <label
+                                  for="addCarbohydrates"
+                                  class="form-label fs-5"
+                                  >碳水化合物含量</label
+                                >
+                                <input
+                                  type="number"
+                                  id="addCarbohydrates"
+                                  name="carbohydrates"
+                                  class="form-control"
+                                  step="0.1"
+                                  placeholder="請輸入數值"
+                                  required
+                                />
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col mb-3">
+                                <label for="addFat" class="form-label fs-5"
+                                  >脂肪含量</label
+                                >
+                                <input
+                                  type="number"
+                                  id="addFat"
+                                  name="fat"
+                                  class="form-control"
+                                  step="0.1"
+                                  placeholder="請輸入數值"
+                                  required
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              type="button"
+                              class="btn btn-danger"
+                              data-bs-dismiss="modal"
+                            >
+                              關閉
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-secondary"
+                              onclick="fillForm()"
+                            >
+                              一鍵輸入
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                              提交
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- 表格 -->
+                <div class="card foodtable-container">
+                  <table class="foodTable table table-hover">
+                    <thead>
+                      <tr class="foodTableTaitle">
+                        <th>食品名稱</th>
+                        <th>分類</th>
+                        <th>蛋白質</th>
+                        <th>碳水化合物</th>
+                        <th>脂肪</th>
+                        <th>總熱量</th>
+                        <th>刪除</th>
+                        <th>更新</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                      <!-- Thymeleaf的each指令 -->
+                      <tr th:each="food : ${page.content}">
+                        <td th:text="${food.foodName}"></td>
+                        <td>
+                          <span
+                            th:text="${food.category == 1 ? '食品' : '飲品'}"
+                          ></span>
+                        </td>
+                        <td th:text="${food.protein}"></td>
+                        <td th:text="${food.carbohydrates}"></td>
+                        <td th:text="${food.fat}"></td>
+                        <td th:text="${food.totalCaloriesPer100g}"></td>
+
+                        <!-- 刪除按鈕 -->
+                        <td>
+                          <a
+                            href="#"
+                            class="Idelete"
+                            th:attr="data-foodID=${food.foodID}"
+                          >
+                            <i class="fa-solid fa-trash-can fa-2xl"></i>
+                          </a>
+                        </td>
+                        <!-- 更新按鈕 -->
+                        <td>
+                          <a
+                            th:href="@{/admin/food/UpdateFood(foodID=${food.foodID})}"
+                            class="Iupdate"
+                            data-bs-toggle="modal"
+                            th:data-bs-target="'#updateModal-' + ${food.foodID}"
+                          >
+                            <i class="fa-solid fa-square-pen fa-2xl"></i>
+                          </a>
+                          <!-- 更新Modal -->
+                          <form
+                            th:action="@{/admin/food/UpdateFood}"
+                            method="post"
+                            accept-charset="UTF-8"
+                          >
+                            <div
+                              class="modal fade"
+                              th:id="'updateModal-' + ${food.foodID}"
+                              tabindex="-1"
+                              aria-hidden="true"
+                            >
+                              <div
+                                class="modal-dialog modal-dialog-centered"
+                                role="document"
+                              >
+                                <div class="modal-content">
+                                  <div
+                                    class="modal-header d-flex justify-content-center"
+                                  >
+                                    <div>
+                                      <h3 class="modal-title">
+                                        更 新 食 品 資 料
+                                      </h3>
+                                      <h5 class="modal-title">(每100克含量)</h5>
+                                    </div>
+                                  </div>
+                                  <div class="modal-body">
+                                    <div class="row">
+                                      <div class="col mb-3">
+                                        <input
+                                          type="hidden"
+                                          id="updateFoodID"
+                                          name="foodID"
+                                          class="form-control"
+                                          th:value="${food.foodID}"
+                                        />
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col mb-3">
+                                        <label
+                                          for="updateFoodName"
+                                          class="form-label fs-5"
+                                          >食品名稱</label
+                                        >
+                                        <input
+                                          type="text"
+                                          id="updateFoodName"
+                                          name="foodName"
+                                          class="form-control"
+                                          th:value="${food.foodName}"
+                                          required
+                                        />
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col category">
+                                        <label
+                                          for="updateCategory"
+                                          class="form-label fs-5"
+                                          >食品分類</label
+                                        >
+                                        <select
+                                          id="updateCategory"
+                                          name="category"
+                                          class="form-select color-dropdown"
+                                          required
+                                        >
+                                          <option
+                                            th:value="1"
+                                            th:text="'食品'"
+                                            th:selected="${food.category == 1}"
+                                          ></option>
+                                          <option
+                                            th:value="2"
+                                            th:text="'飲品'"
+                                            th:selected="${food.category == 2}"
+                                          ></option></select
+                                        ><br />
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col mb-3">
+                                        <label
+                                          for="updateProtein"
+                                          class="form-label fs-5"
+                                          >蛋白值含量</label
+                                        >
+                                        <input
+                                          type="number"
+                                          id="updateProtein"
+                                          name="protein"
+                                          class="form-control"
+                                          step="0.1"
+                                          th:value="${food.protein}"
+                                        />
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col mb-3">
+                                        <label
+                                          for="updateCarbohydrates"
+                                          class="form-label fs-5"
+                                          >碳水化合物含量</label
+                                        >
+                                        <input
+                                          type="number"
+                                          id="updateCarbohydrates"
+                                          name="carbohydrates"
+                                          class="form-control"
+                                          step="0.1"
+                                          th:value="${food.carbohydrates}"
+                                        />
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col mb-3">
+                                        <label
+                                          for="updateFat"
+                                          class="form-label fs-5"
+                                          >脂肪含量</label
+                                        >
+                                        <input
+                                          type="number"
+                                          id="updateFat"
+                                          name="fat"
+                                          class="form-control"
+                                          step="0.1"
+                                          th:value="${food.fat}"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button
+                                      type="button"
+                                      class="btn btn-danger"
+                                      data-bs-dismiss="modal"
+                                    >
+                                      關閉
+                                    </button>
+                                    <button
+                                      type="submit"
+                                      class="btn btn-success"
+                                    >
+                                      更新
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- 食品查詢 -->
+              <br />
+              <div class="card mx-auto w-25">
+                <h5 class="card-header p-3">搜尋食品</h5>
+                <div class="card-body demo-vertical-spacing demo-only-element">
+                  <form th:action="@{/admin/food/QueryByFoodName}" method="get">
+                    <div class="input-group input-group-merge">
+                      <!-- 放大鏡圖示 -->
+                      <span class="input-group-text" id="basic-addon-search31"
+                        ><i class="bx bx-search"></i
+                      ></span>
+                      <!--輸入框-->
+                      <input
+                        type="text"
+                        id="foodName"
+                        name="foodName"
+                        class="form-control"
+                        placeholder="請輸入關鍵字"
+                        aria-describedby="button-addon2"
+                      />
+                      <button
+                        class="querybtn btn btn-outline-primary"
+                        type="submit"
+                        id="button-addon2"
+                      >
+                        查詢
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- 分頁 -->
+              <div th:text=" '總共有 ' + ${page.totalElements} + ' 筆' "></div>
+              <div class="container">
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                    <!-- 第一頁 -->
+                    <li
+                      class="page-item"
+                      th:classappend="${page.number == 0} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/admin/food/ShowFood(page=0, size=${page.size})}"
+                      >
+                        <i class="tf-icon bx bx-chevrons-left"></i>
+                      </a>
+                    </li>
+
+                    <!-- 上一頁 -->
+                    <li
+                      class="page-item"
+                      th:classappend="${page.number == 0} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/admin/food/ShowFood(page=${page.number - 1}, size=${page.size})}"
+                      >
+                        <i class="tf-icon bx bx-chevron-left"></i>
+                      </a>
+                    </li>
+
+                    <!-- 這一頁 -->
+                    <th:block
+                      th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                    >
+                      <!-- 選到分頁 : 有顏色、不可點擊-->
+                      <li th:if="${i == page.number}" class="page-item active">
+                        <a class="page-link" th:text="${i + 1}"></a>
+                      </li>
+                      <!-- 非選擇分頁 -->
+                      <li th:unless="${i == page.number}" class="page-item">
+                        <a
+                          class="page-link"
+                          th:href="@{/admin/food/ShowFood(page=${i}, size=${page.size})}"
+                          th:text="${i + 1}"
+                        ></a>
+                      </li>
+                    </th:block>
+
+                    <!-- 下一頁 -->
+                    <li
+                      class="page-item"
+                      th:classappend="${page.number + 1 >= page.totalPages} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/admin/food/ShowFood(page=${page.number + 1}, size=${page.size})}"
+                      >
+                        <i class="tf-icon bx bx-chevron-right"></i>
+                      </a>
+                    </li>
+
+                    <!-- 最後一頁 -->
+                    <li
+                      class="page-item"
+                      th:classappend="${page.number + 1 >= page.totalPages} ? 'disabled'"
+                    >
+                      <a
+                        class="page-link"
+                        th:href="@{/admin/food/ShowFood(page=${page.totalPages - 1}, size=${page.size})}"
+                      >
+                        <i class="tf-icon bx bx-chevrons-right"></i>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+    </div>
+    <th:block th:replace="~{back/NavBar :: js}"></th:block>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+    <script th:src="@{/js/food/OneClick.js}"></script>
+    <script th:src="@{/js/food/UseSweetAlert.js}"></script>
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+    <script>
+      document.querySelector(".Idelete").addEventListener("click", (e) => {
+        e.preventDefault();
+        const foodID = e.target.closest("a").getAttribute("data-foodID");
+        showSweetAlert("您確定要刪除此食品項目嗎?", () => {
+          axios.get(`DeleteByFoodID?foodID=${foodID}`).then((response) => {
+            showSweetAlertSuccess("刪除成功", () => {
+              e.target.closest("tr").remove();
+            });
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

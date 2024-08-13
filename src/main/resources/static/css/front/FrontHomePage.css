@@ -1,0 +1,259 @@
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@200&family=Noto+Sans+TC:wght@100..900&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
+}
+
+.zh {
+    font-family: "Noto Sans TC", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+}
+
+.en {
+    font-family: "Dosis", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+}
+
+
+body {
+    background-color: #4d4d4d;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin: 0 auto;
+    height: calc(100vh - 287.8px);
+    background-image: url(../../images/front/gym-background.jpg);
+}
+
+header,
+footer {
+    flex-shrink: 0;
+}
+
+.forHeader {
+    background: linear-gradient(to bottom,
+            hsl(43.06, 87.63%, 61.96%) 0%,
+            hsl(43.06, 85.6%, 61.55%) 8.9%,
+            hsl(43.06, 80.1%, 60.41%) 16.7%,
+            hsl(43.06, 72.21%, 58.64%) 23.5%,
+            hsl(43.06, 62.98%, 56.35%) 29.4%,
+            hsl(43.06, 53.3%, 53.67%) 34.8%,
+            hsl(43.06, 43.82%, 50.71%) 39.8%,
+            hsl(43.06, 38.53%, 47.58%) 44.6%,
+            hsl(43.06, 33.8%, 44.38%) 49.4%,
+            hsl(43.06, 28.44%, 41.25%) 54.4%,
+            hsl(43.06, 22.57%, 38.29%) 59.9%,
+            hsl(43.06, 16.42%, 35.61%) 65.9%,
+            hsl(43.06, 10.4%, 33.32%) 72.7%,
+            hsl(43.06, 5.13%, 31.55%) 80.5%,
+            hsl(43.06, 1.4%, 30.41%) 89.6%,
+            hsl(0, 0%, 30%) 100%);
+}
+
+header {
+    position: sticky;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.headTitle {
+    padding: 32px 30px;
+    width: 100%;
+    text-decoration: none;
+    font-size: 50px;
+    font-weight: bolder;
+    color: black;
+    background-color: transparent;
+    text-align: center;
+}
+
+footer {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #2f2f2f;
+}
+
+.icons {
+    display: flex;
+    list-style: none;
+    justify-content: center;
+    padding-inline-start: 0;
+    margin-top: 5px;
+}
+
+.item {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border: 1px solid #5a5a5a;
+    border-radius: 50%;
+    margin: 0 8px;
+    padding: 3px 0px 0px 2px;
+    text-align: center;
+    cursor: pointer;
+}
+
+i.fa-brands {
+    font-size: 26px;
+}
+
+i.fa-brands::before {
+    color: #fff;
+    position: relative;
+    top: 13px;
+    left: -1px;
+}
+
+.item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    height: 100%;
+    width: 100%;
+    transition: 0.5s;
+    transform-origin: buttom;
+    background-color: var(--bg-color, white);
+    border-radius: 50%;
+    scale: 0 0;
+}
+
+.item:hover {
+    z-index: 1;
+    color: #fff;
+}
+
+.item:hover i.fa-brands::before {
+    color: #2f2f2f;
+    transition: color 0.5s ease-in-out;
+}
+
+.item:hover::before {
+    scale: 1 1;
+}
+
+.item:nth-child(1)::before {
+    --bg-color: rgb(240, 128, 221);
+}
+
+.item:nth-child(2)::before {
+    --bg-color: rgb(113, 195, 223);
+}
+
+.item:nth-child(3)::before {
+    --bg-color: rgb(142, 227, 149);
+}
+
+.item:nth-child(4)::before {
+    --bg-color: rgb(216, 119, 119);
+}
+
+footer div {
+    margin: 30px auto 0 auto;
+    color: #bdbdbd;
+    font-weight: bolder;
+    font-size: 20px;
+}
+
+.message {
+    margin-top: 50px;
+    font-size: 36px;
+    text-align: center;
+    background-color: rgb(77, 77, 77, 0.7);
+    padding: 40px 60px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgb(0, 0, 0, 0.7);
+}
+
+.message h1 {
+    color: #bdbdbd;
+}
+
+.message h1 span {
+    color: #228fe7;
+}
+
+.login {
+    margin-top: 25px;
+    padding: 10px 20px;
+    font-size: 24px;
+    font-weight: bolder;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.login:hover {
+    transition: background-color 0.5s ease-in-out;
+    background-color: #f3c449;
+}
+
+.login:active a {
+    background-color: #eecc78;
+}
+
+.shadow {
+    width: 100%;
+    min-height: 50px;
+    background: linear-gradient(to top,
+            hsla(0, 0%, 30%, 0) 0%,
+            hsla(0, 0%, 30%, 0.003) 10.1%,
+            hsla(0, 0%, 30%, 0.013) 18.9%,
+            hsla(0, 0%, 30%, 0.03) 26.5%,
+            hsla(0, 0%, 30%, 0.055) 33.3%,
+            hsla(0, 0%, 30%, 0.088) 39.3%,
+            hsla(0, 0%, 30%, 0.13) 44.7%,
+            hsla(0, 0%, 30%, 0.182) 49.8%,
+            hsla(0, 0%, 30%, 0.243) 54.7%,
+            hsla(0, 0%, 30%, 0.315) 59.6%,
+            hsla(0, 0%, 30%, 0.399) 64.7%,
+            hsla(0, 0%, 30%, 0.493) 70.3%,
+            hsla(0, 0%, 30%, 0.6) 76.4%,
+            hsla(0, 0%, 30%, 0.72) 83.2%,
+            hsla(0, 0%, 30%, 0.853) 91%,
+            hsl(0, 0%, 30%) 100%);
+}
+
+.another-shadow {
+	position: absolute;
+	bottom: 0;
+    width: 100%;
+    min-height: 50px;
+    margin-top: 42px;
+    background: linear-gradient(to bottom,
+            hsla(0, 0%, 18%, 0) 0%,
+            hsla(0, 0%, 18%, 0.147) 9.2%,
+            hsla(0, 0%, 18%, 0.28) 17.2%,
+            hsla(0, 0%, 18%, 0.4) 24.3%,
+            hsla(0, 0%, 18%, 0.507) 30.6%,
+            hsla(0, 0%, 18%, 0.601) 36.4%,
+            hsla(0, 0%, 18%, 0.685) 41.7%,
+            hsla(0, 0%, 18%, 0.757) 46.7%,
+            hsla(0, 0%, 18%, 0.818) 51.8%,
+            hsla(0, 0%, 18%, 0.87) 56.9%,
+            hsla(0, 0%, 18%, 0.912) 62.3%,
+            hsla(0, 0%, 18%, 0.945) 68.2%,
+            hsla(0, 0%, 18%, 0.97) 74.7%,
+            hsla(0, 0%, 18%, 0.987) 82.1%,
+            hsla(0, 0%, 18%, 0.997) 90.5%,
+            hsl(0, 0%, 18%) 100%);
+}

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>GYMNITY - 編輯文章</title>
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<link rel="stylesheet" th:href="@{/css/memberAdm/profile_style.css}">
+	<style>
+		/* 將 form 設置為 flex 容器並水平置中內容 */
+		#articleForm {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.form-group {
+			display: flex;
+			flex-direction: row;
+			/* 水平排列 input 和 select 元素 */
+			align-items: center;
+			margin-bottom: 10px;
+			/* 調整間距 */
+		}
+
+		/* 設置 input 元素的寬度和間距 */
+		input[type="text"] {
+			width: 500px;
+			margin: 10px 0;
+			margin-right: 50px;
+			font-size: inherit;
+		}
+
+		/* 針對 select 元素設定寬度 */
+		select {
+			width: 20%;
+			height: 30px;
+			/* 或其他適當的百分比 */
+			margin: 10px 0;
+			background-color: rgb(32, 32, 32);
+			color: white;
+			font-size: inherit;
+		}
+
+		/* 使 textarea 也居中 */
+		textarea {
+			width: 60%;
+			/* 或其他適當的百分比 */
+		}
+
+
+		h2 {
+			margin-left: 20%;
+		}
+
+		textarea {
+			width: 50%;
+			margin: 10px auto;
+		}
+
+		.ck-editor {
+			width: 60% !important;
+			height: 300px !important;
+			color: white !important;
+			border-color: #f36100;
+		}
+
+
+		.ck-toolbar {
+			background-color: rgb(32, 32, 32) !important;
+		}
+
+		.ck-icon {
+			color: gray !important;
+		}
+
+		.ck-content {
+			background-color: rgb(32, 32, 32) !important;
+			height: 300px;
+		}
+
+
+
+		.button-container {
+			margin-top: 20px;
+			margin-bottom: 20px;
+
+		}
+
+		.btn {
+			margin-top: 20px;
+			margin-left: 10px;
+			margin-right: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+
+	<section class="s-header-title" style="background-image: url(../images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title fw-bold">會員中心</h1>
+			<ul class="breadcrambs">
+				<li><a th:href="@{/home}">Home</a></li>
+				<li>會員中心</li>
+			</ul>
+		</div>
+	</section>
+
+	<div class="profile-container">
+		<th:block th:replace="~{memberAdm/profile :: profile-sidebar}"></th:block>
+		<main class="main-content">
+			<h2>編輯文章</h2>
+			<br>
+			<form id="articleForm" method="POST" th:action="@{editArticle}">
+				<input type="hidden" name="articleId" th:value="${article.articleId}">
+				<input type="text" name="articleTitle" th:value="${article.articleTitle}">
+				<select name="tag">
+					<option value="問題" th:selected="${article.tag == '問題'}">問題</option>
+					<option value="討論" th:selected="${article.tag == '討論'}">討論</option>
+					<option value="心得" th:selected="${article.tag == '心得'}">心得</option>
+					<option value="飲食" th:selected="${article.tag == '飲食'}">飲食</option>
+					<option value="其他" th:selected="${article.tag == '其他'}">其他</option>
+				</select>
+				<br>
+				<textarea name="articleContent" id="editor" required th:text="${article.articleContent}"></textarea>
+				<br>
+				<input type="hidden" name="postTime">
+				<div class="button-container">
+					<button type="submit" onclick="fillLocalTime()" class="btn">確認</button>
+				</div>
+			</form>
+		</main>
+	</div>
+
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+	<script src="https://cdn.ckeditor.com/ckeditor5/26.0.0/classic/ckeditor.js"></script>
+	<script>
+		function fillLocalTime() {
+			// 取得當前時間
+			const now = new Date();
+			// 將本地時間格式化為 yyyy-mm-dd HH:MM:SS 格式
+			const formattedTime = now.toLocaleString();
+			//const formattedTime = now.toISOString().slice(0, 19).replace('T', ' ');
+			// 將格式化後的時間填入發文時間欄位
+			document.getElementsByName("postTime")[0].value = formattedTime;
+
+		}
+
+		ClassicEditor
+			.create(document.querySelector('#editor'))
+			.then(editor => {
+				console.log('Editor was initialized', editor);
+
+				// 在表单提交之前手动更新 textarea 的内容
+				document.getElementById('articleForm').addEventListener('submit', function () {
+					editor.updateSourceElement(); // 将编辑器内容更新到关联的 textarea 元素中
+				});
+			})
+			.catch(error => {
+				console.error(error);
+			});
+	</script>
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+</body>
+
+</html>

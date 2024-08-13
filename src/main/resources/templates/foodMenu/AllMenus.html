@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>使用者飲食紀錄管理</title>
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/css/bootstrap/bootstrap.min.css}" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <link th:href="@{/css/front/fontawesome.css}" rel="stylesheet" />
+    <link th:href="@{/css/food/allMenu.css}" rel="stylesheet" />
+    <th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+  </head>
+
+  <body>
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+        <div class="layout-page">
+          <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+          <div class="content-wrapper">
+            <main class="container-fluid py-5">
+              <div class="user-diet-records">
+                <div class="row justify-content-center">
+                  <div class="col-lg-10">
+                    <div class="card shadow-sm mb-5">
+                      <div class="card-body">
+                        <h1 class="card-title text-center mb-4">
+                          使用者飲食紀錄管理
+                        </h1>
+                        <form id="userSelectForm" class="mb-4">
+                          <div class="row g-3 align-items-end">
+                            <div class="col-md-6">
+                              <label for="memNo" class="form-label h5">
+                                <i class="fas fa-user me-2"></i>會員姓名
+                              </label>
+                              <select id="memNo" class="form-select">
+                                <option value="">選擇會員</option>
+                              </select>
+                            </div>
+                            <div class="col-md-6 d-flex justify-content-end">
+                              <button
+                                type="submit"
+                                class="btn btn-primary me-2"
+                              >
+                                <i class="fas fa-search me-2"></i>查看飲食紀錄
+                              </button>
+                              <button
+                                id="viewAllRecords"
+                                class="btn btn-outline-secondary"
+                                type="button"
+                              >
+                                <i class="fas fa-list-alt me-2"></i>所有會員紀錄
+                              </button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+
+                    <h2 class="text-center mb-4">
+                      <i class="fas fa-utensils me-2"></i>飲食紀錄
+                    </h2>
+                    <div class="accordion" id="menuAccordion">
+                      <div
+                        th:each="menu, iterStat : ${menus}"
+                        class="accordion-item mb-3 shadow-sm"
+                      >
+                        <h2
+                          class="accordion-header"
+                          th:id="'heading' + ${iterStat.index}"
+                        >
+                          <button
+                            class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            th:data-bs-target="'#collapse' + ${iterStat.index}"
+                            aria-expanded="false"
+                            th:aria-controls="'collapse' + ${iterStat.index}"
+                          >
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span
+                              th:text="${menu.memberName}"
+                              class="fw-bold me-3"
+                            ></span>
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            <span
+                              th:text="${menu.createdTime}"
+                              class="text-muted"
+                            ></span>
+                          </button>
+                        </h2>
+                        <div
+                          th:id="'collapse' + ${iterStat.index}"
+                          class="accordion-collapse collapse"
+                          th:aria-labelledby="'heading' + ${iterStat.index}"
+                          data-bs-parent="#menuAccordion"
+                        >
+                          <div class="accordion-body">
+                            <div class="table-responsive">
+                              <table class="table table-hover">
+                                <thead class="table-light">
+                                  <tr>
+                                    <th>
+                                      <i class="fas fa-apple-alt me-2"></i
+                                      >食物名稱
+                                    </th>
+                                    <th>
+                                      <i class="fas fa-weight me-2"></i>食物重量
+                                    </th>
+                                    <th>
+                                      <i class="fas fa-fire-alt me-2"></i
+                                      >當前熱量
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr th:each="detail : ${menu.details}">
+                                    <td th:text="${detail.foodName}"></td>
+                                    <td th:text="${detail.foodWeight}"></td>
+                                    <td
+                                      th:text="${detail.currentCalories}"
+                                    ></td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                            <div class="text-end mt-3">
+                              <h4 class="fw-bold">
+                                <i class="fas fa-calculator me-2"></i>總熱量:
+                                <span
+                                  th:text="${menu.totalCalories}"
+                                  class="text-primary"
+                                ></span>
+                              </h4>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <th:block th:replace="~{back/NavBar :: js}"></th:block>
+    <script th:src="@{/js/lib/jquery-3.7.1.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+    <script>
+      $(document).ready(function () {
+        // 載入會員資料
+        function loadMemberData() {
+          $.ajax({
+            url: "/workout/admin/getallmembers.controller",
+            type: "GET",
+            dataType: "html",
+            success: function (response) {
+              var $memNo = $("#memNo");
+              $memNo.empty(); // 清空下拉菜单
+
+              // 添加一個默認的選項
+              $memNo.append('<option value="">選擇會員</option>');
+
+              // 使用 jQuery 解析 HTML 響應
+              var $html = $(response);
+
+              // 遍歷 HTML 表格中的會員信息
+              $html.find("tbody tr").each(function () {
+                var $row = $(this);
+                var memberId = $row.find("td").eq(0).text().trim(); // 會員編號
+                var memberName = $row.find("td").eq(1).text().trim(); // 會員姓名
+                if (memberId && memberName) {
+                  $memNo.append(
+                    '<option value="' +
+                      memberId +
+                      '">' +
+                      memberName +
+                      "</option>"
+                  );
+                }
+              });
+
+              // 初始化 Select2 插件
+              $memNo.select2({
+                placeholder: "選擇會員",
+                allowClear: true,
+              });
+            },
+            error: function (xhr, status, error) {
+              console.error("取會員失敗:", status, error);
+            },
+          });
+        }
+        // 載入會員數據
+        loadMemberData();
+
+        ///////////////////////////////////////////////////
+
+        // 查單一會員飲食紀錄
+        $("#userSelectForm").on("submit", function (e) {
+          e.preventDefault();
+          var memNo = $("#memNo").val();
+          if (memNo) {
+            loadDietRecords(memNo);
+          } else {
+            alert("請選擇一個會員");
+          }
+        });
+
+        // 查所有會員飲食紀錄
+        $("#viewAllRecords").on("click", function (e) {
+          e.preventDefault();
+          loadDietRecords();
+        });
+
+        function loadDietRecords(memberId) {
+          var url = memberId
+            ? "/workout/admin/foodMenu/getMenuByMember?memNo=" + memberId
+            : "/workout/admin/foodMenu/allMenus";
+
+          window.location.href = url;
+        }
+      });
+    </script>
+  </body>
+</html>

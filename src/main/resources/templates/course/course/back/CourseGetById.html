@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	<title>課程資料</title>
+	<link rel="stylesheet" th:href="@{/css/course/CoursePage.css}">
+  	<link rel="stylesheet" th:href="@{/css/schedule/SchedulePage.css}">	
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.min.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  
+  	<th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+</head>
+<body>
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      <!-- Layout container -->
+      <nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+      <div class="layout-page">
+        <!-- Content wrapper -->
+        <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+        <div class="content-wrapper">
+
+
+	<div class="coursePageContainer">	
+		  <h2>課程資料</h2>		
+			<div class="btn-like position-absolute top-0 start-50">
+			  <div class="row">
+			  	<!-- <a th:href="@{/course/CourseUpdate(courseId=${course.courseId})}" class="link-btn1">修改資料</a> -->
+				<a th:href="@{../course/CourseGetAll}" class="col">查詢課程</a>
+				<a href="javascript:history.go(-1)" class="col">回上一頁</a>
+			  </div>
+			</div>			
+		<div class="courseProfile">
+		    <div class="courseInfo">
+		        <div class="hidden-data" th:attr="data-courseId=${course.courseId}" id="iniCourseId" hidden></div>
+		        <div class="info-item">課程編號: <span th:text="${course.courseId}"></span></div>
+		        <div class="info-item">課程名稱: <span th:text="${course.courseName}"></span></div>
+		        <div class="info-item">課程類型: <span th:text="${course.courseType}"></span></div>
+		        <div class="info-item">課程價格: <span th:text="${course.coursePrice}"></span></div>
+		        <div class="info-item">日期: <span th:text="${course.courseStartDate}"></span>~<span th:text="${course.courseEndDate}"></span></div>
+		        <div class="info-item">課程狀態: <span th:text="${course.courseStatus}"></span></div>
+		        <div class="info-item">課程資料: <span th:text="${course.courseProfile}"></span></div>
+		        <div class="info-item">教練編號: <span th:text="${course.coachId}"></span> 教練姓名: <a th:href="@{../coach/CoachGetById(coachId=${course.coachId})}"><span th:text="${course.coach.coachName}"></span></a></div>
+		        <!-- <div class="info-item">課表顯示: <a th:href="@{/schedule/ScheduleShowByCourseId(courseId=${course.courseId})}">點我</a></div> -->
+		        <!-- <div class="info-item">課表資料: <a th:href="@{/schedule/ScheduleGetByCourseId(courseId=${course.courseId})}">點我</a></div> -->
+		    </div>
+		</div>
+		<a href="#" class="scheduleGetShow">課表增刪</a>		
+		<div class="scheduleShow">
+			<table class="scheduleTable">
+				<thead>
+						<tr>
+								<th>時間\日期</th>
+								<th>星期一</th>
+								<th>星期二</th>
+								<th>星期三</th>
+								<th>星期四</th>
+								<th>星期五</th>
+								<th>星期六</th>
+								<th>星期日</th>
+						</tr>
+				</thead>
+				<tbody id="scheduleTableBody"></tbody>
+			</table>
+    </div>
+		<div class="scheduleTableContainer" style="display: none;">
+		<form method="post" action="#" class="insertForm">
+			<table class="scheduleTable">
+				<thead>
+						<tr><th>課表編號</th><th>課程編號</th><th>課程名稱</th><th>星期</th><th>時間</th><th>刪除</th></tr>
+				</thead>
+				<tbody id="scheduleTableBody2"></tbody>
+				<tr>
+					<td>&nbsp;</td>
+					<td><input type="text" id="courseId" name="courseId" th:value="${course.courseId}" readonly ></td>
+					<td><input type="text" id="courseName" name="courseName" th:value="${course.courseName}" readonly ></td>
+					<td>
+							<select id="weekday" name="weekday" required>
+								<option value="">請選擇</option>
+								<option value="Monday">Monday</option>
+								<option value="Tuesday">Tuesday</option>
+								<option value="Wednesday">Wednesday</option>
+								<option value="Thursday">Thursday</option>
+								<option value="Friday">Friday</option>
+								<option value="Saturday">Saturday</option>
+								<option value="Sunday">Sunday</option>
+							</select>
+					</td>
+					<td>
+							<select id="daytime" name="daytime" required>
+								<option value="">請選擇</option>
+								<option value="Morning">Morning</option>
+								<option value="Afternoon">Afternoon</option>
+								<option value="Evening">Evening</option>
+								<option value="Night">Night</option>
+							</select>
+					</td>
+					<td><input type="submit" value="新增" class="insertBtn"></td>
+				</tr>
+			</table>
+		</form>
+		</div>      
+	</div>
+	
+	
+        <!-- Content wrapper -->
+        </div>
+      </div>
+    </div>
+    <div class="layout-overlay layout-menu-toggle"></div>
+  </div>
+  <th:block th:replace="~{back/NavBar :: js}"></th:block>
+  <script th:src="@{/js/lib/dashboards-analytics.js}"></script>		
+  <!-- Page JS -->	
+	
+	
+  	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>	
+	<script>
+		const iniCourseId = document.getElementById('iniCourseId').getAttribute('data-courseId');
+		const scheduleFindUrl = `../schedule/api/ScheduleFindByCourseId?courseId=${iniCourseId}`;
+		var scheduleTableContainer = document.querySelector('.scheduleTableContainer');
+		var scheduleTableBody = document.getElementById('scheduleTableBody2');
+		window.onload = function() {scheduleShow();};
+		document.querySelector(".scheduleGetShow").addEventListener('click', async e => {
+			e.preventDefault();
+			await scheduleData();
+			scheduleGet();
+			async function scheduleGet(){
+				await scheduleData();
+				var scheduleTableContainerTemp = scheduleTableContainer.cloneNode(true);
+				scheduleTableContainerTemp.style.display = 'block';
+				Swal.fire({
+					html: scheduleTableContainerTemp,
+					showCloseButton: true,
+					showConfirmButton: false,
+				    customClass: {popup: 'swal-class'},
+					didOpen: () => {
+						scheduleTableContainerTemp.querySelector(".insertForm").addEventListener('submit', e2=>{
+							e2.preventDefault();
+							var insertForm = scheduleTableContainerTemp.querySelector(".insertForm");
+							const formData = new FormData(insertForm);
+							const courseId = formData.get('courseId');
+							const weekday = formData.get('weekday');
+							const daytime = formData.get('daytime');
+							axios.post('../schedule/api/ScheduleInsert',formData,{headers:{'Content-Type':'multipart/form-data'}})
+							.then(async res => {
+								if(res.data === 1){
+									showAlertForGet('新增成功!!','success',() => {})
+									scheduleShow();
+								}else{
+									showAlertForGet('新增失敗!!輸入重複時間!!','error',() => {})
+								}
+							}).catch(err => {console.error(err);})
+						})
+						scheduleTableContainerTemp.addEventListener('click',async e=>{
+							if (e.target.classList.contains('deleteBtn')) {
+								e.preventDefault();
+								showAlertForGet('確定要刪除嗎？','warning', () => {
+									const scheduleId = e.target.getAttribute('data-id');
+									const deleteurl = `../schedule/api/ScheduleDelete?scheduleId=${scheduleId}`;
+									axios.get(deleteurl)
+									.then(res => {
+										showAlertForGet('資料已成功刪除。','success',()=>{})
+										scheduleShow();
+									})
+									.catch(err => {console.error(err);})
+								})
+							}
+						})
+					}
+				});
+			}
+			function showAlertForGet(title, icon, callback) {
+					Swal.fire({
+						title: title,
+						icon: icon,
+						willClose : ()=>{scheduleGet();},
+						showCancelButton: icon === 'warning' ? true : false,
+						cancelButtonText: '取消',
+						cancelButtonColor: '#d33',
+						confirmButtonText: '確定',
+						confirmButtonColor: '#3085d6',
+					}).then((result) => {
+						if (result.isConfirmed) {callback();}
+					});
+			}
+		});
+		async function scheduleData() {
+			try {
+				const res = await axios.get(scheduleFindUrl);
+				const schedules = res.data;
+				scheduleTableBody.innerHTML = '';
+				schedules.forEach(schedule => {
+					const row = document.createElement("tr");
+					row.innerHTML += `
+						<td>${schedule.scheduleId}</td>
+						<td>${schedule.courseId}</td>
+						<td>${schedule.course.courseName}</td>
+						<td>${schedule.weekday}</td>
+						<td>${schedule.daytime}</td>
+						<td><a href="#" class="deleteBtn" data-id="${schedule.scheduleId}">刪除</a></td>
+					`;
+					scheduleTableBody.appendChild(row);
+				});
+			} catch (err) {console.error(err);}
+		}
+		function scheduleShow(){
+			axios.get(scheduleFindUrl)
+			.then(res => {
+					const schedules = res.data;
+					const daytimes = ["Morning (6:00 AM - 12:00 PM)", "Afternoon (12:00 PM - 6:00 PM)", "Evening (6:00 PM - 10:00 PM)", "Night (10:00 PM - 6:00 AM)"];
+					const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+					const scheduleTableBody = document.getElementById("scheduleTableBody");
+					scheduleTableBody.innerHTML = "";
+					daytimes.forEach(daytime => {
+							const row = document.createElement("tr");
+							const broadside = document.createElement("td");
+							broadside.innerHTML = `<b>${daytime}</b>`;
+							row.appendChild(broadside);
+							weekdays.forEach(weekday => {
+									const rowdata = document.createElement("td");
+									let courseName = "";
+									let courseId = 0;
+									for (const schedule of schedules) {
+											if (schedule.weekday === weekday && schedule.daytime === daytime.split(" ")[0]) {
+													courseName = schedule.course.courseName;
+													courseId = schedule.courseId;
+													break;
+											}
+									}
+									if (courseName) {
+											const courseNameDiv = document.createElement("div");
+											courseNameDiv.innerHTML = `${courseName}`;
+											rowdata.appendChild(courseNameDiv);
+									} else {
+											rowdata.innerHTML = "&nbsp;";
+									}
+									row.appendChild(rowdata);
+							});
+							scheduleTableBody.appendChild(row);
+					});
+			})
+			.catch(err => {console.error(err);})
+		}
+		function showAlert(title, icon, callback) {
+			Swal.fire({
+				title: title,
+				icon: icon,
+				showCancelButton: icon === 'warning' ? true : false,
+				cancelButtonText: '取消',
+				cancelButtonColor: '#d33',
+				confirmButtonText: '確定',
+				confirmButtonColor: '#3085d6',
+			}).then((result) => {
+				if (result.isConfirmed) {
+					callback();
+				}
+			});
+		}
+
+</script>
+</body>
+</html>

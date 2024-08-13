@@ -1,0 +1,134 @@
+.calorie-calculator {
+    background-color: #202020;
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+/*熱量計算機表 & 菜單明細表*/
+.calorie-card {
+    background-color: #2a2a2a;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: medium;
+}
+
+/*熱量計算機*/
+.calorie-card-header {
+    background-color: var(--workout-theme-color);
+    border-bottom: none;
+    border-radius: 15px 15px 0 0;
+}
+
+/*食品名稱 & 重量(克)*/
+.calorie-label {
+    padding-left: 8px;
+}
+
+/*增加食品按鈕*/
+.calorie-btn {
+    background-color: #198754;
+    border: none;
+}
+
+/*增加食品按鈕 hover*/
+.calorie-btn:hover {
+    border: 3px solid !important;
+    color: #198754 !important;
+}
+
+/*選擇食物名稱*/
+.calorie-select2 .select2-selection--single {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+}
+
+/*選擇食物名稱 - 被選到的食物*/
+.calorie-select2 .select2-results__option--highlighted[aria-selected] {
+    background-color: #007bff;
+}
+
+/*食品選項*/
+.select2-selection__rendered {
+    color: #ddd !important;
+}
+
+/*食品選項背景*/
+.select2-dropdown {
+    background-color: #2a2a2a;
+}
+
+/*重量輸入*/
+.calorie-weightInput {
+    background-color: #2a2a2a !important;
+    border: 1px solid #3a3a3a;
+    color: #ddd !important;
+}
+
+/*菜單明細表*/
+.calorie-body {
+    background-color: #2a2a2a;
+}
+
+/*菜單明細 - 表頭*/
+.calorie-table {
+    color: #ffffff;
+}
+
+/*菜單明細 - 內容*/
+.foodDetailsBody td {
+    color: #ddd !important;
+    background-color: #2a2a2a;
+}
+
+/*菜單明細 - 重量更改*/
+.weightInput-Details {
+    background-color: #2a2a2a !important;
+    border: 1px solid #fff;
+    color: #ddd !important;
+}
+
+.food-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.food-btn-confirm {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.food-btn-confirm:hover {
+    background-color: #45a049;
+}
+
+.food-btn-cancel {
+    background-color: #f44336;
+    color: white;
+}
+
+.food-btn-cancel:hover {
+    background-color: #da190b;
+}
+
+.food-edit-input {
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/*生成菜單按鈕*/
+.food-action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+/*生成菜單按鈕 - hover*/
+.addFoodMenu-btn:hover {
+    border: 3px solid;
+}

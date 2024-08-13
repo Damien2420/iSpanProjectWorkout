@@ -1,0 +1,226 @@
+/* 課程頁面容器 */
+.coursePageContainer {
+    position: relative;
+    width: 100%;
+    margin: 20px auto;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+}
+/* 課程表格 */
+.courseTable {
+    text-align: center;
+    border: 1px solid black;
+    width: 80%;
+    margin: 10px auto;
+    border-collapse: collapse;
+	tr,th,td {
+	    border: 1px solid black;
+	    padding: 8px;
+	}
+	th {
+	    background-color: #141414;
+	    color: #ffffff;
+	}
+	tr:nth-child(odd) {
+	    background-color: #e1ebf7;
+	}
+	tr:nth-child(even) {
+	    background-color: #cadbf0;
+	}
+	tr:hover {
+	    background-color: #b0d3f7;
+	}
+	/* 文字連結顏色 */
+	a {
+		color:#3270BA;
+		text-decoration: none;
+	}
+	a:hover {
+		color:#1b3c63;	
+	}
+}
+/* 分頁按鈕 */
+#pgbtn button {
+    background-color: #3270BA;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    margin: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 10px;
+}
+/* 課程功能按鈕區域 */
+.courseFunctionRow {
+    justify-content: space-between;
+    text-align: center;
+    width: 80%;
+    margin: 10px auto;
+    display: flex;
+    align-items: center;
+	input[type="text"]{
+	    display: inline-block;
+	    padding: 4px 4px;
+	    border: 2px solid #c6c6c6;
+	    border-radius: 4px;	
+	    cursor: pointer;
+	    text-decoration: none;
+	}
+}
+/* 功能按鈕 */
+#newcoursebtn,input[type="submit"],.btn-like a,.QuickInput{
+    display: inline-block;
+    padding: 5px 5px;
+    background-color: #416c9e;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+/* 功能按鈕2 */
+.btn-like2 a{
+    display: inline-block;
+    padding: 5px 5px;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    color: #3270BA;
+    text-decoration: none;
+}
+/* 主題按鈕位置 */
+.btn-like{
+	margin: 0 0 0 120px;
+	a{
+		margin: 0 20px 0 0;	
+	}
+}
+/* swal-class */
+.swal-class {
+    width:50%!important;
+}
+.form-container {
+	position: relative;
+	margin: 0 auto;
+    padding: 20px;
+	.form-field {
+	    margin-bottom: 15px;
+	    label {
+		    display: block;
+		    margin-bottom: 5px;
+		    font-weight: bold;
+		}
+		input[type="text"],input[type="file"] {
+			text-align:center;
+		    width: calc(100% - 20px);
+		    padding: 8px;
+		    border: 1px solid #ddd;
+		    border-radius: 4px;
+		}
+	}   
+}
+/* 課程單筆頁面 */
+.courseProfile {
+    width: 80%;
+    margin: 20px auto;
+    padding: 20px 0 20px 100px ;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align:left;
+	.courseInfo {
+	    display: flex;
+	    flex-direction: column;
+	    gap: 10px;
+	}
+	.info-item {
+    padding: 10px;
+		span {
+		    font-weight: normal;
+		}
+	}
+	a {
+		color:#3270BA;
+		text-decoration: none;
+	}
+	a:hover {
+		color:#1b3c63;	
+	}
+}
+.scheduleGetShow{
+	color:#3270BA;
+	text-decoration: none;
+}
+/* CourseFront */
+
+#courseList {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	justify-content: center;
+	.course-item {	
+		border-radius: 4px;
+		border-top: 3px solid #F5672B;
+		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		padding: 20px;
+		width: 300px;
+		transition: transform 0.3s ease;
+		background-color: #343641;
+	}
+	.course-item:hover {
+	  	transform: translateY(-5px);
+	}
+	.course-name {	
+	    font-weight: 900;
+		color: #FFBC42;
+		margin-top: 0;
+	}
+	.course-details{
+		font-weight: 900;
+		.course-details-courseType{
+		  	color: #F5672B;
+		}
+		.course-details-coursePrice{
+		  	color: #598fd2;
+		}
+	}
+}
+
+#courseTypeSelect {
+    appearance: none; /* 移除默認的下拉箭頭 */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #343641; /* 淺灰色背景 */
+    border: 2px solid #292c34; /* 邊框顏色 */
+    border-radius: 6px; /* 圓角 */
+    padding: 10px 35px 10px 15px; /* 內邊距 */
+    font-size: 24px; /* 字體大小 */
+    color: #F5672B; /* 文字顏色 */
+    cursor: pointer; /* 鼠標樣式 */
+    width: 100%; /* 寬度，可以根據需要調整 */
+    max-width: 300px; /* 最大寬度 */
+    transition: all 0.3s ease; /* 過渡效果 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23495057' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 15px) center; /* 右側箭頭位置 */
+}
+#courseTypeSelect:focus {
+    outline: none;
+    border-color: #80bdff; /* 聚焦時邊框顏色 */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* 聚焦時陰影效果 */
+}
+/* 設置選項樣式 */
+#courseTypeSelect option {
+    background-color: #343641;
+    color: #F5672B;
+    padding: 10px;
+}
+
+
+

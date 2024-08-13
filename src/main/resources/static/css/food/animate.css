@@ -1,0 +1,9 @@
+/* 更新&刪除 按鈕動畫 */
+.Idelete i, .Iupdate i {
+    transition: transform 0.3s ease;
+}
+/* 移動過去變大 */
+.Idelete:hover i, .Iupdate:hover i {
+    transform: scale(1.2);
+    color: inherit;
+}

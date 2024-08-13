@@ -1,0 +1,197 @@
+.title {
+	color: #0a0a0a;
+	text-align: center;
+	width: 400px;
+	margin-top: 20px;
+	margin-bottom: 0;
+	font-size: 36px;
+	padding-bottom: 25px;
+}
+
+.main-form,
+.queue {
+	box-sizing: border-box;
+	background-color: lightgray;
+	border-radius: 10px;
+}
+
+.main-form .row {
+	align-items: center;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.msg span,
+.filepond-msg {
+	color: #DC143C;
+}
+
+.label {
+	text-align: right;
+	font-weight: 600;
+}
+
+.label label span {
+	color: #DC143C;
+	margin-right: 5px;
+}
+
+input,
+textarea,
+select {
+	border: none;
+	border-radius: 10px;
+}
+
+.main-form input[type="number"],
+.main-form input[type="text"] {
+	padding: 5px 10px;
+	width: 100%;
+}
+
+select {
+	text-align: center;
+}
+
+textarea {
+	resize: none;
+	overflow: auto;
+	height: 80px;
+	padding: 10px;
+	width: 100%;
+}
+
+.func{
+	padding: 5px 20px;
+	font-weight: 600;
+	font-size: 18px;
+	cursor: pointer;
+	border: none;
+	border-radius: 10px;
+	transition: color 0.3s ease-in-out;	
+}
+
+.func:hover {
+	color: #fff;
+}
+
+.insert {
+	background-color: #13AE85;
+}
+
+.reset {
+	background-color: #fb1846;
+}
+
+.upload {
+	background-color: #3270BA;
+}
+
+.addcate {
+	background-color: #a751cc;
+	margin-left: 10px;
+}
+
+.main-menu {
+	background-color: #f36100;
+}
+
+#queue-hr {
+	color: #0a0a0a;
+}
+
+.filepond--root {
+	max-height: 400px;
+}
+
+.filepond--drop-label,
+.filepond--drop-label.filepond--drop-label label {
+	cursor: pointer;
+}
+
+.filepond--label-action {
+    text-decoration: none;
+	color: #566A7F;
+	align-items: center;
+	height: 100%;
+	text-align: center;
+}
+
+.filepond-container {
+	position: relative;
+	transition: all 0.15s ease-in-out;
+}
+
+.filepond-padding {
+	padding-top: 40px;
+}
+
+.filepond--warning {
+	background-color: #f7bdbd;
+    position: absolute;
+    top: -15%;
+    left: 6%;
+    padding: 7px 20px;
+    border-radius: 20px;
+    transform: translateY(1em) translateX(0%);
+    opacity: 0;
+    transition: opacity .15s ease-out, transform .5s ease-out;
+}
+
+.item-container .item .col {
+	padding: 10px 25px;
+}
+
+.item {
+	margin: 10px auto;
+}
+
+.item .col img,
+.name {
+	margin-right: 20px;
+}
+
+.item .col img {
+	width: 50px;
+	height: 50px;
+	border-radius: 10px;
+}
+
+.name {
+	font-weight: 600;
+	font-size: 20px;
+	max-width: 115px;
+	min-width: 115px;
+	text-align: center;
+}
+
+.value {
+	margin-left: 6px;
+}
+
+.remove {
+	position: absolute;
+	right: 3%;
+}
+
+.remove button {
+	border: none;
+	background-color: transparent;
+	font-size: 20px;
+}
+
+.remove button i {
+	transition: color 0.3s ease-in-out;
+}
+
+.remove:hover i {
+	color: #fb1846;
+}
+
+.save-all {
+	background-color: #3497e8;
+}
+
+.one-click {
+	background-color: #FFBC42;
+}

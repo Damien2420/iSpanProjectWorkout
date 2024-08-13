@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	<title>會員中心 - 選課紀錄</title>
+	<link rel="stylesheet" th:href="@{/css/schedule/SchedulePage.css}">	
+	<link rel="stylesheet" th:href="@{/css/course/CoursePage.css}">
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">	
+	<link rel="stylesheet" th:href="@{/css/memberAdm/profile_style.css}">
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.min.css">
+</head>
+<body id="home" class="page-courseRegisteration">
+	<div th:attr="data-memberId=${member.memNo}" id="iniMemberId" hidden></div>
+	<div th:attr="data-memberName=${member.memName}" id="iniMemberName" hidden></div>	
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<!-- =============== HEADER-TITLE =============== -->
+	<section class="s-header-title" style="background-image: url(../../images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title fw-bold">會員中心</h1>
+			<ul class="breadcrambs">
+				<li><a th:href="@{/home}">Home</a></li>
+				<li>會員中心</li>
+			</ul>
+		</div>
+	</section>
+	<!-- ============= HEADER-TITLE END ============= -->
+	<div class="profile-container">
+    <th:block th:replace="~{memberAdm/profile :: profile-sidebar}"></th:block>
+		<div class="RegistrationTableContainer coursePageContainer">
+			<h2>選課記錄</h2>
+			
+			<div class="row my-3 d-flex justify-content-center align-items-center flex-row gap-3">
+	            <div class="col-3">
+	                <a th:href="@{/schedule/front/SchedulePreSelection}" class="btn">課程預選</a>
+	            </div>
+	            <div class="col-3">
+	                <a th:href="@{/schedule/front/ScheduleShowByMemberId}" class="btn">我的課表</a>
+	            </div>
+	        </div>
+			
+			<table class="RegistrationTable scheduleTableFront">
+				<thead>
+					<tr><th>課程編號<th>課程名稱<th>審核狀態<th>取消選課</tr>
+				</thead>
+				<tbody id="RegistrationBody">
+				</tbody>
+			</table>
+	
+			<div class="coursePrice"></div>
+	
+		</div>
+	</div>
+	<footer th:replace="~{front/Layout :: footer}"></footer>    
+	
+  	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>	
+	<script>
+		const memberId = document.getElementById('iniMemberId').getAttribute('data-memberId');
+		const urlCourseRegistrationGetAll = 'api/CourseRegistrationGetByMemberId';
+		let TotalCoursePriceTemp = 0 ;
+		let TotalCoursePrice = 0;
+		window.onload = async function() { await onLoadData() };
+		async function onLoadData() {
+			TotalCoursePriceTemp = 0,TotalCoursePrice = 0;
+			await axios.get('api/CourseRegistrationGetByMemberId',{params: {memberId: memberId}})
+			.then(res => {
+				const CourseRegistrations = res.data;
+				var RegistrationBody = document.querySelector('#RegistrationBody');
+				RegistrationBody.innerHTML = " ";
+				CourseRegistrations.forEach(courseRegistration => {
+					let statusClass = '';
+					if (courseRegistration.registerStatus === '待審核') {statusClass = 'text-secondary';} 
+					else if (courseRegistration.registerStatus === '駁回') {statusClass = 'text-danger';}
+					else if (courseRegistration.registerStatus === '通過') {
+						TotalCoursePrice += courseRegistration.course.coursePrice;
+						statusClass = 'text-success';}
+					RegistrationBody.innerHTML +=  `
+						<tr>
+							<td>${courseRegistration.courseId}</td>
+							<td>${courseRegistration.course.courseName}</td>
+							<td><span class="${statusClass}">${courseRegistration.registerStatus}<span></td>
+							<td><a href="#" class="deleteBtn" data-id="${courseRegistration.registerID}">取消</a></td>
+						</tr>`;
+					TotalCoursePriceTemp += courseRegistration.course.coursePrice;
+				});
+				document.querySelectorAll('.deleteBtn').forEach(button => {
+					button.addEventListener('click', e => {
+						e.preventDefault();
+						Swal.fire({
+							title: '確定要取消嗎？',
+							icon: 'warning',
+							showCancelButton: true,
+							cancelButtonText: '關閉',
+							cancelButtonColor: '#d33',
+							confirmButtonText: '確定取消',
+							confirmButtonColor: '#3085d6',
+						}).then((result) => {
+							if (result.isConfirmed) {
+								const registerID = e.target.getAttribute('data-id');
+
+								axios.get('api/CourseRegistrationCheck',{params:{registerID:registerID,registerStatus:'取消'}})
+								.then(res => {
+									showAlert('資料進入取消狀態。', 'success', () => { onLoadData(); });
+								})								
+							}
+						});
+					});
+				});
+			}).catch(err => {console.error(err);})
+			document.querySelector(".coursePrice").innerHTML = `全部金額:${TotalCoursePriceTemp},通過金額:${TotalCoursePrice}`;
+		}
+		function showAlert(title, icon, callback) {
+			Swal.fire({
+				title: title,
+				icon: icon,
+				willClose:()=>{callback();},
+				confirmButtonText: '確定',
+				confirmButtonColor: '#3085d6',
+			});
+		}
+
+	</script>
+</body>
+</html>

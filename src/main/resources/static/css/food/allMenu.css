@@ -1,0 +1,35 @@
+.user-diet-records {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card-title {
+  color: #3a3a3a;
+  font-weight: 700;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.select2-container .select2-selection--single {
+  height: 38px;
+  border-color: #ced4da;
+  border-radius: 20px;
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__rendered {
+  line-height: 38px;
+  padding-left: 15px;
+}
+
+.select2-container--default
+  .select2-selection--single
+  .select2-selection__arrow {
+  height: 38px;
+  right: 10px;
+}
+

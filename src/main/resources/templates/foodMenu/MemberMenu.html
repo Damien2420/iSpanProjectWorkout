@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>個人飲食紀錄</title>
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/css/bootstrap/bootstrap.min.css}" rel="stylesheet" />
+    <!-- Select2 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <!-- FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link th:href="@{/css/front/fontawesome.css}" rel="stylesheet" />
+    <!-- DataTables CSS -->
+    <link
+      href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <th:block th:replace="~{front/Layout :: css}"></th:block>
+    <link th:href="@{/css/food/memberMenu.css}" rel="stylesheet" />
+  </head>
+
+  <body>
+    <th:block th:replace="~{front/Layout :: header}"></th:block>
+    <!-- =============== HEADER-TITLE =============== -->
+    <section
+      class="s-header-title"
+      th:style="'background-image: url(' + @{/images/front/bg-1-min.png} + ');'"
+    >
+      <div class="container">
+        <h1 class="title fw-bold">飲食紀錄</h1>
+        <ul class="breadcrambs">
+          <li><a th:href="@{/home}">Home</a></li>
+          <li>飲食紀錄</li>
+        </ul>
+      </div>
+    </section>
+    <!-- ============= HEADER-TITLE END ============= -->
+
+    <div class="user-diet-records dark-theme-datatable">
+      <!-- <th:block th:replace="~{memberAdm/profile :: profile-sidebar}"></th:block> -->
+
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <h2 class="text-center mb-4 pt-4">
+            <i class="fas fa-utensils me-2"></i>飲食紀錄
+          </h2>
+
+          <div class="mb-3 shadow-sm">
+            <table
+              id="menuTable"
+              class="table table-striped table-bordered"
+              style="table-layout: fixed; width: 100%"
+            >
+              <thead class="table-light">
+                <tr>
+                  <th>會員名稱</th>
+                  <th>建立時間</th>
+                  <th>操作</th>
+                  <th>詳細信息</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="menu, iterStat : ${menus}">
+                  <td>
+                    <i class="fas fa-user-circle me-2"></i>
+                    <span th:text="${menu.memberName}"></span>
+                  </td>
+                  <td>
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    <span th:text="${menu.createdTime}"></span>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-primary"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      th:data-bs-target="'#collapse' + ${iterStat.index}"
+                      aria-expanded="false"
+                      th:aria-controls="'collapse' + ${iterStat.index}"
+                    >
+                      查看詳細
+                    </button>
+                  </td>
+                  <td>
+                    <div
+                      th:id="'collapse' + ${iterStat.index}"
+                      class="collapse"
+                      th:aria-labelledby="'heading' + ${iterStat.index}"
+                    >
+                      <div class="">
+                        <div class="table-responsive">
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th>食物名稱</th>
+                                <th>食物重量</th>
+                                <th>當前熱量</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr th:each="detail : ${menu.details}">
+                                <td th:text="${detail.foodName}"></td>
+                                <td th:text="${detail.foodWeight}"></td>
+                                <td th:text="${detail.currentCalories}"></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <div class="text-end mt-3">
+                          <h4 class="fw-bold">
+                            <i class="fas fa-calculator me-2"></i>總熱量:
+                            <span
+                              th:text="${menu.totalCalories}"
+                              class="text-danger"
+                            ></span>
+                          </h4>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer th:replace="~{front/Layout :: footer}"></footer>
+    <!-- jQuery -->
+    <script th:src="@{/js/lib/jquery-3.7.1.js}"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script th:src="@{/js/bootstrap/bootstrap.bundle.min.js}"></script>
+    <!-- Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <!-- axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+    <script>
+      // $(document).ready(function () {
+      //   $("#menuTable").DataTable();
+      // });
+
+      $(document).ready(function () {
+        $("#menuTable").DataTable({
+          pageLength: 10,
+          lengthMenu: [
+            [10, 25, 50, -1],
+            [10, 25, 50, "All"],
+          ],
+          language: {
+            lengthMenu: "顯示 _MENU_ 條記錄",
+            zeroRecords: "沒有找到記錄",
+            info: "第 _PAGE_ 頁 ( 總共 _PAGES_ 頁 )",
+            infoEmpty: "無記錄",
+            infoFiltered: "(從 _MAX_ 條記錄過濾)",
+            search: "搜索:",
+            paginate: {
+              first: "首頁",
+              last: "尾頁",
+              next: "下一頁",
+              previous: "上一頁",
+            },
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

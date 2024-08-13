@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+	<meta charset="UTF-8">
+	<title>商品管理系統 - 商品後台列表</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/products/management/AllProducts.css}">
+	<link rel="stylesheet" th:href="@{/css/products/management/Table.css}">
+	<link rel="stylesheet" th:href="@{/css/products/management/ui-checkbox.css}">
+	<link rel="stylesheet" th:href="@{/css/order/PageButtons.css}">
+	<th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+</head>
+
+<body>
+	<div class="layout-wrapper layout-content-navbar">
+		<div class="layout-container">
+			<nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+			<div class="layout-page">
+				<header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+				<div class="content-wrapper">
+					<div class="container-xxl flex-grow-1 container-p-y">
+						<div class="row justify-content-center">
+							<div class="col">
+								<h1 class="text-center fw-bolder">商品列表</h1>
+								<hr>
+							</div>
+						</div>
+						<div class="row d-flex justify-content-center">
+							<div class="buttons d-flex justify-content-center flex-row">
+								<div class="col d-flex justify-content-center align-items-center">
+									<a th:href="@{/admin/products/searchAllCategory}">
+										<button class="functionBtn add"><i class="fa-solid fa-circle-plus"></i>
+											新增商品</button>
+									</a>
+								</div>
+								<div class="col d-flex justify-content-center align-items-center">
+									<a th:href="@{/admin/products/searchPage}">
+										<button class="functionBtn query"><i class="fa-solid fa-magnifying-glass"></i>
+											查詢商品資料</button>
+									</a>
+								</div>
+								<div class="col d-flex justify-content-center align-items-center">
+									<button class="functionBtn delete"><i class="fa-solid fa-trash-can"></i>
+										刪除資料</button>
+								</div>
+							</div>
+						</div>
+						<div class="table-container">
+							<form method="post" class="delete-form">
+								<table>
+									<thead>
+										<tr>
+											<td>商品編號</td>
+											<td>商品類別</td>
+											<td>商品名稱</td>
+											<td>價格</td>
+											<td>庫存</td>
+											<td>新增日期</td>
+											<td>上架狀態</td>
+											<td>修改資料</td>
+											<td class="delete-column delete-title">刪除</td>
+										</tr>
+									</thead>
+									<tbody>
+										<th:block th:each="product : ${allProducts.content}">
+											<tr>
+												<td><a th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${product.productID}]]</a></td>
+												<td><a th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${product.productCategory.categoryName}]]</a></td>
+												<td><a th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${product.productName}]]</a></td>
+												<td><a th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${product.price}]]</a></td>
+												<td><a th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${product.stock}]]</a></td>
+												<td><a th:href="@{/admin/products/fullDetail?(productID=${product.productID})}">[[${#temporals.format(product.addedDate,
+													'yyyy年MM月dd日')}]]</a></td>
+												<td class="launch-status">
+													<label class="switch">
+														<input type="checkbox" th:checked="${product.launchStatus}">
+														<span class="slider"></span>
+													</label>
+												</td>
+												<td>
+													<a th:href="@{/admin/products/updateInfo?(productID=${product.productID})}" id="modified">
+														<i class="fa-solid fa-wrench"></i>
+													</a>
+												</td>
+												<td class="delete-column">
+													<input type="checkbox" class="ui-checkbox" name="delete" id="delete-checkbox" th:value="${product.productID}">
+												</td>
+											</tr>
+										</th:block>
+									</tbody>
+								</table>
+							</form>
+							<div class="totalmsg">總共有<span id="elements">[[${allProducts.totalElements}]]</span>筆商品資料，共<span id="pages">[[${allProducts.totalPages}]]</span>頁</div>
+							<div class="row d-flex justify-content-center">
+								<div class="col-4">
+									<div class="page-buttons-container d-flex align-items-center justify-content-center">
+										<button type="button" id="firstPage"><i
+												class="fa-solid fa-angles-left"></i></button>
+										<button type="button" id="previousPage"><i
+												class="fa-solid fa-angle-left"></i></button>
+										<div class="nums">
+											<th:block th:each="pageNumber : ${#numbers.sequence(1, allProducts.totalPages)}">
+												<button type="button" class="page-num"
+													th:classappend="${allProducts.Number + 1 == pageNumber} ? 'active' : ''">[[${pageNumber}]]</button>
+											</th:block>
+										</div>
+										<button type="button" id="nextPage"><i class="fa-solid fa-angle-right"></i></button>
+										<button type="button" id="lastPage"><i
+												class="fa-solid fa-angles-right"></i></button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<th:block th:replace="~{back/NavBar :: js}"></th:block>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+	<script th:src="@{/js/products/management/AllProducts.js}"></script>
+	<script th:src="@{/js/products/management/Table.js}"></script>
+	<script th:src="@{/js/products/management/DeleteAlert.js}"></script>
+	<script th:src="@{/js/axios/axios.min.js}"></script>
+</body>
+
+</html>

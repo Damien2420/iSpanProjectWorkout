@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	<title>課表資料</title>
+	<link rel="stylesheet" th:href="@{/css/schedule/SchedulePage.css}">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.min.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  
+  	<th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+</head>
+<body>
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      <!-- Layout container -->
+      <nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+      <div class="layout-page">
+        <!-- Content wrapper -->
+        <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+        <div class="content-wrapper">
+        
+
+	<div class="schedulePageContainer">
+			<h2>課程列表</h2>			
+			<div class="btn-like position-absolute top-0 start-50">
+			  <div class="row">
+			    <a th:href="@{../course/CourseGetAll}" class="col">查詢課程</a>
+				<a th:href="@{../schedule/ScheduleList}" class="col">周表視圖</a>	 
+			  </div>
+			</div>			
+			<div id="FindByTime" class="btn-like2">
+				<span>依照時間進行查詢</span>
+				<a href="#" class="CourseFindByPastDate">已結束課表</a>
+				<a href="#" class="CourseFindByCurrentDate">進行中課表</a>
+				<a href="#" class="CourseFindByFutureDate">預定中課表</a>
+				<a href="#" class="FindAll">完整資料</a>
+			</div>						
+			<form method="post" action="#">
+			    <table class="scheduleTable">
+				    <thead>
+				        <tr><th>課表編號</th><th>開始時間</th><th>課程編號</th><th>課程名稱</th><th>星期</th><th>時間</th><th>刪除</th></tr>
+				    </thead>
+        			<tbody id="scheduleTableBody">
+        			
+        			</tbody>
+			        <tr>
+			            <td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>
+								<select id="courseId" name="courseId" required>
+									<option value="" disabled selected hidden>請選擇</option>
+								</select>
+						</td>
+						<td>
+								<select id="courseName" name="courseName" required>
+									<option value="" disabled selected hidden>請選擇</option>
+								</select>
+						</td>
+			            <td>
+			                    <select id="weekday" name="weekday" required>
+			                        <option value="" disabled selected hidden>請選擇</option>
+						            <option value="Monday">Monday</option>
+						            <option value="Tuesday">Tuesday</option>
+						            <option value="Wednesday">Wednesday</option>
+						            <option value="Thursday">Thursday</option>
+						            <option value="Friday">Friday</option>
+						            <option value="Saturday">Saturday</option>
+						            <option value="Sunday">Sunday</option>
+						        </select>
+			            </td>
+			            <td>
+			                  <select id="daytime" name="daytime" required>
+								    		<option value="" disabled selected hidden>請選擇</option>
+						            <option value="Morning">Morning</option>
+						            <option value="Afternoon">Afternoon</option>
+						            <option value="Evening">Evening</option>
+						            <option value="Night">Night</option>
+						        </select>
+			            </td>
+			            <td><input type="submit" value="新增"></td>
+			        </tr>
+			    </table>
+			</form>
+	</div>
+
+
+        <!-- Content wrapper -->
+        </div>
+      </div>
+    </div>
+    <div class="layout-overlay layout-menu-toggle"></div>
+  </div>
+  <th:block th:replace="~{back/NavBar :: js}"></th:block>
+  <script th:src="@{/js/lib/dashboards-analytics.js}"></script>		
+  <!-- Page JS -->
+
+
+	
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>		
+	<script>
+		window.onload = function() {updatePgBtVisibility()};
+		const ScheduleFindAll = "api/ScheduleFindAll";
+		let pageStatus = 'getAll';
+		document.querySelector("form").addEventListener('submit', function(event) {
+			event.preventDefault();
+			const formData = new FormData(event.target);
+			const courseId = formData.get('courseId');
+			const courseName = formData.get('courseName');
+			const weekday = formData.get('weekday');
+			const daytime = formData.get('daytime');
+			axios.post('api/ScheduleInsert',null,{params:{
+				weekday:weekday,daytime:daytime,courseId:courseId
+			}}).then(res => {
+				if(res.data === 1){
+					showAlert('新增成功!!<br>課程編號:'+courseId+'<br>課程名稱:'+courseName,'success',() => {})
+					updatePgBtVisibility();
+				}else{
+					showAlert('新增失敗!!輸入重複時間!!','error',() => {})
+					updatePgBtVisibility();
+				}
+			}).catch(err => {console.error(err);})
+		});
+		document.addEventListener('DOMContentLoaded', function() {
+			const courseIdSelect = document.getElementById("courseId");
+			const courseNameSelect = document.getElementById("courseName");
+			courseIdSelect.addEventListener('change', function() {
+				let selectedCourseId = courseIdSelect.value;
+				axios.get(`../course/api/CourseFindById?courseId=${selectedCourseId}`)
+				.then(res => {
+					let course = res.data;
+					courseNameSelect.value = course.courseName;
+				}).catch(err => {console.error(err);})
+			});
+			courseNameSelect.addEventListener('change', function() {
+				let selectedCourseName = courseNameSelect.value;
+				axios.get(`../course/api/CourseFindByName?courseName=${selectedCourseName}`)
+				.then(res => {
+					let course = res.data;
+					courseIdSelect.value = course.courseId;
+				}).catch(err => {console.error(err);})
+			});
+		});
+		document.getElementById("scheduleTableBody").addEventListener('click',function(event){
+			if (event.target.classList.contains('deleteBtn')) {
+				event.preventDefault();
+				showAlert('確定要刪除嗎？','warning', () => {
+					const scheduleId = event.target.getAttribute('data-id');
+					const deleteurl = `api/ScheduleDelete?scheduleId=${scheduleId}`;
+					axios.get(deleteurl)
+					.then(res => {
+						showAlert('資料已成功刪除。','success',()=>{})
+						updatePgBtVisibility();
+					})
+					.catch(err => {
+						console.error(err); 
+					})
+				})
+			}
+		})
+		document.getElementById("FindByTime").addEventListener('click',e=>{
+			if (e.target.classList.contains("CourseFindByCurrentDate")) {
+				pageStatus = 'CurrentDate';
+				updatePgBtVisibility();
+			}
+			if (e.target.classList.contains("CourseFindByPastDate")) {
+				pageStatus = 'PastDate';
+				updatePgBtVisibility();				
+			}
+			if (e.target.classList.contains("CourseFindByFutureDate")) {
+				pageStatus = 'FutureDate';
+				updatePgBtVisibility();
+			}
+			if (e.target.classList.contains("FindAll")) {
+				pageStatus = 'getAll';
+				updatePgBtVisibility();
+			}
+		})
+		function onLoadData(url){
+			axios.get(url)
+			.then(res => {
+				const schedules = res.data;
+				const stb = document.getElementById("scheduleTableBody");
+				stb.innerHTML = "";
+				let uniqueCourseIds = new Set();
+				let uniqueCourseNames = new Set();
+				schedules.forEach(schedule => {
+					uniqueCourseIds.add(schedule.course.courseId)
+					uniqueCourseNames.add(schedule.course.courseName)
+					stb.innerHTML += `
+					<tr>
+						<td>${schedule.scheduleId}</td>	
+						<td>${schedule.course.courseStartDate}</td>	
+						<td>${schedule.courseId}</td>	
+						<td><a href="../course/CourseGetById?courseId=${schedule.courseId}">${schedule.course.courseName}</a></td>	
+						<td>${schedule.weekday}</td>	
+						<td>${schedule.daytime}</td>	
+						<td><a href="#" class="deleteBtn" data-id="${schedule.scheduleId}">刪除</a></td>
+					</tr>	
+					`
+				});
+				const uniqueCourseIdsArray = Array.from(uniqueCourseIds);
+				const uniqueCourseNamesArray = Array.from(uniqueCourseNames);
+				let courseIdSelect = document.getElementById("courseId");
+				courseIdSelect.innerHTML ='';
+				courseIdSelect.innerHTML += (`<option value="" disabled selected hidden>請選擇</option>`);
+				let courseNameSelect = document.getElementById("courseName");
+				courseNameSelect.innerHTML ='';
+				courseNameSelect.innerHTML += (`<option value="" disabled selected hidden>請選擇</option>`);
+				uniqueCourseIdsArray.forEach(courseId =>{
+					const courseIdOption = document.createElement('option');
+					courseIdOption.value = courseId;
+					courseIdOption.innerHTML = courseId;
+					courseIdSelect.appendChild(courseIdOption);
+				})
+				uniqueCourseNamesArray.forEach(courseName =>{
+					const courseNameOption = document.createElement('option');
+					courseNameOption.value = courseName;
+					courseNameOption.innerHTML = courseName;
+					courseNameSelect.appendChild(courseNameOption);
+				})
+			}).catch(err => {console.error(err);})
+		}
+		function updatePgBtVisibility() {
+			const currentDate = new Date().toISOString().split('T')[0];
+			if (pageStatus === 'getAll') {
+				onLoadData(ScheduleFindAll);
+			}else if (pageStatus === 'CurrentDate') {
+				onLoadData(`api/CourseFindByCurrentDate?currentDate=${currentDate}`)
+			}else if (pageStatus === 'PastDate') {
+				onLoadData(`api/CourseFindByPastDate?currentDate=${currentDate}`)
+			}else if (pageStatus === 'FutureDate') {
+				onLoadData(`api/CourseFindByFutureDate?currentDate=${currentDate}`)
+			}
+		}
+		function showAlert(title, icon, callback) {
+			Swal.fire({
+				title: title,
+				icon: icon,
+				showCancelButton: icon === 'warning' ? true : false,
+				cancelButtonText: '取消',
+				cancelButtonColor: '#d33',
+				confirmButtonText: '確定',
+				confirmButtonColor: '#3085d6',
+			}).then((result) => {
+				if (result.isConfirmed) {callback();}
+			});
+		}
+	</script>
+</body>
+</html>

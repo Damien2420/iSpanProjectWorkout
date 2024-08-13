@@ -1,0 +1,99 @@
+.pid {
+    color: #36935b;
+}
+
+.pics {
+    background-color: #f2f4f8;
+}
+
+.carousel-inner {
+    width: 450px;
+    height: 450px;
+    border-radius: 10px;
+}
+
+.carousel-inner img {
+    width: inherit;
+    height: inherit;
+    object-fit: cover;
+}
+
+.info-block {
+    display: flex;
+    align-items: center;
+    margin-bottom: 23px;
+}
+
+#feature {
+    margin-left: 10px;
+}
+
+label {
+    width: 100px;
+    text-align: right;
+    font-size: 17px;
+    font-weight: bold;
+    color: #0a0a0a;
+}
+
+label span {
+    margin-right: 5px;
+    color: red;
+}
+
+.update-input {
+    padding: 7px;
+    border: 1px solid #0a0a0a;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+    font-size: 16px;
+    transition: box-shadow 0.5s ease-in-out;
+    margin-left: 10px;
+}
+
+#feature {
+    width: 300px;
+    height: 200px;
+}
+
+.functionBtn {
+    padding: 5px 20px;
+    font-weight: 600;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    margin: auto 10px;
+    transition: all 0.5s ease-in-out;
+}
+
+.main-menu {
+    background-color: #f36100;
+    transition: color 0.5s ease-in-out;
+}
+
+.main-menu:hover,
+.detail-page:hover,
+.update:hover,
+.update-submit:hover {
+    color: #fff;
+}
+
+.detail-page {
+    background-color: #29ccef;
+    transition: color 0.5s ease-in-out;
+}
+
+.update {
+    background-color: #b392f7;
+}
+
+.update-input:focus {
+    box-shadow: 0 0 15px #f36100;
+    outline: none;
+}
+
+.update-submit {
+    background-color: lightgreen;
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>會員中心 - 我的留言</title>
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.1.0/css/dataTables.dataTables.min.css">
+	<link rel="stylesheet" th:href="@{/css/memberAdm/profile_style.css}">
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<style>
+
+		h2 {
+			margin-left: 15%;
+		}
+
+		option {
+			background-color: rgb(32, 32, 32);
+		}
+
+		td,
+		th {
+			text-align: center;
+			vertical-align: middle;
+			/* Center vertically if needed */
+		}
+	</style>
+</head>
+
+<body>
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+
+	<section class="s-header-title" style="background-image: url(../images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title fw-bold">會員中心</h1>
+			<ul class="breadcrambs">
+				<li><a th:href="@{/home}">Home</a></li>
+				<li>會員中心</li>
+			</ul>
+		</div>
+	</section>
+
+	<div class="profile-container">
+		<th:block th:replace="~{memberAdm/profile :: profile-sidebar}"></th:block>
+		<main class="main-content">
+			<br>
+			<h2>我的留言</h2>
+			<div class="container">
+				<table id="memcenterComment" class="display" style="width:100%">
+					<thead>
+						<tr>
+							<th style="text-align: center;">留言編號</th>
+							<th style="text-align: center;">文章標題</th>
+							<th style="text-align: center;">留言時間</th>
+							<th style="text-align: center;">留言內容</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="comment : ${comments}">
+							<td th:text="${comment.commentId}"></td>
+							<td th:text="${comment.articleId.articleTitle}"></td>
+							<td th:text="${comment.commentTime}"></td>
+							<td th:text="${comment.commentContent}"></td>
+							<td>
+								<!-- <a th:href="@{/article/editCommentPage(id=${comment.commentId})}" class="btn">編輯</a> -->
+								<form th:action="@{editCommentPage}" method="post" style="display:inline;">
+									<input type="hidden" name="id" th:value="${comment.commentId}" />
+									<button type="submit" class="btn">編輯</button>
+								</form>
+								<form th:action="@{/comment/deleteComment}" method="post" style="display:inline;">
+									<input type="hidden" name="id" th:value="${comment.commentId}" />
+									<button type="submit" class="btn">刪除</button>
+								</form>
+
+
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</main>
+	</div>
+
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+	<script src="https://cdn.datatables.net/2.1.0/js/dataTables.min.js"></script>
+	<script>
+		let table = new DataTable('#memcenterComment')
+	</script>
+</body>
+
+</html>

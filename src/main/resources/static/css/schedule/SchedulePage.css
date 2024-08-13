@@ -1,0 +1,228 @@
+/* 課表頁面容器 */
+.schedulePageContainer {
+    position: relative;
+    width: 100%;
+    margin: 20px auto;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+}
+/* 課表表格 */
+.scheduleTable {
+    text-align: center;
+    border: 1px solid black;
+    width: 80%;
+    margin: 10px auto;
+    border-collapse: collapse;
+	tr,th,td {
+	  	line-height: 3; 
+  		white-space: nowrap; 
+	    border: 1px solid black;
+	    padding: 8px;
+	}
+	th {
+	    background-color: #141414;
+	    color: #ffffff;
+	}
+	tr:nth-child(odd) {
+	    background-color: #e1ebf7;
+	}
+	tr:nth-child(even) {
+	    background-color: #cadbf0;
+	}
+	tr:hover {
+	    background-color: #b0d3f7;
+	}
+	/* 文字連結顏色 */
+	a{
+		color:#3270BA;
+		text-decoration: none;
+	}
+	a:hover {
+		color:#1b3c63;	
+	}
+	input[type="submit"]{
+	    border: none;
+	    background-color: inherit;
+	    color: #3270BA;
+	    font-weight: bolder;
+	}
+	input[type="text"]{
+		text-align:center;
+	    border: none;
+	    background-color: inherit;
+	}
+}
+/* 課表功能按鈕區域 */
+.scheduleFunctionRow {
+    justify-content: center;
+    text-align: center;
+	width: 100%;
+    margin: 30px auto;
+    display: flex;
+    align-items: center;
+	gap: 20px;
+}
+/* 功能按鈕 */
+.btn-like a{
+    display: inline-block;
+    padding: 5px 5px;
+    background-color: #416c9e;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+/* 功能按鈕2 */
+.btn-like2 a{
+    display: inline-block;
+    padding: 5px 5px;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    color: #3270BA;
+    text-decoration: none;
+}
+/* 主題按鈕位置 */
+.btn-like{
+	margin: 0 0 0 120px;
+	a{
+		margin: 0 20px 0 0;	
+	}
+}
+select {
+    border: none;
+    outline: 2px solid none;
+    background-color: transparent;
+    font-size: inherit;
+    font-family: inherit;
+    vertical-align: middle; 
+}
+select option {
+    text-align: center;
+}
+select:hover{
+	outline: 2px solid black;
+}
+/* swal-class */
+.swal-class {
+    width:90%!important;
+    background-color:transparent!important;
+}
+.form-container {
+	position: relative;
+	margin: 0 auto;
+    padding: 20px;
+	.form-field {
+	    margin-bottom: 15px;
+	    label {
+		    display: block;
+		    margin-bottom: 5px;
+		    font-weight: bold;
+		}
+		input[type="text"],input[type="file"] {
+			text-align:center;
+		    width: calc(100% - 20px);
+		    padding: 8px;
+		    border: 1px solid #ddd;
+		    border-radius: 4px;
+		}
+	}   
+}
+
+
+/* front */
+
+/* 課表視圖 */
+.scheduleShow {
+    position: relative;
+    margin: auto;
+    text-align: center;
+	.scheduleShowTable {
+	    width: 80%;
+	    margin: auto;
+	    font-weight: bold;
+		background-color: #343641;
+		color:white;
+		div{
+	    margin: 0;
+	    padding:0;	
+		}
+	    .scheduleShowTable-Top{
+			border-top: 3px solid #F5672B;
+			background-color: #272a31;
+			line-height: 50px;
+	    }
+	    .scheduleShowTable-Head{
+			background-color: #191a1f;
+			.col{
+				padding: 10px 5px 10px 5px;
+				color: #999;
+			}
+	    }
+	    .scheduleShowTable-Body .row{
+			display: flex;
+	    }
+	    
+	    /* 所有變量data在這層 */
+	    .scheduleShowTable-Body .row .col{
+	    	border-right: 1px solid #3c3e4a;
+	    	border-bottom: 1px solid #3c3e4a;
+	    	display: flex;
+	    	flex-direction: column; 
+	    	align-items: center;
+  			justify-content: center;
+  			height: 200px;
+	   	}
+	   	.scheduleShowTable-Body .row .col:last-child{
+	    	border-right: none;
+	    	border-bottom: none;
+	   	}
+	   	.scheduleShowTable-Body .row .col:first-child{
+    		color: #999;
+	   	}
+	   	.scheduleShowTable-Body{
+	   		.courseColor{
+	   		color : #FFBC42;	   		
+	   		}
+	   		.coachColor{
+	   		color : #FFBC42;
+	   		}
+	   		.registerStatusColor{
+	   		color: #FF6666;
+	   		}
+	   	}
+	}
+}
+
+/* 前台預選課表表格 */
+.scheduleTableFront {
+    text-align: center;
+    border: 1px solid black;
+    width: 80%;
+    margin: 10px auto;
+    border-collapse: collapse;
+	tr,th,td {
+	    text-align: center;
+	    border: 1px solid black;
+	    padding: 8px;
+	}
+	th {
+		font-weight: bolder;
+	    background-color: #141414;
+	    color: #ffffff;
+	}
+	tr:nth-child(odd) {
+	    background-color: #3c3e4a;
+	}
+	tr:nth-child(even) {
+	    background-color: #3c3e4a;
+	}
+	tr:hover {
+	    background-color: #4d4f5e;
+	}
+}
+
+

@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>GYMNITY - 健身商城</title>
+    <!-- =================== META =================== -->
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+    <th:block th:replace="~{front/Layout :: css}"></th:block>
+    <style>
+        @media (max-width: 992px) {
+            .row {
+                flex-direction: column !important; 
+            }
+        }
+
+        @media (min-width: 992px) {
+            .sidebar {
+                max-width: 20%;
+            }
+            .widgets {
+                margin-top: 19.5px;
+            }
+        }
+
+        .theme-color-words {
+            color: var(--workout-theme-color);
+        }
+
+        .blog-cover nav {
+            border-bottom: 1px solid #474747;
+        }
+
+        .category-list li button {
+            background-color: transparent;
+            border: none;
+            transition: 0.3s ease-in-out color;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .category-list li button:hover,
+        .category-list li button.active {
+            color: var(--workout-theme-color);
+        }
+
+        .category-list li button.active {
+            pointer-events: none;
+        }
+
+        .product-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #product-wrapper {
+            margin-top: 22px;
+        }
+
+        .sort-btn {
+            text-align: center;
+            align-items: center;
+            padding: 5px 8px;
+            background-color: transparent;
+            border: 2px solid #fff;
+            color: #fff;
+            font-weight: 500;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s ease-in-out all;
+        }
+
+        .sort-btn:hover,
+        .sort-btn.active {
+            background-color: var(--workout-theme-color);
+            border: 2px solid var(--workout-theme-color);
+        }
+
+        .sort-btn.active {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .cart {
+            font-size: 24px;
+        }
+
+        .cart span {
+            font-size: 12px;
+        }
+
+        .product-container {
+            font-size: 0;
+        }
+
+        .product-item {
+            box-sizing: border-box;
+            width: calc((100% - 80px) / 3);
+            height: auto;
+			margin-bottom: 40px;
+        }
+
+        .pName {
+            transition: color 0.3s ease-in-out;
+        }
+
+        .p-img {
+            width: 100%;
+            height: 300px;
+			border-radius: 8px;
+            object-fit: cover;
+        }
+
+		.price {
+			color: var(--workout-theme-color);
+			font-size: 20px;
+		}
+
+		@media(max-width: 1290px) {
+			.product-item {
+				width: calc((100% - 40px) / 2);
+			}
+			.p-img {
+				height: 300px;
+			}
+		}
+
+		@media(max-width: 575px) {
+			.product-item {
+				width: 100%;
+			}
+			.p-img {
+				height: 500px;
+			}
+		}
+
+        .page-info .col span {
+            color: var(--workout-theme-color);
+            margin: 0 5px;
+            font-weight: bold;
+        }
+
+		.pagination-cover {
+			margin-top: 0;
+		}
+
+		.pagination-item p {
+			padding-top: 1px;
+			font-weight: 400;
+			font-size: 18px;
+			line-height: 41px;
+			width: 44px;
+			text-align: center;
+			border: 1px solid rgba(255, 255, 255, 0.8);
+			color: #fff;
+			display: block;
+			border-radius: 5px;
+		}
+
+        .recommend-block,
+        .recommand-item,
+        .ratings {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .recommend-block h3 {
+            text-align: center;
+            width: 100%;
+            border-bottom: 0.5px solid #646464;
+            padding-bottom: 10px;
+        }
+
+        .recommend-container {
+            display: flex;
+            justify-content: center;
+            flex-direction: row;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .recommand-item h5 {
+            color: var(--workout-theme-color);
+        }
+
+        .recommend-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body id="home">
+    <th:block th:replace="~{front/Layout :: header}"></th:block>
+    <section class="main-section">
+        <section class="s-header-title" style="background-image: url(images/front/bg-1-min.png);">
+			<div class="container">
+				<h1 class="title fw-bold">GYMNITY 商城</h1>
+				<ul class="breadcrambs">
+					<li><a th:href="@{/home}">首頁</a></li>
+					<li>商城</li>
+				</ul>
+			</div>
+		</section>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-3 sidebar">
+                    <a href="#" class="btn btn-sidebar"><span>Widgets</span></a>
+                    <ul class="widgets">
+                        <li class="widget widget-archive">
+                            <h3 class="title">商品類別</h3>
+                            <ul class="category-list">
+                                <li data-filter="0">
+                                    <button class="active">
+                                        <i class="fa-solid fa-angle-right"></i>全部類別
+                                    </button>
+                                </li>
+                                <li th:each="category : ${categories}"  th:data-filter="${category.categoryID}">
+                                    <button>
+                                        <i class="fa-solid fa-angle-right"></i>[[${category.categoryName}]]
+                                    </button>
+								</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <main class="col-12 col-lg-9 blog-cover">
+                    <div class="row">
+                        <nav class="col-12 mt-3 pb-3">
+                            <div class="row product-nav flex-row">
+                                <div class="col-6 product-nav flex-row">
+                                    <span class="sort-btn-span me-3">排序</span>
+                                    <button class="sort-btn me-2 active" data-iso-sort="original-order">綜合排序</button>
+                                    <button class="sort-btn me-2" data-iso-sort="stock">銷量</button>
+                                    <button class="sort-btn me-2" data-iso-sort="date">新增日期</button>
+                                    <button class="sort-btn me-2" data-iso-sort="price">價格</button>
+                                </div>
+                                <div class="col-5 product-nav">
+                                    <form class="search-form">
+                                        <input class="inp-form" type="text" name="keyword" placeholder="搜尋商品">
+                                        <button type="submit" class="btn-form"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                    </form>
+                                </div>
+                                <div class="col-1 product-nav">
+                                    <a th:href="@{/mall/cart}" class="cart">
+                                        <i class="fa-solid fa-cart-shopping fa-lg"></i>
+                                        <span th:if="${session.cart != null}" class="position-absolute top-0 translate-middle badge rounded-pill bg-danger">[[${session.cart.size()}]]</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </nav>
+                        <div class="col-12" id="product-wrapper">
+                            <div class="row product-container">
+                                <div class="product-item" th:each="item : ${products.content}" th:data-stock="${item.stock}" th:data-date="${#temporals.format(item.addedDate, 'yyyy-MM-dd')}" th:data-category="${item.productCategory.categoryID}">
+									<a th:href="@{/mall/productDetails?(id=${item.productID})}">
+										<img th:src="@{/image?(id=${item.productImage.get(0).imageID})}" class="p-img" alt="">
+									</a>
+									<a th:href="@{/mall/productDetails?(id=${item.productID})}">
+										<h3 class="pName text-center mt-3">[[${item.productName}]]</h3>
+									</a>
+                                    <h5 class="price text-center my-3">NT$[[${item.price}]]</h5>
+                                </div>
+                            </div>
+                            <div class="page-info row mb-3 fs-5">
+                                <div class="col d-flex justify-content-center align-items-center text-center">
+                                    <p>
+                                        第<span id="page-num">[[${products.number + 1}]]</span>頁 / 共<span id="total-page">[[${products.totalPages}]]</span>頁
+                                    </p>
+                                </div>
+                            </div>
+							<div class="page-row row mb-4">
+                                <div class="pagination-cover col">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="pagination-item item-prev">
+                                            <a href="">
+                                                <i class="fa fa-angle-left"></i>
+                                            </a>
+                                        </li>
+                                        <li class="pagination-item page-num-btn" th:each="pageNum : ${#numbers.sequence(1, products.totalPages)}"
+                                            th:classappend="${products.Number + 1 == pageNum} ? 'active' : ''">
+                                            <a href="">[[${pageNum}]]</a>
+                                        </li>
+                                        <li class="pagination-item item-next">
+                                            <a href="">
+                                                <i class="fa fa-angle-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+							</div>
+                            <section class="row mt-5 mb-4">
+                                <div class="recommend-block col">
+                                    <h3>推薦商品</h3>
+                                    <div class="recommend-container mt-3">
+                                        <a class="recommand-item" th:href="@{/mall/productDetails?(id=${rItem.productID})}" th:each="rItem : ${recommend}">
+                                            <img th:src="@{/image?(id=${rItem.productImage.get(0).imageID})}" class="recommend-img" alt="">
+                                            <h4 class="mt-3 fw-bold">[[${rItem.productName}]]</h4>
+                                            <h5 class="mt-3">NT$[[${rItem.price}]]</h5>
+                                        </a>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </section>
+    <footer th:replace="~{front/Layout :: footer}"></footer>
+    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+    <script>
+        let $grid;
+        let currentCategoryID = 0;
+        let currentSortOption;
+        let isSearch = false;
+        let keyword = '';
+        $(function() {
+            //初始化isotope
+            initializeIsotope();
+            //頁碼按鈕監聽
+            paginationButtonEvent();
+            disablePrevNext();
+            hoverEvent();
+            // 添加排序按鈕監聽器
+            $('.sort-btn').on('click', function() {
+                $('.sort-btn.active').removeClass('active');
+                $(this).addClass('active');
+                currentSortOption = $(this).data('iso-sort');
+                $grid.isotope({ sortBy: currentSortOption });
+            });
+
+            $('.category-list li').on('click', async function() {
+                isSearch = false;
+                $('.search-form .inp-form').val('');
+                await getProductData($(this), 1);
+                regeneratePagination();
+                $('.category-list li button.active').removeClass('active');
+                $(this).children().addClass('active');
+            });
+
+            $('.search-form').on('submit', function(event) {
+                event.preventDefault();
+                keyword = $('.search-form .inp-form').val();
+                searchRequest(keyword);
+            });
+        });
+
+        function hoverEvent() {
+            $('.p-img').on('mouseenter', function() {
+                enter($(this));
+            }).on('mouseleave', function() {
+                leave($(this));
+            });
+            
+            $('.pName').on('mouseenter', function() {
+                enter($(this));
+            }).on('mouseleave', function() {
+                leave($(this));
+            });
+        };
+
+        function enter(element) {
+            const productName = element.closest('.product-item').find('.pName');
+            productName.css('color', 'var(--workout-theme-color)');
+        };
+
+        function leave(element) {
+            const productName = element.closest('.product-item').find('.pName');
+            productName.css('color', '#fff');
+        };
+
+        function initializeIsotope() {
+            $grid = $('.product-container').isotope({
+                itemSelector: '.product-item',
+                layoutMode: 'fitRows',
+                fitRows: {
+                    gutter: 40
+                },
+                getSortData: {
+                    stock: '[data-stock]',
+                    date: function(itemElem) {
+                        const date = $(itemElem).data('date');
+                        return new Date(date).getTime();
+                    },
+                    price: function(itemElem) {
+                        const price = $(itemElem).find('.price').text().substring(3);
+                        return Number(price);
+                    }
+                },
+            });
+        }
+
+        async function getProductData(element, pageNumber) {
+            const categoryID = element.data('filter');
+            try {
+                const response = await axios.get(`mall/category/${categoryID}?page=${pageNumber}`);
+                if(response.data._embedded != null) {
+                    updateProductsContainer(response.data);
+                    setPageInfo(response.data.page);
+                }else {
+                    const category = $(element).find('button').text().trim();
+                    emptyContainer(category);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        //搜尋是空的時候顯示訊息
+        function emptyContainer(keywords) {
+            $('.product-container').html(`
+            <div class="text-center fw-bold fs-3">
+                沒有<span class="theme-color-words mx-2">${keywords}</span>的商品
+            </div>`);
+            $('.page-row').css('display', 'none');
+            $('.page-info').css('display', 'none');
+        };
+        //設定頁數顯示文字
+        function setPageInfo(pageInfoData) {
+            $('#page-num').text(Number(pageInfoData.number) + 1);
+            $('#total-page').text(Number(pageInfoData.totalPages));
+        }
+        //更新商品container
+        function updateProductsContainer(response) {
+            const data = response._embedded.productList;
+            let template = '';
+            data.forEach(function(item) {
+                template += `
+                    <div class="product-item" data-stock="${item.stock}" data-date="${item.listingDate}" data-category="${item.productCategory.categoryID}">
+                        <a href="mall/productDetails?&id=${item.productID}">
+                            <img src="image/product?id=${item.productID}" class="p-img" alt="">
+                        </a>
+                        <a href="mall/productDetails?&id=${item.productID}">
+                            <h3 class="pName text-center mt-3">${item.productName}</h3>
+                        </a>
+                        <h5 class="price text-center my-3">$${item.price}</h5>
+                    </div>`;
+            });
+            $('.product-container').html(template);
+
+            $('.page-row').css('display', 'block');
+            $('.page-info').css('display', 'block');
+            //重新初始化isotope
+            hoverEvent();
+            $grid.isotope('destroy');
+            initializeIsotope();
+            $grid.isotope({ sortBy: currentSortOption });
+        };
+        //重新生成頁數按鈕
+        function regeneratePagination() {
+            const totalPages = Number($('#total-page').text().trim());
+            $('.pagination').html('');
+            let template = `
+            <li class="pagination-item item-prev">
+                <a href="">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+            </li>
+            <li class="pagination-item page-num-btn active">
+                <a href="">1</a>
+            </li>
+            `;
+            for(let i = 2;i <= totalPages;i++) {
+                template += `
+                <li class="pagination-item page-num-btn">
+                    <a href="">${i}</a>
+                </li>`
+            }
+            template += `
+            <li class="pagination-item item-next">
+                <a href="">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>`;
+            $('.pagination').html(template);
+
+            paginationButtonEvent();
+        }
+
+        function paginationButtonEvent() {
+            $('.item-prev').on('click', function(event) {
+                event.preventDefault();
+                const currentPageButton = $('.pagination-item.active');
+                const currentPageNum = Number(currentPageButton.text().trim());
+                if(currentPageNum != 1) {
+                    if(isSearch){
+
+                    }else {
+                        getProductData($('.category-list li button.active').parent(), currentPageNum - 1);
+                        changePageButton(currentPageButton, currentPageButton.prev());
+                    }
+                }
+            });
+
+            $('.page-num-btn').on('click', function(){
+                event.preventDefault();
+                const targetPage = Number($(this).text().trim());
+                if(isSearch) {
+
+                }else {
+                    getProductData($('.category-list li button.active').parent(), targetPage);
+                    changePageButton($('.page-num-btn.active'), $(this));
+                }
+            });
+
+            $('.item-next').on('click', function(event) {
+                event.preventDefault();
+                const currentPageButton = $('.pagination-item.active');
+                const currentPageNum = Number(currentPageButton.text().trim());
+                const maximumPage = Number($('#total-page').text());
+                if(currentPageNum != maximumPage) {
+                    if(isSearch) {
+
+                    }else {
+                        getProductData($('.category-list li button.active').parent(), currentPageNum + 1);
+                        changePageButton(currentPageButton, currentPageButton.next());
+                    }
+                    
+                }
+            });
+        }
+
+        function changePageButton(oldButton, newButton) {
+            oldButton.removeClass('active');
+            newButton.addClass('active');
+            disablePrevNext();
+        }
+
+        function disablePrevNext() {
+            const currentPage = Number($('.pagination-item.active').text().trim());
+            const maxPage = Number($('#total-page').text().trim());
+            if(currentPage === 1) {
+                $('.item-prev').off('click');
+                $('.item-prev').html(`
+                    <p>
+                        <i class="fa fa-angle-left"></i>
+                    </p>`
+                );
+            }else {
+                $('.item-prev').html(`
+                    <a href="">
+                        <i class="fa fa-angle-left"></i>
+                    </a>`
+                );
+                paginationButtonEvent()
+            }
+            if(currentPage === maxPage) {
+                $('.item.next').off('click');
+                $('.item-next').html(`
+                   <p>
+                        <i class="fa fa-angle-right"></i>
+                    </p> 
+                `);
+            }else {
+                $('.item-next').html(`
+                   <a href="">
+                        <i class="fa fa-angle-right"></i>
+                    </a> 
+                `);
+                paginationButtonEvent()
+            }
+        }
+
+        async function searchRequest(keyword) {
+            isSearch = true;
+            try {
+                const response = await axios.get(`search?key=${keyword}`);
+                if(response.data._embedded != null) {
+                    updateProductsContainer(response.data);
+                    setPageInfo(response.data.page);
+                    regeneratePagination();
+                    disablePrevNext();
+                }else {
+                    emptyContainer(keyword);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

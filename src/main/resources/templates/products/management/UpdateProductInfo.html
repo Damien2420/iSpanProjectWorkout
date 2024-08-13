@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+    <meta charset="UTF-8">
+    <title>商品管理系統 - 更新商品資訊 - [[${selectedProduct.productName}]]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/products/management/UpdateProductInfo.css}">
+    <th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+
+    <style>
+        .swalConfirmBtn {
+            color: #383737;
+
+        }
+
+        .swalCancelBtn {
+            color: #d9d9d9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+            <div class="layout-page">
+                <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+                <div class="content-wrapper">
+                    <main class="container-xxl flex-grow-1 container-p-y" th:data-update-status="${status}">
+                        <div class="row">
+                            <div class="col text-end mb-3">
+								<a th:href="@{/admin/products/allList}">
+									<button class="functionBtn main-menu"><i class="fa-solid fa-house"></i> 回商品列表</button>
+								</a>
+							</div>
+							<div class="col text-start">
+								<a th:href="@{/admin/products/fullDetail?(productID=${selectedProduct.productID})}">
+									<button class="functionBtn detail-page"><i class="fa-solid fa-circle-info"></i> 商品詳細資訊</button>
+								</a>
+							</div>
+                        </div>
+                        <div class="row card p-3 d-flex justify-content-center align-items-center">
+                            <h5 class="text-center fs-4">商品編號 : <span class="pid">[[${selectedProduct.productID}]]</span></h5>
+                            <hr>
+                            <div class="row mt-2 d-flex justify-content-center align-items-center">
+                                <div class="pics col-7 d-flex justify-content-center align-items-center flex-column py-5">
+                                    <div id="carouselContainer" class="carousel slide w-75" data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <th:block th:each="image, iterStat : ${productImage}">
+                                                <div class="carousel-item w-100 h-100"
+                                                    th:classappend="${iterStat.index == 0} ? 'active'">
+                                                    <img th:src="@{/image?(id=${image.imageID})}"
+                                                        class="d-block" alt="${image.imageFileName}">
+                                                </div>
+                                            </th:block>
+                                        </div>
+                                        <button class="carousel-control-prev" type="button"
+                                            data-bs-target="#carouselContainer" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button"
+                                            data-bs-target="#carouselContainer" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                    <a class="mt-4" th:href="@{/admin/products/updateImage?(p=${selectedProduct.productID})}">
+                                        <button class="functionBtn update"><i class="fa-solid fa-circle-info"></i> 更新商品圖片</button>
+                                    </a>
+                                </div>
+                                <div class="col-5 d-flex flex-column align-items-center justify-content-center">
+                                    <form method="post" action="" class="update-form">
+                                        <input id="productID" th:value="${selectedProduct.productID}" type="hidden">
+                                        <div class="info-block">
+                                            <label for="productCategory"><span>*</span>商品類別：</label>
+                                            <select class="update-input validate" id="categoryID">
+                                                <option th:each="category : ${allCategories}"
+                                                    th:value="${category.categoryID}" th:text="${category.categoryName}"
+                                                    th:selected="${selectedProduct.productCategory.categoryID == category.categoryID}">
+                                            </select>
+                                        </div>
+                                        <div class="info-block">
+                                            <label for="productName"><span>*</span>商品名稱：</label>
+                                            <input id="productName" th:value="${selectedProduct.productName}" type="text"
+                                                class="update-input validate">
+                                        </div>
+                                        <div class="info-block">
+                                            <label for="price"><span>*</span>價格：</label>
+                                            <input id="price" th:value="${selectedProduct.price}" type="number"
+                                                class="update-input validate">
+                                        </div>
+                                        <div class="info-block">
+                                            <label for="stock"><span>*</span>庫存量：</label>
+                                            <input id="stock" th:value="${selectedProduct.stock}" type="number"
+                                                class="update-input validate">
+                                        </div>
+                                        <div class="info-block">
+                                            <label for="listingDate"><span>*</span>新增日期：</label>
+                                            <input id="listingDate" th:value="${selectedProduct.addedDate}" type="date"
+                                                class="update-input validate">
+                                        </div>
+                                        <div class="info-block">
+                                            <label for="productFeatures">商品特色：</label>
+                                            <textarea id="feature" th:utext="${selectedProduct.productFeatures}"
+                                                class="update-input"></textarea>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <button class="functionBtn update-submit text-center">送出資料</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:replace="~{back/NavBar :: js}"></th:block>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+    <script th:src="@{/js/products/management/ValidateForm.js}"></script>
+    <script th:src="@{/js/products/management/UpdateProduct.js}"></script>
+</body>
+
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title>User Chat</title>
+<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
+<th:block th:replace="~{front/Layout :: css}"></th:block>
+<link rel="stylesheet" th:href="@{/css/memberAdm/profile_style.css}">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<style>
+#chat-window {
+	height: 400px;
+	overflow-y: auto;
+	background-color: #353535;
+	border-radius: 5px 5px 0 0;
+}
+
+#messages li {
+	margin-bottom: 10px;
+	max-width: 80%; /* 防止消息太寬 */
+	display: flex;
+}
+
+.imgDiv {
+	padding: 3px;
+}
+
+.imgDiv img {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	object-fit: cover; /* 保持圖片的寬高比，裁剪圖片 */
+	object-position: center; /* 圖片居中顯示 */
+}
+
+.time-message {
+	font-size: 0.8rem;
+}
+
+.chat-message {
+	display: inline-block;
+	padding: 1px 10px;
+	border-radius: 5px;
+	word-wrap: break-word; /* 自動換行 */
+	word-break: break-all; /* 自動換行 */
+	white-space: normal; /* 確保正常換行 */
+	height: 100%;
+	margin: 3px 5px;
+}
+
+.user-message {
+	float: right;
+	clear: both; /* 防止消息重疊 */
+}
+
+.user-message .chat-message {
+	background-color: var(--workout-theme-color);
+}
+
+.admin-message {
+	float: left;
+	clear: both; /* 防止消息重疊 */
+}
+
+.admin-message .chat-message {
+	background-color: #4F4F4F;
+}
+
+.input-group {
+	display: flex;
+}
+
+.input-group button {
+	border-left: none;
+	border-radius: 0 0 5px 0;
+	color: white;
+	cursor: pointer;
+	width: 3rem;
+}
+
+#message {
+	flex: 1;
+	position: relative;
+	width: auto;
+	margin: 0;
+	border-radius: 0 0 0 5px;
+}
+</style>
+
+</head>
+<body>
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<!-- =============== HEADER-TITLE =============== -->
+	<section class="s-header-title"
+		style="background-image: url(images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title">會員中心</h1>
+			<ul class="breadcrambs">
+				<li><a th:href="@{/home}">Home</a></li>
+				<li><a th:href="@{/@{/profile.controller}}">會員中心</a></li>
+				<li>線上客服</li>
+			</ul>
+		</div>
+	</section>
+	<!-- ============= HEADER-TITLE END ============= -->
+	<div class="profile-container">
+		<th:block th:replace="~{memberAdm/profile :: profile-sidebar}"></th:block>
+
+		<main class="main-content">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6">
+						<h2 class="mb-2">Chat Support</h2>
+						<span>admin</span>
+						<div id="chat-window" class="p-3">
+							<ul id="messages" class="list-unstyled"></ul>
+						</div>
+						<div class="input-group">
+							<input type="hidden" id="memNo" class="form-control"
+								placeholder="Enter your ID" th:value="${member.memNo}">
+							<input type="hidden" id="memName" class="form-control"
+								placeholder="Enter your Name" th:value="${member.memName}">
+							<input type="hidden" id="memPic" th:value="${member.memPic}">
+							<input type="hidden" id="defaultPicUrl"
+								th:value="@{/images/front/logo-without-brandname-brighter-transparent.png}">
+							<input type="hidden" id="adminId" placeholder="Enter admin ID"
+								value="admin">
+						</div>
+						<div class="input-group mb-3">
+							<input type="text" id="message" class="form-control"
+								placeholder="Enter your message" onkeydown="checkEnter(event)">
+							<button class="btn btn-primary" onclick="sendMessage()">
+								<i class="fa-solid fa-paper-plane"></i>
+							</button>
+							<div class="input-group-append"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+
+	<script>
+        var stompClient = null;
+        var memNo = document.getElementById('memNo').value;
+        var memName = document.getElementById('memName').value;
+        var memPic = document.getElementById('memPic').value;
+        var defaultPicUrl = document.getElementById('defaultPicUrl').value;
+        
+        var adminId = document.getElementById('adminId').value;
+        
+        function checkEnter(event) {
+		    if (event.key === "Enter") {
+		        sendMessage();
+		    }
+		}
+        
+        function loadChatHistory(sender, recipient) {
+		    fetch(`/workout/api/chat/history?sender=${sender}&recipient=${recipient}`)
+		        .then(response => response.json())
+		        .then(data => {
+		            var messages = document.getElementById('messages');
+		            messages.innerHTML = ''; // 清空舊的消息
+		            data.forEach(showMessage);
+		            scrollToBottom(); // 加載歷史消息後滾動到底部
+		        });
+		}
+        
+        function connect() {
+            var socket = new SockJS('/workout/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/user/' + memNo + '/queue/messages', function (messageOutput) {
+                    showMessage(JSON.parse(messageOutput.body));
+                    scrollToBottom(); // 收到新消息後滾動到底部
+                });
+                loadChatHistory(memNo, adminId); // 加載歷史消息
+            }, function (error) {
+		        console.error('STOMP error: ', error);
+		    });
+        }
+
+        function sendMessage() {
+            var messageInput = document.getElementById('message');
+    		var message = messageInput.value;
+            if (memNo && adminId && message) {
+                console.log(memNo + " " + adminId + " " + message);
+                stompClient.send("/app/chat", {}, JSON.stringify({
+                    'sender': {'memNo': memNo, 'memName': memName},
+                	'recipient': {'memNo': adminId, 'memName': 'admin'},
+                    'message': message
+                }));
+                messageInput.value = '';
+            } else {
+                alert('Please fill in all fields');
+            }
+            console.log(memNo + " " + adminId + " " + message);
+        }
+
+        function showMessage(message) {
+            var response = document.getElementById('messages');
+            var li = document.createElement('li');
+            
+	        var imgDiv = document.createElement('div');
+	        imgDiv.classList.add('imgDiv');
+	        var img = document.createElement('img');
+	        img.id = 'memPic';
+            img.src = defaultPicUrl;
+	        imgDiv.appendChild(img);
+            
+            var messagespan = document.createElement('span');
+            messagespan.classList.add('chat-message');
+            
+            var timespan = document.createElement('span');
+            timespan.classList.add('time-message');
+            timespan.appendChild(document.createTextNode('	' + message.createTime + '	'));
+            
+            if (message.sender.memNo === adminId) {
+		        li.classList.add('admin-message');
+		        messagespan.appendChild(document.createTextNode(message.message));
+		        li.appendChild(imgDiv);
+		        li.appendChild(messagespan);
+            	li.appendChild(timespan);
+		    } else {
+		        li.classList.add('user-message');
+		        messagespan.appendChild(document.createTextNode(message.message));
+            	li.appendChild(timespan);
+		        li.appendChild(messagespan);
+		    }
+            // li.appendChild(document.createTextNode(message.createTime + ' - ' + message.sender.memName + ': ' + message.message));
+            
+            response.appendChild(li);
+        }
+        
+        function scrollToBottom() {
+	        var chatWindow = document.getElementById('chat-window');
+	        chatWindow.scrollTop = chatWindow.scrollHeight;
+	    }
+
+        connect();
+        
+    </script>
+</body>
+</html>
+

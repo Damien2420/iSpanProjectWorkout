@@ -1,0 +1,252 @@
+/* 教練頁面容器 */
+.coachPageContainer {
+    position: relative;
+    width: 100%;
+    margin: 20px auto;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+}
+/* 教練表格 */
+.coachTable {
+    text-align: center;
+    border: 1px solid black;
+    width: 60%;
+    margin: 10px auto;
+    border-collapse: collapse;
+	tr,th,td {
+	    border: 1px solid black;
+	    padding: 8px;
+	}
+	th {
+	    background-color: #141414;
+	    color: #ffffff;
+	}
+	tr:nth-child(odd) {
+	    background-color: #e1ebf7;
+	}
+	tr:nth-child(even) {
+	    background-color: #cadbf0;
+	}
+	tr:hover {
+	    background-color: #b0d3f7;
+	}
+	/* 文字連結顏色 */
+	a {
+		color:#3270BA;
+		text-decoration: none;
+	}
+	a:hover {
+		color:#1b3c63;	
+	}
+}
+
+/* 分頁按鈕 */
+#pgbtn button {
+    background-color: #3270BA;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    margin: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+/* 教練功能按鈕區域 */
+.coachFunctionRow {
+    justify-content: space-between;
+    text-align: center;
+    width: 60%;
+    margin: 10px auto;
+    display: flex;
+    align-items: center;
+	input[type="text"]{
+	    display: inline-block;
+	    padding: 4px 4px;
+	    border: 2px solid #c6c6c6;
+	    border-radius: 4px;	
+	    cursor: pointer;
+	    text-decoration: none;
+	}
+}
+/* 功能按鈕 */
+#newcoachbtn,input[type="submit"],.btn-like a,.QuickInput{
+    display: inline-block;
+    padding: 5px 5px;
+    background-color: #416c9e;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+/* 主題按鈕位置 */
+.btn-like{
+	margin: 0 0 0 120px;
+	a{
+		margin: 0 20px 0 0;	
+	}
+}
+/* 教練個人首頁 */
+.coachProfile{
+	width: 80%;
+    margin: auto;
+	.coachProfileHeader {
+	    display: flex;
+	    align-items: center;
+	    justify-content: space-between;
+	    padding-bottom: 20px;
+	    border-bottom: 1px solid #ddd;
+		img {
+		    width: 250px;
+		    height: 250px;
+		    border-radius: 50%;
+		    object-fit: cover;
+		    border: 3px solid #ddd;
+		}
+		.coachInfo {
+		    flex: 1;
+		    margin-left: 40px;
+		    text-align: left;
+		}
+	}
+	.coachClass {
+	    text-align: left;
+	    margin: 20px 0 0 20px;
+	    border: 1px solid black;
+		ul {
+		    margin: 10px;
+			li:nth-child(odd) a {
+			    text-decoration: none;
+			    color: black;
+			    font-weight: bold;
+			    font-size: 20px;
+			}
+			li:nth-child(even) {
+			    list-style-type: none;
+			    color: #555;
+			}
+		}		
+	}
+	.coachspecialties{
+		margin: 10px 0 0 20px;
+		table{
+			width:70%;
+			input[type="submit"]{
+    			background-color: transparent;
+				color:#3270BA;
+				font-weight: 800;				
+			}
+		}
+	}
+}
+/* swal-class */
+.swal-class {
+    width:30%!important;
+}
+.form-container {
+	position: relative;
+	margin: 0 auto;
+    padding: 20px;
+	.form-field {
+	    margin-bottom: 15px;
+	    label {
+		    display: block;
+		    margin-bottom: 5px;
+		    font-weight: bold;
+		}
+		input[type="text"],input[type="file"] {
+			text-align:center;
+		    width: calc(100% - 20px);
+		    padding: 8px;
+		    border: 1px solid #ddd;
+		    border-radius: 4px;
+		}
+	}
+	.coachModifyPic {
+	    margin-top: 10px;
+	}    
+}
+
+/* Front */
+
+/*------------------ S-OUR-TRAINER ------------------*/
+.coachInfoContainer{
+	align-items: center;
+	margin-top: 75px;
+	margin-bottom: 75px;
+	display: flex;
+	.CoachColorSet-o{
+		color:#F5672B;
+	}
+	.CoachColorSet-y{
+		color:#FFBC42;
+	}
+	/*圖片層*/
+	.coachImgCol{
+	  	display: flex;
+  		justify-content: flex-end;
+  		.coachImgCover{
+  		  	display: flex;
+  			position: relative;
+  			.decorationImg-1,.decorationImg-2,.decorationImg-3{
+  			  position: absolute;
+  			}
+  			.decorationImg-1{
+  			  	left: 40px;
+				top: -90px;
+  			}
+  			.decorationImg-2{
+				bottom: -90px;
+				right: 20%;
+  			}
+  			.decorationImg-3{
+				left: -50px;
+				top: -30px;
+  			}
+			.coach-Img {
+			    position: relative;
+			    z-index: 1;
+			    border-radius: 5%;
+			    border: 1px solid #464646;
+			    width: 400px;
+			    height: 400px;
+			    object-fit: cover;
+			}
+  		}
+	}
+	.coachInforation{
+		display: flex;
+		position: relative;
+		height:100%;
+		flex: 1;
+		min-height: 400px;
+		.coachName{
+			position: absolute;
+		  	top: 5px;
+  			left: 20px;
+			color:#F5672B;
+		}
+		.socialList{
+			position: absolute;
+		  	top: 9px;
+  			left: 120px;
+			display: flex;
+			list-style: none;
+			li {
+		  		margin-right: 18px; }
+			li:last-child {
+		  		margin-right: 0; }
+		}
+		.coachDetails{
+			padding-top:50px;
+		}
+	}
+	
+}

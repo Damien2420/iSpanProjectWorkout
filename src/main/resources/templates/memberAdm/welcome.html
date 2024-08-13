@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	<title>Welcome ! </title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+    	.container{
+    		margin: 110px auto 0 auto;
+    	}
+    
+    	.message {
+            font-size: 36px;
+            text-align: center;
+        }
+
+        .message h1 {
+            color: #bdbdbd;
+        }
+
+        .message h1 span {
+            color: #228fe7;
+        }
+
+        .mall {
+            margin-top: 25px;
+            padding: 10px 20px;
+            font-size: 24px;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            background-color: #fff;
+        }
+
+        .mall:hover {
+            transition: background-color 0.5s ease-in-out;
+            background-color: #f3c449;
+        }
+
+        .mall:active a {
+            background-color: #eecc78;
+        }
+        
+        a {
+        	text-decoration: none !important;
+        }
+    </style>
+</head>
+<body>
+	<div th:replace="~{products/mall/Header}"></div>
+	<main class="my-container">
+        <div class="message">
+            <h1 class="zh">登入成功<br>
+            	<span th:text="${session.user.memName}"></span><br>
+                Welcome Back
+            </h1>
+            <a th:href="@{/mall/explorePage}">
+                <button class="mall zh">前往商城</button>
+            </a>
+            <a th:href="@{/ticketmart/selectallnew}">
+                <button class="mall zh">購買票卷</button>
+            </a>
+        </div>
+    </main>
+	<div th:replace="~{products/mall/Footer}"></div>
+</body>
+</html>

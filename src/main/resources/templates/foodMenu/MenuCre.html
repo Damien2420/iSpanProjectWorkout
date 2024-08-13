@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>熱量紀錄</title>
+
+    <!-- Select2 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <!-- SweetAlert2 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+    <!-- bootstrap CSS -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}" />
+    <!-- 前台CSS -->
+    <th:block th:replace="~{front/Layout :: css}"></th:block>
+    <!-- menuCre.css -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/food/menuCre.css}" />
+  </head>
+
+  <body class="calorie-calculator">
+    <th:block th:replace="~{front/Layout :: header}"></th:block>
+    <!-- =============== HEADER-TITLE =============== -->
+    <section
+      class="s-header-title"
+      th:style="'background-image: url(' + @{/images/front/bg-1-min.png} + ');'"
+    >
+      <div class="container">
+        <h1 class="title fw-bold">熱量筆記</h1>
+        <ul class="breadcrambs">
+          <li><a th:href="@{/home}">Home</a></li>
+          <li>熱量筆記</li>
+        </ul>
+      </div>
+    </section>
+    <!-- ============= HEADER-TITLE END ============= -->
+    <div class="container">
+      <!-- <th:block th:replace="~{memberAdm/profile :: profile-sidebar}"></th:block> -->
+
+      <div class="row justify-content-center">
+        <div class="col-md-8 pt-4">
+          <div class="calorie-card mb-4">
+            <div class="calorie-card-header">
+              <h2 class="text-center mb-0">今天吃什麼呢 ?</h2>
+            </div>
+            <div class="card-body">
+              <div class="calorie-select2 mb-3 pt-3">
+                <label for="foodsSelector" class="calorie-label form-label"
+                  >食物名稱:</label
+                >
+                <select
+                  class="form-select"
+                  id="foodsSelector"
+                  style="width: 100%"
+                >
+                  <option value="">--選擇食品--</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="weightInput" class="calorie-label form-label"
+                  >重量 (克):</label
+                >
+                <input
+                  type="number"
+                  class="calorie-weightInput form-control"
+                  id="weightInput"
+                  placeholder="輸入重量"
+                  step="0.1"
+                />
+              </div>
+              <button
+                id="addFoodButton"
+                class="calorie-btn btn btn-primary w-100"
+              >
+                增加食品
+              </button>
+            </div>
+          </div>
+
+          <div class="calorie-card card mb-4">
+            <div class="calorie-card card-body">
+              <table id="foodTable" class="calorie-table table">
+                <thead>
+                  <tr>
+                    <th>食物名稱</th>
+                    <th>重量 (克)</th>
+                    <th>熱量 (大卡)</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="foodDetailsBody" class="foodDetailsBody"></tbody>
+              </table>
+              <div class="result text-center mt-3" id="result">
+                總熱量: 0 大卡
+              </div>
+            </div>
+          </div>
+
+          <button id="addFoodMenu" class="addFoodMenu-btn btn w-100 mb-4">
+            生成菜單
+          </button>
+          <div id="menu"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer th:replace="~{front/Layout :: footer}"></footer>
+    <!-- jQuery -->
+    <script th:src="@{/js/lib/jquery-3.7.1.js}"></script>
+    <!-- Bootstrap -->
+    <script th:src="@{/js/bootstrap/bootstrap.bundle.min.js}"></script>
+    <!-- Axios -->
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+    <!-- Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.all.min.js"></script>
+    <script>
+      let totalCal = 0;
+      let foodList = [];
+      let menuId = 0;
+      let memberID = null; //存當前的會員ID
+
+      $(document).ready(function () {
+        $("#foodsSelector")
+          .select2({
+            placeholder: "選擇食物名稱",
+            allowClear: true,
+          })
+          .parent()
+          .addClass("calorie-select2");
+        getAllFoodForMenu();
+      });
+
+      // 取當前的會員;
+      axios
+        .get("/workout/admin/getallmembers.controller")
+        .then((response) => {
+          memberID = response.data.memNo;
+          getAllFoodForMenu();
+        })
+        .catch((error) => {
+          console.error("Error fetching current member info", error);
+        });
+
+      function getAllFoodForMenu() {
+        axios
+          .get("api/getAllFoodForMenu")
+          .then((res) => {
+            const foods = res.data;
+            const foodsSelector = document.getElementById("foodsSelector");
+            foods.forEach((food) => {
+              const foodsOption = document.createElement("option");
+              foodsOption.value = food.foodID;
+              foodsOption.innerHTML = food.foodName;
+              foodsOption.setAttribute(
+                "data-foods-TCP100",
+                food.totalCaloriesPer100g
+              );
+              foodsSelector.appendChild(foodsOption);
+            });
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
+
+      // 添加食品項目
+      document
+        .getElementById("addFoodButton")
+        .addEventListener("click", addFoodItem);
+
+      function addFoodItem() {
+        const foodsSelector = document.getElementById("foodsSelector");
+        const weightInput = document.getElementById("weightInput");
+        const selectedOption =
+          foodsSelector.options[foodsSelector.selectedIndex];
+        const foodID = selectedOption.value;
+        const foodName = selectedOption.text;
+        const weight = parseFloat(weightInput.value);
+        const totalCaloriesPer100g = parseFloat(
+          selectedOption.getAttribute("data-foods-TCP100")
+        );
+
+        if (foodName && !isNaN(weight) && weight > 0) {
+          const calories = (totalCaloriesPer100g * weight) / 100;
+          const food = {
+            id: Date.now(),
+            foodID: foodID,
+            name: foodName,
+            weight: weight,
+            calories: calories,
+          };
+          foodList.push(food);
+          totalCal += calories;
+          updateTotalCalories();
+          renderTable();
+          $("#foodsSelector").val(null).trigger("change");
+          weightInput.value = "";
+
+          axios
+            .post("api/setFoodMenuDetailSession", {
+              memberNo: memberID,
+              foodID: foodID,
+              foodWeight: weight,
+              calories: calories,
+            })
+            .catch((error) => {
+              console.error("Error adding food to cart", error);
+            });
+        } else {
+          Swal.fire({
+            title: "錯誤",
+            text: "請輸入有效的食物名稱和重量",
+            icon: "error",
+            confirmButtonText: "確定",
+          });
+        }
+      }
+
+      // 渲染表格
+      function renderTable() {
+        const tbody = document.querySelector("#foodTable tbody");
+        tbody.innerHTML = "";
+        foodList.forEach((food) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+          <td>${food.name}</td>
+          <td>${food.weight}</td>
+          <td>${food.calories.toFixed(2)}</td>
+          <td>
+            <div class="action-buttons">
+              <button onclick="editFood(${
+                food.id
+              })" class="food-btn food-btn-confirm">編輯</button>
+              <button onclick="deleteFood(${
+                food.id
+              })" class="food-btn food-btn-cancel">刪除</button>
+            </div>
+          </td>
+        `;
+          tbody.appendChild(row);
+        });
+      }
+
+      // 編輯食品
+      function editFood(id) {
+        const row = document
+          .querySelector(`button[onclick="editFood(${id})"]`)
+          .closest("tr");
+        const food = foodList.find((f) => f.id === id);
+        if (food) {
+          row.innerHTML = `
+          <td>${food.name}</td>
+          <td><input type="number" value="${
+            food.weight
+          }" id="editWeight${id}" class="weightInput-Details"></td>
+          <td>${food.calories.toFixed(2)}</td>
+          <td>
+            <div class="action-buttons">
+              <button onclick="confirmEdit(${id})" class="food-btn food-btn-confirm">確定修改</button>
+              <button onclick="cancelEdit(${id})" class="food-btn food-btn-cancel">取消</button>
+            </div>
+          </td>
+        `;
+        }
+      }
+
+      // 確認修改
+      function confirmEdit(id) {
+        const weight = parseFloat(
+          document.getElementById(`editWeight${id}`).value
+        );
+        if (!isNaN(weight) && weight > 0) {
+          const foodIndex = foodList.findIndex((f) => f.id === id);
+          if (foodIndex > -1) {
+            const food = foodList[foodIndex];
+            totalCal -= food.calories;
+            food.weight = weight;
+            const totalCaloriesPer100g = parseFloat(
+              document
+                .querySelector(`#foodsSelector option[value="${food.foodID}"]`)
+                .getAttribute("data-foods-TCP100")
+            );
+            food.calories = (totalCaloriesPer100g * weight) / 100;
+            totalCal += food.calories;
+            updateTotalCalories();
+            renderTable();
+
+            axios
+              .post("foodMenu/api/updateFoodInCart", {
+                foodID: food.foodID,
+                newWeight: weight,
+                newCalories: food.calories,
+              })
+              .catch((error) => {
+                console.error("Error updating food in cart", error);
+              });
+          }
+        } else {
+          Swal.fire({
+            title: "錯誤",
+            text: "請輸入有效的重量",
+            icon: "error",
+            confirmButtonText: "確定",
+          });
+        }
+      }
+
+      // 取消編輯
+      function cancelEdit(id) {
+        renderTable();
+      }
+
+      // 刪除食品
+      function deleteFood(id) {
+        const foodIndex = foodList.findIndex((f) => f.id === id);
+        if (foodIndex > -1) {
+          const food = foodList[foodIndex];
+          totalCal -= food.calories;
+          foodList.splice(foodIndex, 1);
+          updateTotalCalories();
+          renderTable();
+
+          axios
+            .post("foodMenu/api/removeFoodFromCart", food.foodID)
+            .catch((error) => {
+              console.error("Error removing food from cart", error);
+            });
+        }
+      }
+
+      // 更新總熱量
+      function updateTotalCalories() {
+        document.getElementById(
+          "result"
+        ).innerText = `總熱量: ${totalCal.toFixed(2)} 大卡`;
+      }
+
+      document
+        .getElementById("addFoodMenu")
+        .addEventListener("click", generateMenu);
+
+      // 生成菜單
+      function generateMenu() {
+        if (foodList.length === 0) {
+          Swal.fire({
+            title: "錯誤",
+            text: "沒有食物選項可供生成菜單",
+            icon: "error",
+            confirmButtonText: "確定",
+          });
+          return;
+        }
+
+        axios
+          .get("api/setFoodMenu", { params: { totalCal: totalCal } })
+          .then((res) => {
+            menuId++;
+            const menuTime = new Date().toLocaleString();
+
+            let menuHtml = `<h3>新菜單</h3>`;
+            menuHtml += `<p>建立時間 : ${menuTime}</p>`;
+            menuHtml += "<ul style='list-style-type: none; padding-left: 0;'>";
+            foodList.forEach((food) => {
+              menuHtml += `<li>${food.name} 
+              重量 : ${food.weight} 克/毫升 , 熱量 : ${food.calories.toFixed(
+                2
+              )} 大卡</li>`;
+            });
+            menuHtml += `</ul><p><strong>總熱量: ${totalCal.toFixed(
+              2
+            )} 大卡</strong></p>`;
+
+            Swal.fire({
+              html: menuHtml,
+              icon: "success",
+              confirmButtonText: "確定",
+              width: "600px",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // 清空當前的食物列表
+                $("#foodsSelector").val(null).trigger("change");
+                document.getElementById("weightInput").value = "";
+                foodList = [];
+                totalCal = 0;
+                updateTotalCalories();
+                renderTable();
+              }
+            });
+          })
+          .catch((err) => {
+            console.error(err);
+            Swal.fire({
+              title: "錯誤",
+              text: "請登入會員",
+              icon: "error",
+              confirmButtonText: "確定",
+            });
+          });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,138 @@
+/*body*/
+#foodList {
+	/*字體:初始化大小*/
+	font-size: initial;
+	text-align: center;
+}
+
+/*表頭*/
+.foodTableTaitle {
+	background-color: #f5721bbd;
+}
+
+/*表頭 - 每個欄位*/
+.foodTable th {
+	font-size: 18px !important;
+	color: #212529 !important;
+}
+
+/*包住整個表格&按鈕*/
+.foodtable-container {
+	width: fit-content !important;
+	margin: auto;
+}
+
+.foodTable {
+	border-collapse: collapse;
+}
+
+.foodTable th,
+.foodTable td {
+	white-space: normal;
+}
+
+/*新增按鈕*/
+.insertbtn {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 5px;
+	margin-right: 0px;
+
+}
+
+.insertbtn button {
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 14px;
+	display: flex;
+	align-items: center;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.3s ease;
+}
+
+/*圖案&字之間的距離*/
+.insertbtn button i {
+	margin-right: 10px;
+}
+
+/* 刪除按鈕 */
+a.Idelete {
+	color: rgb(233, 71, 71) !important;
+}
+
+/* 更新按鈕--列表 */
+a.Iupdate {
+	color: rgba(128, 128, 216, 0.842) !important;
+}
+
+/*新增Modal - 分類*/
+.category select {
+	color: black;
+
+}
+
+/*更新按鈕 --更新表單裡*/
+.updatebtn {
+	background-color: #8690a5;
+	color: white;
+	padding: 5px 5px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 20px;
+	margin-bottom: 16px;
+}
+
+.updatebtn:hover {
+	background-color: #a8abc7;
+}
+
+/* 查詢 */
+.querybtn:hover {
+	background-color: #f36100 !important;
+}
+
+input[type="text"],
+input[type="number"] {
+	padding: 7px 14px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 16px;
+	box-sizing: border-box;
+	color: black;
+}
+
+/*返回食品列表按鈕*/
+.backbtnForm {
+	display: flex;
+	/* 水平居中 */
+	justify-content: center;
+	margin-top: 20px;
+
+}
+
+.backbtn {
+	background-color: #8690a5;
+	color: white;
+	padding: 10px 10px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	transition: background-color 0.3s ease;
+	align-items: baseline;
+	text-decoration: none;
+	/*去掉底線*/
+}
+
+.backbtn i {
+	margin-right: 10px;
+}
+
+.backbtn:hover {
+	background-color: #a8abc7;
+
+}

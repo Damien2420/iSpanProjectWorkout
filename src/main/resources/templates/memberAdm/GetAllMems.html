@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/memberAdm/style.css}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+	<th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+	<title>會員資料</title>
+	
+</head>
+<body style="background-color:rgb(245, 244, 249)">
+	
+	<div class="layout-wrapper layout-content-navbar">
+		<div class="layout-container">
+			<nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+			<div class="layout-page">
+				<header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+				<div class="content-wrapper">
+	
+					<main  class="container-xxl flex-grow-1 container-p-y">
+						<div align="center" class="p-3">
+							<h2>會員資料</h2>
+							<div class="btn-container">
+								<a class="abtn insBtn" th:href="@{/admin/insertmembers.controller}" >
+									<i class="fa-solid fa-user-plus"></i>  新增會員</a> 
+							</div>
+							<table id="memberTable" class="display">
+								<thead>
+									<tr>
+									<th>會員編號<th>姓名<th>Email<th>性別<th>年齡<th>電話<th>註冊日期<th>狀態<th>編輯<th>封鎖
+									</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block th:each=" member : ${members}">
+										<tr><td th:text="${member.memNo}"></td>
+										<td><a th:href="@{/admin/getonemember.controller(memNo=${member.memNo})}" th:text="${member.memName}" ></a>	
+										<td th:text="${member.memEmail}"></td>
+										<td th:switch="${member.gender}">
+											<span th:case="0">男</span>
+										    <span th:case="1">女</span>
+							            </td>
+										<td th:text="${member.age}"></td>
+										<td th:text="${member.phone}"></td>
+										<td th:text="${member.regDate}"></td>
+										<td th:switch="${member.status}">
+										    <span th:case="0">未驗證</span>
+										    <span th:case="1">正常</span>
+										    <span th:case="2">封鎖</span>
+										</td>
+										<td><a class="updBtn" th:href="@{/admin/getupdatemember.controller(memNo=${member.memNo})}" ><i class="fa-solid fa-pen-to-square"></i></a>
+										<td><a class="delBtn" th:onclick="'showAlert(' + ${member.memNo} + ')'" href="javascript:void(0);" ><i class="fa-solid fa-ban"></i></a>
+									</th:block>
+								</tbody>
+							</table>
+							<p class="empty"></p>
+							<h3>共<span th:text="${members.size()}"></span>筆會員資料</h3>
+						</div>
+					</main>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<th:block th:replace="~{back/Navbar :: js}"></th:block>
+	<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+	<script th:src="@{/js/axios/axios.min.js}"></script>
+	<script>
+		const showAlert = (memNo) => {
+            Swal.fire({
+			    icon: 'question',
+			    title: '封鎖會員？',
+			    showCancelButton: true,
+			}).then((result) => {
+			    console.log(result)
+			    if(result.isConfirmed){
+			        Swal.fire({
+			            icon: 'success',
+			            title: '已封鎖會員',
+			        }).then(() => {
+	                    window.location.href = `/workout/admin/blockmember.controller?memNo=${memNo}`;
+	                })
+			    }
+			})
+        }
+        
+        $(document).ready(function() {
+            $('#memberTable').DataTable();
+        });
+	</script>
+	
+</body>
+</html>

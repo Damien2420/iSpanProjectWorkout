@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-menu-fixed" xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+  <meta name="description" content="" />
+  <title>Gymnity - 後台首頁</title>
+  <th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+</head>
+
+<body>
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      <!-- Layout container -->
+      <nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+      <div class="layout-page">
+        <!-- Content wrapper -->
+        <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+        <div class="content-wrapper">
+          <!-- Content -->
+          <div class="container-xxl flex-grow-1 container-p-y">
+            <!-- 創建容器（畫好的圖表會被插入在裡面） -->
+	           	<div class="d-flex row">
+	           		<div class="col-lg-6 mb-4 order-0">
+                  <div class="row h-100">
+                    <div class="col-12 h-100">
+                      <div class="card p-1 h-100">
+                        <div class="card-body" style="padding-bottom: 10px">
+                          <h2 class="text-center fw-bold">會員每月註冊人數</h2>
+                          <canvas id="myChart-line"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+					      </div>
+					      <div class="col-lg-6 col-md-12 col-6 mb-4">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="card p-1">
+                        <div class="card-body" style="padding-bottom: 10px">
+                          <h2 class="text-center fw-bold">會員註冊人數及性別比</h2>
+                          <div class="chart-container">
+                            <canvas id="myChart-doughnut"></canvas>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+                <div class="col-lg-6 col-sm-12 mb-4 order-0">
+                  <div class="card p-1">
+                    <div class="card-body" style="padding-bottom: 10px">
+                      <h2 class="text-center fw-bold">會員年齡分布</h2>
+                      <canvas id="myChart-bar"></canvas>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-sm-12 mb-4 order-0">
+                  <div class="card p-1">
+                    <div class="card-body" style="padding-bottom: 10px">
+                      <h2 class="text-center fw-bold">近期訂單數量統計</h2>
+                      <canvas id="orderChart-bar"></canvas>
+                    </div>
+                  </div>
+                </div>
+	           	</div>
+	           	<!-- ========================================================== -->
+          </div>
+          <!-- / Content -->
+          <div class="content-backdrop fade"></div>
+        </div>
+        <!-- Content wrapper -->
+      </div>
+      <!-- / Layout page -->
+    </div>
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+  </div>
+  <!-- / Layout wrapper -->
+  <th:block th:replace="~{back/NavBar :: js}"></th:block>
+  <!-- Page JS -->
+  <script th:src="@{/js/lib/dashboards-analytics.js}"></script>
+  <script th:src="@{/js/axios/axios.min.js}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+		$(document).ready(function() {
+            $.ajax({
+                url: '/workout/api/member-gender',
+                type: 'GET',
+                success: function(response) {
+                    const data = {
+                        labels: response.labels,
+                        datasets: [{
+                            label: '人數',
+                            data: response.data,
+                            backgroundColor: [
+                                'rgb(255, 99, 132)',
+                                'rgb(54, 162, 235)'
+                            ],
+                            hoverOffset: 4
+                        }]
+                    };
+                    const config = {
+                        type: 'doughnut',
+                        data: data,
+                        options: {
+                          responsive: true, // 設置圖表為響應式，根據屏幕窗口變化而變化
+                          maintainAspectRatio: false,// 保持圖表原有比例
+                        }
+                    };
+                    const ctx = document.getElementById('myChart-doughnut').getContext('2d');
+                    const myChart = new Chart(ctx, config);
+                },
+                error: function(error) {
+                    console.error('Error fetching chart data:', error);
+                }
+            });
+            
+			$.ajax({
+		        url: '/workout/api/member-registration',
+		        method: 'GET',
+		        success: function(data) {
+		          updateLineChart(data);
+		        },
+		        error: function(error) {
+		          console.error('Error fetching member registration data:', error);
+		        }
+			});
+			function updateLineChart(data) {
+		        const lineCtx = document.getElementById('myChart-line').getContext('2d');
+		        const labels = data.map(item => item.month);
+		        const values = data.map(item => item.count);
+		        
+		        const maxCount = Math.max(...values);
+		        const suggestedMax = maxCount + 1; // 比最大值多兩格
+		
+		        const lineData = {
+		          labels: labels,
+		          datasets: [{
+		            label: '會員註冊人數',
+		            data: values,
+		            fill: false,
+		            borderColor: 'rgb(75, 192, 192)',
+		            backgroundColor: 'rgba(255, 160, 66, 0.5)',
+		            pointStyle: 'circle',
+		            pointRadius: 3,
+		            pointHoverRadius: 10,
+		            tension: 0.1
+		          }]
+		        };
+		
+		        const lineConfig = {
+		          type: 'line',
+		          data: lineData,
+		          options: {
+		            responsive: true,
+		            interaction: {
+		              intersect: false,
+		            },
+		            scales: {
+		              x: {
+		                display: true,
+		                title: {
+		                  display: true,
+		                  text: '月份'
+		                }
+		              },
+		              y: {
+		                display: true,
+		                title: {
+		                  display: true,
+		                  text: '人數'
+		                },
+	                    beginAtZero: true,
+	                    suggestedMax: suggestedMax,
+	                    ticks: {
+	                        beginAtZero: true,
+	                        stepSize: 1 // 每個刻度間隔為1
+	                    }
+		              }
+		            }
+		          }
+		        };
+		        new Chart(lineCtx, lineConfig);
+		      }
+		});
+	
+		// 會員年齡分佈柱狀圖 另一種方法
+		async function fetchData() {
+            const response = await fetch('/workout/api/member-age');
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        }
+
+        function createChart(data) {
+            const ctx = document.getElementById('myChart-bar').getContext('2d');
+            const labels = data.map(item => item.ageGroup);
+            const counts = data.map(item => item.count);
+
+            const chartData = {
+                labels: labels,
+                datasets: [{
+                    label: '會員年齡分佈',
+                    data: counts,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 205, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(201, 203, 207, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(255, 159, 64)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(54, 162, 235)',
+                        'rgb(153, 102, 255)',
+                        'rgb(201, 203, 207)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+            const config = {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '年齡'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return Number.isInteger(value) ? value : '';
+                                },
+                                stepSize: 1 // Force the y axis to display only integers
+                            }
+                        }
+                    }
+                }
+            };
+            new Chart(ctx, config);
+        }
+        fetchData().then(data => createChart(data)).catch(error => console.error('Error fetching data:', error));
+        
+        orderStatisticData();
+
+        async function orderStatisticData() {
+          const response = await axios.get('../api/order-count');
+
+          const months = Object.keys(response.data).map(Number);
+          const currentMonth = Math.max(...months);
+          const existingCount = months.length;
+          const requiredCount = 4;
+          const missingCount = requiredCount - existingCount;
+
+          const updatedData = {};
+
+          for (let i = missingCount; i > 0; i--) {
+            const prevMonth = (currentMonth - i + 12) % 12 || 12;
+            if (!response.data[prevMonth]) {
+              updatedData[prevMonth] = 0;
+            }
+          }
+          Object.assign(updatedData, response.data);
+          const sortedMonths = Object.keys(updatedData).map(Number).sort((a, b) => a - b);
+          const labels = sortedMonths.map(month => `${month}月`);
+          const dataValues = sortedMonths.map(month => updatedData[month]);
+
+          const ctx = document.querySelector('#orderChart-bar').getContext('2d');
+          new Chart(ctx, {
+              type: 'bar',
+              data: {
+                  labels: labels,
+                  datasets: [{
+                      label: '訂單數量',
+                      data: dataValues,
+                      backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                      borderColor: 'rgba(75, 192, 192, 1)',
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  scales: {
+                      x: {
+                          beginAtZero: true
+                      },
+                      y: {
+                          beginAtZero: true
+                      }
+                  }
+              }
+          });
+        };
+	</script>
+  
+</body>
+
+</html>

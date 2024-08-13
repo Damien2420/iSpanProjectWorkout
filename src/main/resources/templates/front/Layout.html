@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zxx" xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Fitmax</title>
+	<!-- =================== META =================== -->
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- =================== STYLE =================== -->
+	<th:block th:fragment="css">
+		<link rel="shortcut icon" th:href="@{/images/front/favicon.ico}">
+		<link rel="stylesheet" th:href="@{/css/front/slick.min.css}">
+		<link rel="stylesheet" th:href="@{/css/front/bootstrap-grid.css}">
+		<link rel="stylesheet" th:href="@{/css/front/fontawesome.css}">
+		<link rel="stylesheet" th:href="@{/css/front/brands.css}">
+		<link rel="stylesheet" th:href="@{/css/front/solid.css}">
+		<link rel="stylesheet" th:href="@{/css/front/style.css}">
+	</th:block>
+</head>
+
+<body id="home">
+	<th:block th:fragment="header">
+		<div class="preloader-cover">
+			<div id="cube-loader">
+				<div class="caption">
+					<div class="cube-loader">
+						<div class="cube loader-1"></div>
+						<div class="cube loader-2"></div>
+						<div class="cube loader-4"></div>
+						<div class="cube loader-3"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<header class="header">
+			<a href="#" class="nav-btn">
+				<span></span>
+				<span></span>
+				<span></span>
+			</a>
+			<div class="top-panel">
+				<div class="container">
+					<div class="header-left">
+						<ul class="header-cont">
+							<li><i class="fa fa-phone" aria-hidden="true"></i><a
+									href="tel:18004886040">02-1234-5678</a>
+							</li>
+							<li><i class="fa-regular fa-clock" aria-hidden="true"></i>Mon - Sun: 8:00AM - 2:00AM</li>
+						</ul>
+					</div>
+					<div class="header-right">
+						<form class="search-form">
+							<input type="search" class="search-form__field" placeholder="Search" value="" name="s">
+							<button type="submit" class="search-form__submit"><i class="fa fa-search"
+									aria-hidden="true"></i></button>
+						</form>
+						<ul class="social-list">
+							<li>
+								<a target="_blank" href="">
+									<i class="fa-brands fa-facebook"></i>
+								</a>
+							</li>
+							<li>
+								<a target="_blank" href="">
+									<i class="fa-brands fa-twitter"></i>
+								</a>
+							</li>
+							<li>
+								<a target="_blank" href="">
+									<i class="fa-brands fa-youtube"></i>
+								</a>
+							</li>
+							<li>
+								<a target="_blank" href="">
+									<i class="fa-brands fa-instagram"></i>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="header-menu">
+				<div class="container nav-container">
+					<div class="logo-container">
+						<div class="header-logo">
+							<a th:href="@{/home}" class="logo"><img
+									th:src="@{/images/front/logo-without-brandname-brighter-transparent.png}"
+									alt="logo"></a>
+						</div>
+						<a th:href="@{/home}" class="brand-title">GYMNITY</a>
+					</div>
+					<nav class="nav-menu">
+						<ul class="nav-list">
+							<li><a th:href="@{/home}">首頁</a></li>
+							<li><a th:href="@{/mall}">商城</a></li>
+							<li class="dropdown">
+								<a href="#">健身課程 <i class="fa fa-caret-down"></i></a>
+								<ul>
+									<li><a th:href="@{/coach/front/CoachFront}">GYMNITY教練</a></li>
+									<li><a th:href="@{/course/front/CourseFront}">GYMNITY健身課程</a></li>
+									<li th:if="${session.user != null}"><a th:href="@{/schedule/front/SchedulePreSelection}">選課系統</a></li>
+									<li th:if="${session.user == null}"><a th:href="@{/loginregister.controller}">選課系統</a></li>
+								</ul>
+							</li>
+							<li><a th:href="@{/forum/articles}">論壇</a></li>
+							<li class="dropdown">
+								<a href="#">菜單系統<i class="fa fa-caret-down"></i></a>
+								<ul>
+									<li><a th:href="@{/foodMenu/MenuCre}">熱量紀錄</a></li>
+									<li><a th:href="@{/foodMenu/memberMenu}">飲食總覽</a></li>								
+								</ul>
+							</li>
+							<li><a th:href="@{/contacts}">聯絡管道</a></li>
+						</ul>
+						<div class="user">
+							<div class="user-login" th:if="${session.user == null}">
+								<a th:href="@{/loginregister.controller}">
+									<i class="fa-solid fa-right-to-bracket"></i>
+									<span>登入</span>
+								</a>
+							</div>
+							<li class="dropdown login-img" th:unless="${session.user == null}">
+								<a href="#" th:if="${session.user.memPic != null}"><img
+										th:src="@{/showphoto?(memNo=${session.user.memNo})}" alt="logo"></a>
+								<a href="#" th:if="${session.user.memPic == null}"><img
+										th:src="@{/images/memberAdm/user-cover.jpg}" alt="logo"></a>
+								<ul>
+									<li><a th:href="@{/profile.controller}">會員中心</a></li>
+									<li><a th:href="@{/logout.controller}">登出</a></li>
+								</ul>
+							</li>
+
+						</div>
+					</nav>
+				</div>
+			</div>
+		</header>
+	</th:block>
+
+	<!-- ================== FOOTER ================== -->
+	<th:block th:fragment="footer">
+		<footer>
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6 col-lg-4 footer-item-logo">
+						<a th:href="@{/home}" class="logo-footer">
+							<img th:src="@{/images/front/logo-without-brandname-brighter-transparent.png}" alt="logo">
+							<h1 class="footer-brand-title">GYMNITY</h1>
+						</a>
+						<ul class="social-list">
+							<li><a target="_blank" href=""><i class="fa-brands fa-facebook" aria-hidden="true"></i></a>
+							</li>
+							<li><a target="_blank" href=""><i class="fa-brands fa-twitter" aria-hidden="true"></i></a>
+							</li>
+							<li><a target="_blank" href=""><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+							</li>
+							<li><a target="_blank" href=""><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+							</li>
+						</ul>
+					</div>
+					<div class="col-sm-6 col-lg-4 footer-item footer-item-list">
+						<h3>Links</h3>
+						<ul class="footer-link">
+							<li>
+								<a class="fw-bold" th:href="@{/mall}">商城</a>
+								<a class="fw-bold" th:href="@{/coach/front/CoachFront}">課程</a>
+							</li>
+							<li>
+								<a class="fw-bold" href="#">菜單</a>
+								<a class="fw-bold" th:href="@{/forum/articles}">論壇</a>
+							</li>
+							<li></li>
+						</ul>
+					</div>
+					<div class="col-sm-6 col-lg-4 footer-item">
+						<h3>Contact us</h3>
+						<ul class="footer-cont">
+							<li><i class="fa fa-phone" aria-hidden="true"></i><a
+									href="tel:0212345678">02-1234-5678</a>
+							</li>
+							<li><i class="fa fa-envelope" aria-hidden="true"></i><a
+									href="mailto:Gymnity@gmail.com">Gymnity@gmail.com</a></li>
+							<li><i class="fa fa-map-marker" aria-hidden="true"></i><a th:href="@{/contacts}">桃園市中壢區新生路二段421號</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="footer-bottom">
+					<div class="copyright"><a href="#" target="_blank">GYMNITY</a> © 2024. GYMNITY. All Rights Reserved.
+					</div>
+					<ul class="footer-menu">
+						<li class="active">本專題僅供資展國際專題報告使用，不得用於商業用途，如有侵權事宜敬請告知。</li>
+					</ul>
+				</div>
+			</div>
+		</footer>
+
+		<a class="to-top" href="#home">
+			<i class="fa fa-chevron-up" aria-hidden="true"></i>
+		</a>
+
+		<script th:src="@{/js/lib/jquery-3.7.1.js}"></script>
+		<script th:src="@{/js/front/slick.min.js}"></script>
+		<script th:src="@{/js/front/rx-lazy.js}"></script>
+		<script th:src="@{/js/front/parallax.min.js}"></script>
+		<script th:src="@{/js/front/scripts.js}"></script>
+	</th:block>
+</body>
+
+</html>

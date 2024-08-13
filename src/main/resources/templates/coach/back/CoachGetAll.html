@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	<title>教練資料</title>
+	<link rel="stylesheet" th:href="@{/css/coach/CoachPage.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.min.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  
+  	<th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+</head>
+<body>
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      <!-- Layout container -->
+      <nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+      <div class="layout-page">
+        <!-- Content wrapper -->
+        <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+        <div class="content-wrapper">
+
+				
+		<div class="coachPageContainer">
+			<div class="btn-like position-absolute top-0 start-50">
+			  <div class="row">
+				<a href="#" class="getAll col">查詢全部</a>
+			    <a th:href="@{../course/CourseGetAll}" class="col">查詢課程</a>	  
+			  </div>
+			</div>
+			<h2>教練資料</h2>
+			<div class="coachFunctionRow">
+		    	<a th:href="@{/coach/CoachInsert}" id="newcoachbtn">新增教練</a>
+	    		<form method="post" action="#" class="getBylikeword">
+	            	<input type="text" placeholder="輸入關鍵字" name="likeword"/>
+	            	<input type="submit" value="查詢"/>
+	    		</form>
+			</div>
+			<div class="table-container">
+				<table class="coachTable">
+					<thead>
+						<tr><th>教練編號<th>教練姓名<th>教練Email<th>教練電話<th>修改<th>刪除</tr>
+					</thead>
+					<tbody id="coachTableBody">
+					</tbody>
+				</table>
+			</div>
+			<div id="pgbtn"></div>
+		</div>
+		
+		
+        <!-- Content wrapper -->
+        </div>
+      </div>
+    </div>
+    <div class="layout-overlay layout-menu-toggle"></div>
+  </div>
+  <th:block th:replace="~{back/NavBar :: js}"></th:block>
+  <script th:src="@{/js/lib/dashboards-analytics.js}"></script>		
+  <!-- Page JS -->
+																			
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>	
+	<script>
+		window.onload = function() {updatePageVisibility();};
+		const CoachFindAll = "api/CoachFindAll";
+		var CoachFindByLike = "api/CoachFindByLike";
+		var pageStatus = 0;
+		var rowsPerPage = 10;
+		document.getElementById("coachTableBody").addEventListener('click',e=>{
+			if (e.target.classList.contains('deleteBtn')) {
+				e.preventDefault();
+				Swal.fire({title: '確定要刪除嗎？',icon: 'warning',showCancelButton: true ,cancelButtonText: '取消',cancelButtonColor: '#d33',confirmButtonText: '確定',confirmButtonColor: '#3085d6',
+				}).then((result) => {
+					if (result.isConfirmed) {
+						const coachId = e.target.getAttribute('data-id');
+						const deleteurl = `api/CoachDelete?coachId=${coachId}`;
+						axios.get(deleteurl)
+						.then(res => {
+							if(res.data === 1){
+								showAlert('資料已成功刪除。','success',()=>{updatePageVisibility();})
+							}else{
+								showAlert('不可刪除有教課之教練!!請先刪除課程!!','error',() => {})
+							}
+						})
+						.catch(err => {console.error(err);})
+					}
+				});
+			}
+			if (e.target.classList.contains("updateBtn")) {
+				const coachId = e.target.getAttribute("data-id");
+				axios.get('api/CoachUpdate',{params: {coachId: coachId}})
+				.then(res => {
+					const coach = res.data;
+					var updateHtml = `
+						<div class="form-container">
+					    <form method="post" action="#" enctype="multipart/form-data" id="saveForm">
+					        <p class="form-field">
+					            <label for="coachId">教練編號:</label>
+					            <input type="text" name="coachId" id="coachId" value="${coach.coachId}" readonly />
+					        </p>
+					        <p class="form-field">
+					            <label for="coachName">教練姓名:</label>
+					            <input type="text" name="coachName" id="coachName" value="${coach.coachName}"/>
+					        </p>
+					        <p class="form-field">
+					            <label for="coachEmail">教練Email:</label>
+					            <input type="text" name="coachEmail" id="coachEmail" value="${coach.coachEmail}"/>
+					        </p>
+					        <p class="form-field">
+					            <label for="coachPhone">教練Phone:</label>
+					            <input type="text" name="coachPhone" id="coachPhone" value="${coach.coachPhone}"/>
+					        </p>
+					        <p class="form-field coachModifyPic">
+					            <label for="coachPicInput">教練照片 :</label>
+					            <input type="file" name="coachPic" id="coachPicInput" />
+					        </p>
+					    </form>
+					</div>
+					`;
+					showForm(updateHtml,'api/CoachUpdateMain','修改成功')
+				}).catch(err => {console.error(err);})
+			}
+		})
+		document.getElementById("newcoachbtn").addEventListener('click', e=>{
+			e.preventDefault();
+			const insertHtml = `
+				<div class="form-container">
+			    <form method="post" action="#" enctype="multipart/form-data" id="saveForm">
+			        <p class="form-field">
+			            <label for="coachName">輸入教練姓名 :</label>
+			            <input type="text" name="coachName" id="coachName" />
+			        </p>
+			        <p class="form-field">
+			            <label for="coachEmail">輸入教練Email :</label>
+			            <input type="text" name="coachEmail" id="coachEmail" />
+			        </p>
+			        <p class="form-field">
+			            <label for="coachPhone">輸入教練Phone :</label>
+			            <input type="text" name="coachPhone" id="coachPhone" />
+			        </p>
+			        <p class="form-field coachModifyPic">
+			            <label for="coachPicInput">輸入照片 :</label>
+			            <input type="file" name="coachPic" id="coachPicInput"/>
+			        </p>
+			        <button type="submit" id="QuickInput" class="QuickInput">一鍵輸入</button>
+			    </form>
+			</div>
+							`;
+			showForm(insertHtml,'api/CoachInsertMain','新增成功')
+		})
+		document.querySelector(".getBylikeword").addEventListener('submit', e=> {
+			e.preventDefault();
+			const formData = new FormData(e.target);
+			const likeword = formData.get('likeword').trim();
+			if(likeword != ''){
+				CoachFindByLike = `api/CoachFindByLike?likeword=${likeword}`;
+				pageStatus = 1;
+			}
+			updatePageVisibility();
+		});
+		document.querySelector(".getAll").addEventListener('click',e=>{
+			e.preventDefault();
+			document.querySelector('.getBylikeword input[name="likeword"]').value = '';
+			pageStatus = 0;
+			updatePageVisibility();
+		});
+		function updatePageVisibility() {
+            if (pageStatus === 1) {
+				onLoadData(CoachFindByLike);
+            } else if (pageStatus === 0) {
+				onLoadData(CoachFindAll);
+            }
+        }
+		function onLoadData(url) {
+			axios.get(url)
+			.then(res => {
+				const coachs=res.data;
+				const ctb = document.getElementById("coachTableBody");
+				ctb.innerHTML = "";
+				coachs.forEach(coach => {
+					ctb.innerHTML += `
+					<tr>
+						<td>${coach.coachId}</td>
+						<td><a href="CoachGetById?coachId=${coach.coachId}">${coach.coachName}</a></td>
+						<td>${coach.coachEmail}</td>
+						<td>${coach.coachPhone}</td>
+						<td><a href="#" class="updateBtn" data-id="${coach.coachId}">修改</a></td>
+						<td><a href="#" class="deleteBtn" data-id="${coach.coachId}">刪除</a></td>
+					</tr>	
+					`
+				});
+				var rows = Array.from(document.querySelectorAll('.coachTable tr:not(:first-child)'));
+				getPage(rows)(1);
+			})
+			.catch(err => {
+				console.error(err);
+			})
+		}
+		function showAlert(title, icon, callback) {
+			Swal.fire({
+				title: title,
+				icon: icon,
+				willClose:()=>{callback();},
+				confirmButtonText: '確定',
+				confirmButtonColor: '#3085d6',
+			});
+		}
+		function showForm(html,url,alert){
+			Swal.fire({
+				html: html,
+				confirmButtonText: '確定',
+				confirmButtonColor: '#3085d6',
+			  customClass: {popup: 'swal-class'},
+				didOpen: () => {
+						document.getElementById('QuickInput').addEventListener('click', e => {
+						e.preventDefault();
+						const Form = document.getElementById('saveForm');
+						Form.querySelector('input[name="coachName"]').value = '田所浩三';
+						Form.querySelector('input[name="coachEmail"]').value = 'KojiTabosh@mail.com';
+						Form.querySelector('input[name="coachPhone"]').value = '0911451400';
+						});
+				}
+			}).then((result) => {
+				if (result.isConfirmed) {
+					const formContainer = document.getElementById('saveForm');
+					const formData = new FormData(formContainer);
+					const coachName = formData.get('coachName');
+					axios.post(url,formData,{headers:{'Content-Type':'multipart/form-data'}})
+					.then(res => {
+						showAlert(alert+`</br>教練姓名 :${coachName}`, 'success', ()=>{updatePageVisibility();})
+					}).catch(err => {console.error(err);})
+				}
+			});
+		}
+		function getPage(rows){
+			var totalPages = Math.ceil(rows.length / rowsPerPage);
+			var pgbtn = document.getElementById('pgbtn');
+			pgbtn.innerHTML='';
+			for (var i = 1; i <= totalPages; i++) {
+						var button = document.createElement('button');
+						button.textContent = i;
+						button.addEventListener('click', function() {showPage(this.textContent);});
+						pgbtn.appendChild(button);
+			}
+			function showPage(pageNumber){
+				var startIndex = (pageNumber - 1) * rowsPerPage;
+				var endIndex = startIndex + rowsPerPage;
+				rows.forEach(function(row, index) {
+						if (index >= startIndex && index < endIndex) {
+								row.style.display = '';
+						} else {
+								row.style.display = 'none';
+						}
+				});
+			};
+			return function(pageNumber){
+				showPage(pageNumber);
+			};
+		}
+</script>
+</body>
+</html>

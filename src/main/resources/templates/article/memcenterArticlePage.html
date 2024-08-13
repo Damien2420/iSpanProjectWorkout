@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>會員中心 - 我的文章</title>
+	<link rel="stylesheet" th:href="@{/css/memberAdm/profile_style.css}">
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.1.0/css/dataTables.dataTables.min.css">
+	<style>
+		h2 {
+			margin-left: 15%;
+		}
+
+		option {
+			background-color: rgb(32, 32, 32);
+		}
+
+		td,
+		th {
+			text-align: center;
+			vertical-align: middle;
+			/* Center vertically if needed */
+		}
+	</style>
+</head>
+
+<body>
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+
+	<section class="s-header-title" style="background-image: url(../images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title fw-bold">會員中心</h1>
+			<ul class="breadcrambs">
+				<li><a th:href="@{/home}">Home</a></li>
+				<li>會員中心</li>
+			</ul>
+		</div>
+	</section>
+
+	<div class="profile-container">
+		<th:block th:replace="~{memberAdm/profile :: profile-sidebar}"></th:block>
+		<main class="main-content">
+			<br>
+			<h2>我的文章</h2>
+			<div class="container">
+				<table id="memcenterArticle">
+					<thead>
+						<tr>
+							<th style="text-align: center;">文章編號</th>
+							<th style="text-align: center;">文章標題</th>
+							<th style="text-align: center;">發文時間</th>
+							<th style="text-align: center;">標籤</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="article : ${articles}">
+							<td th:text="${article.articleId}"></td>
+							<td th:text="${article.articleTitle}"></td>
+							<td th:text="${article.postTime}"></td>
+							<td th:text="${article.tag}"></td>
+							<td>
+								<!-- <a th:href="@{/article/editCommentPage(id=${comment.commentId})}" class="btn">編輯</a> -->
+								<form th:action="@{/forum/editArticlePage}" method="post" style="display:inline;">
+									<input type="hidden" name="id" th:value="${article.articleId}" />
+									<button type="submit" class="btn">編輯</button>
+								</form>
+								<form th:action="@{/forum/deleteArticle}" method="post" style="display:inline;">
+									<input type="hidden" name="id" th:value="${article.articleId}" />
+									<button type="submit" class="btn">刪除</button>
+								</form>
+
+
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</main>
+	</div>
+
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+	<script src="https://cdn.datatables.net/2.1.0/js/dataTables.min.js"></script>
+	<script>
+		let table = new DataTable('#memcenterArticle')
+	</script>
+</body>
+
+</html>

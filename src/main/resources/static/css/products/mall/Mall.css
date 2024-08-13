@@ -1,0 +1,156 @@
+.page-title {
+    text-align: center;
+    font-size: 40px;
+    color: #bdbdbd;
+}
+
+.container {
+    overflow: auto;
+}
+
+.my-hr {
+    margin: 30px auto 40px auto;
+    width: 87.5%;
+    border: 1px solid #f3c449;
+    opacity: 1;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+.my-td {
+    border: 3px solid rgba(211, 211, 211, 0.201);
+}
+
+tr:first-child .my-td {
+    border-top: none;
+}
+
+.my-td:first-child {
+    border-left: none;
+}
+
+tr:last-child .my-td {
+    border-bottom: none;
+}
+
+.my-td:last-child {
+    border-right: none;
+}
+
+.product {
+    aspect-ratio: 1 / 0.7;
+    position: relative;
+    cursor: pointer;
+    margin: 35px;
+    border-radius: 15px;
+}
+
+.product::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 2px solid #fff;
+    border-radius: inherit;
+    opacity: 0;
+    transition: 0.4s ease-in-out;
+}
+
+.product:hover::after {
+    opacity: 1;
+    inset: 20px;
+}
+
+.product:hover .productImg {
+    filter: grayscale(1) brightness(0.4);
+}
+
+.product:hover .content {
+    visibility: visible;
+}
+
+.product:hover .description {
+    visibility: visible;
+    -webkit-animation: scale-in-center 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    animation: scale-in-center 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+.content {
+    width: 80%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #fff;
+    visibility: hidden;
+    transition: visibility 0s ease-in-out;
+}
+
+#category {
+    margin-bottom: 50px;
+}
+
+.psquare {
+    width: 300px;
+    height: 300px;
+    border-radius: inherit;
+}
+
+.psquare a:link {
+    text-decoration: none;
+}
+
+.psquare a:visited {
+    color: gray;
+}
+
+.psquare a {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-color: #bdbdbd;
+    border-radius: inherit;
+    z-index: 1;
+}
+
+.productImg {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    transition: 0.5s ease-in-out;
+}
+
+@-webkit-keyframes scale-in-center {
+    0% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes scale-in-center {
+    0% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.scale-in-center {
+    -webkit-animation: scale-in-center 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    animation: scale-in-center 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}

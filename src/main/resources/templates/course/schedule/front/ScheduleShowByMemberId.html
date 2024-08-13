@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+	<meta charset="UTF-8">
+	<title>會員中心 - 我的課表</title>
+	<link rel="stylesheet" th:href="@{/css/schedule/SchedulePage.css}">
+	<link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/memberAdm/profile_style.css}">
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.min.css">
+</head>
+<body id="home" class="page-schedule">
+	<div th:attr="data-memberId=${member.memNo}" id="iniMemberId" hidden></div>
+	<div th:attr="data-memberName=${member.memName}" id="iniMemberName" hidden></div>	
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<!-- =============== HEADER-TITLE =============== -->
+	<section class="s-header-title" style="background-image: url(../../images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title fw-bold">會員中心</h1>
+			<ul class="breadcrambs">
+				<li><a th:href="@{/home}">Home</a></li>
+				<li>會員中心</li>
+			</ul>
+		</div>
+	</section>
+	<!-- ============= HEADER-TITLE END ============= -->
+	<div class="profile-container">
+        <th:block th:replace="~{memberAdm/profile :: profile-sidebar}"></th:block>
+        <div class="schedulePageContainer">
+            <h2>課表</h2>
+
+            <div class="row my-3 d-flex justify-content-center align-items-center flex-row gap-3">
+                <div class="col-3">
+                    <a th:href="@{/schedule/front/SchedulePreSelection}" class="btn">課程預選</a>
+                </div>
+                <div class="col-3">
+                    <a th:href="@{/courseRegistration/front/CourseRegistrationGetByMemberId}" class="btn">選課紀錄</a>
+                </div>
+            </div>
+
+            <div class="scheduleShow">
+                <div class="scheduleShowTable">
+                    <div class="scheduleShowTable-Top row d-flex justify-content-center"></div>
+                    <div class="scheduleShowTable-Head row">
+                        <div class="col">&nbsp;</div>
+                        <div class="col">星期一</div>
+                        <div class="col">星期二</div>
+                        <div class="col">星期三</div>
+                        <div class="col">星期四</div>
+                        <div class="col">星期五</div>
+                        <div class="col">星期六</div>
+                        <div class="col">星期日</div>
+                    </div>
+                    <div class="scheduleShowTable-Body" id="scheduleTableBody"></div>
+                </div>
+            </div>    
+
+        </div>
+    </div>  
+	<footer th:replace="~{front/Layout :: footer}"></footer>    
+    
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.12.5/dist/sweetalert2.all.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>	
+    <script>
+		window.onload = function() {onLoadData();};
+        const currentDate = new Date().toISOString().split('T')[0];
+        document.querySelector(".scheduleShowTable-Top").innerHTML += currentDate;
+        const memberId = document.getElementById('iniMemberId').getAttribute('data-memberId');
+        const memberName = document.getElementById('iniMemberName').getAttribute('data-memberName');
+        function onLoadData(){
+            axios.get("../../courseRegistration/front/api/CourseRegistrationGetByMemberId",{params: {memberId: memberId}})
+            .then(res => {
+                const courseIdArray = [];
+                const registerStatusMap = new Map();
+                const courseRegistrations = res.data;
+                courseRegistrations.forEach(courseRegistration => {
+                    courseIdArray.push(courseRegistration.courseId);
+                    registerStatusMap.set(courseRegistration.courseId,courseRegistration.registerStatus);
+                });
+                const courseIds = courseIdArray.join(',');
+                axios.get("api/ScheduleFindByCourseIds", {params: {courseIds: courseIds}})
+                .then(res => {
+                    const schedules = res.data;
+                    const daytimes = ["Morning (06:00-12:00)", "Afternoon (12:00-18:00)", "Evening (18:00-22:00)", "Night (22:00-02:00)"];
+                    const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+                    const scheduleTableBody = document.getElementById("scheduleTableBody");
+                    daytimes.forEach(daytime => {
+                        const row = document.createElement("div");
+                        row.className = "row";
+                        const broadside = document.createElement("div");
+                        broadside.className = "col";
+                        broadside.innerHTML = ` <div class="clock-name">${daytime.split(" ")[0]}</div><div class="clock-num">${daytime.substring(daytime.indexOf('('), daytime.indexOf(')') + 1)}</div>`;
+                        row.appendChild(broadside);                        
+                        weekdays.forEach(weekday => {
+                            const rowdata = document.createElement("div");
+                            rowdata.className = "col";
+                            let courseName = "";
+                            let courseId = 0;
+                            let coachName = "";
+                            for (const schedule of schedules) {
+                                if (schedule.weekday === weekday && schedule.daytime === daytime.split(" ")[0]) {
+                                    courseName = schedule.course.courseName;
+                                    courseId = schedule.courseId;
+                                    coachName = schedule.course.coach.coachName
+                                    break;
+                                }
+                            }
+                            if (courseName) {
+                                const registerStatus = registerStatusMap.get(courseId);
+                                if (registerStatus === '通過') {
+                                    rowdata.innerHTML = `<div>${courseName}</div><div class="coachColor">${coachName}</div>`;
+                                } else if (registerStatus === '待審核') {
+                                    rowdata.innerHTML = `<div>${courseName}</div><div class="coachColor">${coachName}</div><div class="registerStatusColor">${registerStatus}</div>`;
+                                }
+                            }
+                            else {rowdata.innerHTML = "&nbsp;"; }
+
+                            row.appendChild(rowdata);
+                        });
+                        scheduleTableBody.appendChild(row);
+                    });
+                }).catch(err => { console.error(err);})
+            }).catch(err => {console.error(err);})
+        }
+
+    </script>
+</body>
+</html>

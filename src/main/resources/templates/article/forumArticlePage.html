@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>GYMNITY - [[${article.articleTitle}]]</title>
+	<!-- =================== META =================== -->
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<th:block th:replace="~{front/Layout :: css}"></th:block>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<style>
+		.review-item {
+			display: flex;
+			/* 使容器成為 flex 容器 */
+			justify-content: space-between;
+			/* 在水平方向上分配空間 */
+			align-items: center;
+			/* 垂直方向上對齊 */
+		}
+
+		.review-content {
+			flex: 1;
+			/* 使內容區域擴展，佔據剩餘空間 */
+		}
+
+		.show-form {
+			/* 不需要額外的樣式，會自然排列在右側 */
+		}
+
+		.post-header-actions {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.post-header-actions .title {
+			margin: 0;
+			/* 去掉默认的 margin 以便更好地对齐 */
+		}
+
+		.post-header-actions .show-article-form {
+			/* 如果需要调整按钮的具体位置或样式，可以在这里添加样式 */
+			margin-left: -10px;
+		}
+
+		select {
+			width: 150px;
+			height: 35px;
+			/* 或其他適當的百分比 */
+			margin: 10px 0;
+			font-size: inherit;
+
+		}
+
+		#reportType {
+			margin-left: 5px;
+		}
+
+		#reportDescribe {
+			background-color: #fff !important;
+			color: black;
+			font-size: inherit;
+			margin-top: 15px;
+		}
+	</style>
+</head>
+
+<body id="home">
+	<th:block th:replace="~{front/Layout :: header}"></th:block>
+	<!-- =============== HEADER-TITLE =============== -->
+	<section class="s-header-title" style="background-image: url(../images/front/bg-1-min.png);">
+		<div class="container">
+			<h1 class="title fw-bold">文章</h1>
+			<ul class="breadcrambs">
+				<li><a th:href="@{/home}">首頁</a></li>
+				<li><a th:href="@{/forum/articles}">論壇</a></li>
+				<li>文章</li>
+			</ul>
+		</div>
+	</section>
+	<!-- ============= HEADER-TITLE END ============= -->
+
+	<!--===================== S-NEWS =====================-->
+	<section class="s-news">
+		<div class="container">
+			<div class="row">
+				<div class="col-12 col-lg-9 blog-cover">
+					<div class="post-item-cover">
+						<!-- <div class="post-header">
+							<div class="post-thumbnail">
+								<img th:src="@{/images/front/blog-1.jpg}" alt="img">
+							</div>
+						</div> -->
+						<div class="post-content">
+							<div class="meta">
+								<span class="post-by"><i class="fa fa-user" aria-hidden="true"></i>
+									<a th:text="${article.memberId.nickName}">Byauthor</a>
+								</span>
+								<span class="post-date"><i class="fa fa-calendar" aria-hidden="true"></i>
+									<p th:text="${article.postTime}">posttime</p>
+								</span>
+								<span class="post-category"><i class="fa fa-tag" aria-hidden="true"></i><a
+										th:href="@{/forum/categories(tag=${article.tag})}"
+										th:text="${article.tag}">tag</a></span>
+							</div>
+							<div class="post-header-actions">
+								<h2 class="title" th:text="${article.articleTitle}">title</h2>
+								<a href="/report?commentId=12345" class="show-article-form"
+									th:data-article-id="${article.articleId}">
+									<i class="fa-solid fa-bars"></i>
+								</a>
+							</div>
+							<br>
+							<div class="text" th:utext="${article.articleContent}"></div>
+						</div>
+						<div class="post-footer">
+							<div class="meta">
+								<span class="post-comment"><i class="fa fa-comment" aria-hidden="true"></i>
+									<a th:text="${article.commentCount + ' Comments'}">2Comments(s)</a>
+								</span>
+							</div>
+						</div>
+					</div>
+					<!--=============== AUTOR-COVER ===============-->
+					<!-- <div class="autor-cover">
+						<img th:src="@{/images/front/autor-img.png}" alt="img">
+						<div class="autor-content">
+							<div class="name">Samson Peters</div>
+							<p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem</p>
+						</div>
+					</div> -->
+					<!--============= AUTOR-COVER END =============-->
+
+					<div class="reviews">
+						<h2 class="title">Comments</h2>
+						<th:block th:each="comment : ${comments}">
+							<ul class="reviews-list">
+								<li class="item">
+									<div class="review-item">
+										<div class="review-content">
+											<h6 class="name"
+												th:text="${comment.memberId.nickName == null || comment.memberId.nickName == '' ? comment.memberId.memName : comment.memberId.nickName}">
+												nickName</h6>
+											<div class="date" th:text="${comment.commentTime}"><i class="fa fa-calendar"
+													aria-hidden="true"></i>posttime
+											</div>
+											<p class="review-comment" th:text="${comment.commentContent}">comment</p>
+
+
+										</div>
+										<a href="/report?commentId=12345" class="show-form"
+											th:data-comment-id="${comment.commentId}"
+											th:data-article-id="${comment.articleId.articleId}">
+											<i class="fa-solid fa-bars"></i>
+										</a>
+									</div>
+
+								</li>
+							</ul>
+						</th:block>
+
+						<div class="reviews-form">
+							<h2 class="title">Leave a Comment</h2>
+							<form th:action="@{/forum/comment}" method="POST" onsubmit="return fillLocalTime()">
+								<input type="hidden" name="articleId" th:value="${article.articleId}">
+								<ul class="form-cover">
+									<li class="inp-text">
+										<label style="font-size: 16px;"></label>
+										<textarea placeholder="請輸入留言" style="font-size: 16px;"
+											name="commentContent"></textarea>
+									</li>
+								</ul>
+								<input type="hidden" name="postTime" id="postTime"><br>
+								<div class="btn-form-cover">
+									<button type="submit" class="btn">送出留言</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					<!--================ NAVIGATION ================-->
+					<br><br>
+					<div class="navigation">
+						<div th:if="${previousArticle != null}">
+							<a th:href="@{/forum/article(articleId=${previousArticle.articleId})}"
+								class="navigation-item">
+								<span>previous</span>
+								<div class="title" th:text="${previousArticle.articleTitle}"></div>
+							</a>
+						</div>
+						<div th:if="${nextArticle != null}">
+							<a th:href="@{/forum/article(articleId=${nextArticle.articleId})}" class="navigation-item">
+								<span>next</span>
+								<div class="title" th:text="${nextArticle.articleTitle}"></div>
+							</a>
+						</div>
+
+					</div>
+					<!--============== NAVIGATION END ==============-->
+				</div>
+				<!--================= SIDEBAR =================-->
+				<div class="col-12 col-lg-3 sidebar">
+					<a href="#" class="btn btn-sidebar"><span>Widgets</span></a>
+					<ul class="widgets">
+						<!--=========== WIDGET-SEARCH ===========-->
+						<!--
+						<li class="widget widget-search">
+							<h3 class="title">Search</h3>
+							<form class="search-form">
+								<input class="inp-form" type="email" name="search" placeholder="Search">
+								<button type="submit" class="btn-form"><i class="fa fa-search"
+										aria-hidden="true"></i></button>
+							</form>
+						</li>
+						-->
+						<!--========= WIDGET-SEARCH END =========-->
+						<!--=========== WIDGET-ARHIVE ===========-->
+						<!-- <li class="widget widget-archive">
+							<h3 class="title">Archive</h3>
+							<ul>
+								<li><a href="#">January 2019</a></li>
+								<li><a href="#">February 2019</a></li>
+								<li><a href="#">March 2019</a></li>
+								<li><a href="#">April 2019</a></li>
+								<li><a href="#">May 2019</a></li>
+							</ul>
+						</li> -->
+						<!--========= WIDGET-ARHIVE END =========-->
+						<!--========= WIDGET-CATEGORIES =========-->
+						<li class="widget widget-categories">
+							<h3 class="title">Categories</h3>
+							<ul>
+								<li><a th:href="@{/forum/categories(tag='問題')}"><i
+											class="fa-solid fa-angle-right"></i>問題</a></li>
+								<li><a th:href="@{/forum/categories(tag='討論')}"><i
+											class="fa-solid fa-angle-right"></i>討論</a></li>
+								<li><a th:href="@{/forum/categories(tag='心得')}"><i
+											class="fa-solid fa-angle-right"></i>心得</a></li>
+								<li><a th:href="@{/forum/categories(tag='飲食')}"><i
+											class="fa-solid fa-angle-right"></i>飲食</a></li>
+								<li><a th:href="@{/forum/categories(tag='其他')}"><i
+											class="fa-solid fa-angle-right"></i>其他</a></li>
+							</ul>
+						</li>
+						<!--======= WIDGET-CATEGORIES END =======-->
+						<!--======== WIDGET-RECENT-POSTS ========-->
+						<li class="widget widget-recent-posts">
+							<h3 class="title">Popular Posts</h3>
+							<ul>
+								<th:block th:each="sideArticle : ${sideArticles}">
+									<li>
+										<a th:href="@{/forum/article(articleId=${sideArticle.articleId})}"
+											th:text="${sideArticle.articleTitle}">熱門文章標題</a>
+										<div class="date">
+											<span>
+												<i class="fa fa-comment" aria-hidden="true"></i>
+												<a th:text="${sideArticle.commentCount+' Comments'}">commentCount</a>
+											</span>
+										</div>
+									</li>
+								</th:block>
+							</ul>
+						</li>
+						<!--====== WIDGET-RECENT-POSTS END ======-->
+					</ul>
+				</div>
+				<!--=============== SIDEBAR END ===============-->
+			</div>
+		</div>
+	</section>
+	<!--=================== S-NEWS END ===================-->
+	<footer th:replace="~{front/Layout :: footer}"></footer>
+	<script>
+		function fillLocalTime() {
+			// 取得當前時間
+			const now = new Date();
+			// 將本地時間格式化為 yyyy-mm-dd HH:MM:SS 格式
+			const formattedTime = now.toLocaleString();
+			//const formattedTime = now.toISOString().slice(0, 19).replace('T', ' ');
+			// 將格式化後的時間填入發文時間欄位
+			document.getElementsByName("postTime")[0].value = formattedTime;
+
+
+		}
+
+
+		document.addEventListener('DOMContentLoaded', function () {
+			document.querySelectorAll('.show-form').forEach(link => {
+				link.addEventListener('click', function (event) {
+					event.preventDefault(); // 阻止链接的默认行为
+
+					const commentId = this.getAttribute('data-comment-id'); // 获取 data-comment-id 属性的值
+					console.log(commentId); // 输出 commentId
+
+					const articleId = this.getAttribute('data-article-id');
+					console.log(articleId);
+
+					Swal.fire({
+						title: "<strong>檢舉留言</strong>",
+						icon: "info",
+						html: `
+                    <form id="reportForm" method="POST" action="/workout/forum/insertCommentReport">
+                        <input type="hidden" name="commentId" value="${commentId}">
+						<input type="hidden" name="articleId" value="${articleId}">
+                        <label for="reportType">檢舉分類:</label>
+                        <select name="reportType" id="reportType">
+                            <option value="謾罵">謾罵</option>
+                            <option value="歧視言論">歧視言論</option>
+							<option value="商業行為">商業行為</option>
+                            <option value="其他">其他</option>
+                        </select>
+                        <br><br>
+                        檢舉描述: <input name="reportDescribe" id="reportDescribe" type="text"></input>
+                    </form>
+                `,
+						showCloseButton: true,
+						showCancelButton: true,
+						focusConfirm: false,
+						confirmButtonText: '提交',
+						cancelButtonText: '取消',
+						preConfirm: () => {
+							document.getElementById('reportForm').submit();
+						}
+					});
+				});
+			});
+		});
+
+		document.addEventListener('DOMContentLoaded', function () {
+			document.querySelectorAll('.show-article-form').forEach(link => {
+				link.addEventListener('click', function (event) {
+					event.preventDefault();
+
+					const articleId = this.getAttribute('data-article-id');
+					console.log(articleId);
+
+					Swal.fire({
+						title: "<strong>檢舉文章</strong>",
+						icon: "info",
+						html: `
+                    <form id="reportForm" method="POST" action="/workout/forum/insertArticleReport">
+						<input type="hidden" name="articleId" value="${articleId}">
+                        <label for="reportType">檢舉分類:</label>
+                        <select name="reportType" id="reportType">
+                            <option value="謾罵">謾罵</option>
+                            <option value="歧視言論">歧視言論</option>
+							<option value="商業行為">商業行為</option>
+                            <option value="其他">其他</option>
+                        </select>
+                        <br><br>
+                        <label for="reportDescribe">檢舉描述:</label>
+                        <input name="reportDescribe" id="reportDescribe" type="text"></input>
+                    </form>
+                `,
+						showCloseButton: true,
+						showCancelButton: true,
+						focusConfirm: false,
+						confirmButtonText: '提交',
+						cancelButtonText: '取消',
+						preConfirm: () => {
+							document.getElementById('reportForm').submit();
+						}
+					});
+				});
+			});
+		});
+
+
+
+
+
+
+	</script>
+</body>
+
+</html>

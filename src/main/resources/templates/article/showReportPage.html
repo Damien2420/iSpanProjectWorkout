@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>檢舉列表</title>
+    <th:block th:replace="~{back/Navbar :: navBarCss}"></th:block>
+    <link href="https://cdn.datatables.net/v/dt/dt-2.1.2/datatables.min.css" rel="stylesheet">
+    <style>
+        .btn-outline-warning .btn-outline-success {
+            width: 102px;
+        }
+
+        .fixed-width {
+            width: 200px;
+            /* 或你希望的寬度 */
+            white-space: nowrap;
+            /* 防止內容換行 */
+        }
+
+        .align-top {
+            vertical-align: top;
+        }
+
+        .inside-button-container {
+            display: flex;
+            justify-content: flex-end;
+            /* 使按鈕靠右對齊 */
+            gap: 20px;
+            /* 按鈕之間的間距 */
+            padding-right: 158px;
+        }
+        
+        .reportId-column{
+        	width:150px; 
+        }
+        .five-word-column{
+			width: 200px;
+		}
+    </style>
+</head>
+
+<body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <nav th:replace="~{back/Navbar :: #layout-menu}">
+            </nav>
+            <div class="layout-page">
+                <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+                <div class="content-wrapper">
+                    <main class="container-xxl flex-grow-1 container-p-y">
+
+                        <h2>待審核的檢舉</h2>
+                        <table class="table table-striped">
+                            <tr>
+                                <th>檢舉編號</th>
+                                <th>檢舉分類</th>
+                                <th>檢舉描述</th>
+                                <th></th>
+                            </tr>
+                            <th:block th:each="report : ${pendingReports}">
+                                <tr th:id="'row_' + ${report.reportId}">
+                                    <td th:text="${report.reportId}"></td>
+                                    <td th:text="${report.reportType}"></td>
+                                    <td th:text="${report.reportDescribe}"></td>
+                                    <td><button type="submit" th:id="'updateBtn_' + ${report.reportId}"
+                                            class="updateBtn btn btn-outline-info">檢視</button></td>
+                                </tr>
+                            </th:block>
+                        </table>
+                        <br><br>
+
+
+
+                        <h2>已處理的檢舉</h2>
+                        <table id="reportTable" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th class="reportId-column">檢舉編號</th>
+                                    <th class="five-word-column">文章/留言編號</th>
+                                    <th>被檢舉類別</th>
+                                    <th>檢舉分類</th>
+                                    <th>檢舉敘述</th>
+                                    <th>處理結果</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <th:block th:each="report : ${processedReports}">
+
+                                    <tr>
+                                        <td th:text="${report.reportId}"></td>
+                                        <td
+                                            th:text="${report.articleId != null ? report.articleId.articleId : report.commentId.commentId}">
+                                        </td>
+                                        <td th:text="${report.articleId != null ? '文章':'留言'}"></td>
+                                        <td th:text="${report.reportType}"></td>
+                                        <td th:text="${report.reportDescribe}"></td>
+                                        <td th:text="${report.verdict == 1 ? '駁回' : '受理'}"></td>
+                                    </tr>
+                                </th:block>
+                            </tbody>
+
+                        </table>
+                        <!-- Pagenation -->
+
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:replace="~{back/NavBar :: js}"></th:block>
+
+
+    <!-- 
+    <th:block th:replace="~{back/Navbar :: navBarCss}"></th:block>
+    </head>
+    
+    
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <nav th:replace="~{back/Navbar :: #layout-menu}"></nav>
+            <div class="layout-page">
+                <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+                <div class="content-wrapper">
+                    <main class="container-xxl flex-grow-1 container-p-y">
+                        
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <!-- <th:block th:replace="~{back/NavBar :: js}"></th:block> -->
+
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.2/datatables.min.js"></script>
+    <script>
+
+
+        new DataTable('#reportTable');
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener("click", function (event) {
+
+                if (event.target.classList.contains("updateBtn")) {
+                    const btnId = event.target.id;
+                    const reportId = btnId.split("_")[1];
+
+
+                    axios.get(`/workout/forum/report/${reportId}`)
+                        .then(res => {
+                            const report = res.data;
+                            htmlMaker(event.target, report);
+                            console.log(report)
+                        })
+                        .catch(err => {
+                            console.error(err);
+                        });
+                }
+            });
+        });
+
+        function htmlMaker(btnElement, report) {
+            let currentElement = btnElement;
+
+            // 找到包含檢視按钮的row
+            while (currentElement && currentElement.tagName !== 'TR') {
+                currentElement = currentElement.parentElement;
+            }
+
+            if (!currentElement) {
+                console.error('Could not find parent tr element');
+                return;
+            }
+
+            const newTd = document.createElement('td');
+            //newTd.style.backgroundColor = 'lightgray'; 
+            newTd.setAttribute('colspan', '5');
+
+            const tableHtml = `
+        
+        <tr>
+            <td>檢舉編號:</td>
+            <td>${report.reportId}</td>
+        </tr>
+        
+        <tr>
+            <td class="fixed-width">被檢舉文章/留言編號:</td>
+            <td>${report.articleId != null ? report.articleId.articleId : report.commentId.commentId}</td>
+        </tr>
+        <tr>
+            <td>檢舉分類:</td>
+            <td>${report.reportType}</td>
+        </tr>
+        <tr>
+            <td>檢舉敘述:</td>
+            <td>${report.reportDescribe}</td>
+        </tr>
+        <tr>
+            <td class="align-top">文章/留言內容:</td>
+            <td>${report.articleId != null ? report.articleId.articleContent : report.commentId.commentContent}</td>
+        </tr>
+        
+            <tr>
+                <input type="hidden" value="${report.reportId}"></input>
+
+                <td colspan="2">
+                    <div class="inside-button-container">
+                        <button class="btn btn-outline-warning" style="width: 102px;" id="rejectBtn" type="submit" onclick="handleReject(${report.reportId})">檢舉駁回</button>
+                        <button class="btn btn-outline-success" style="width: 102px;" id="acceptBtn" type="submit" onclick="handleAccept(${report.reportId})">檢舉受理</button>
+                        <button class="btn btn-outline-info foldBtn" style="width: 72px;" id="foldBtn" onclick="fold(${report.reportId})" value="${report.reportId}" type="button">收起</button>
+                    </div>
+                </td>
+            </tr>
+        
+    `;
+            newTd.innerHTML = `<div class="expanded-row-${report.reportId}"><table class="table table-borderless">${tableHtml}</table></div>`;
+            currentElement.insertAdjacentElement('afterend', newTd);
+            // 插入新的td元素到當前row的row
+
+            btnElement.style.display = 'none';
+        }
+
+        //檢舉駁回
+        function handleReject(reportId) {
+            const verdict = 1;
+            patchReq(reportId, verdict)
+
+        }
+
+        //檢舉受理
+        function handleAccept(reportId) {
+            const verdict = 2;
+            patchReq(reportId, verdict)
+
+
+        }
+
+        //實際的ajax
+        function patchReq(reportId, verdict) {
+            axios.put(`/workout/forum/report/${reportId}`, verdict, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(res => {
+                    window.location.href = "getAllReports";
+                    // if (res.status === 200) {
+                    //     console.log('更新成功');
+                    //     console.log("資料是: " + res.data.reportId)
+                    // } else {
+                    //     console.log('更新失敗，但服務端點已成功處理');
+                    // }
+                })
+        }
+
+
+        //按下收起按鈕摺疊展開的資料
+        function fold(reportId) {
+            //收起按鈕
+            const foldBtn = document.querySelector(".foldBtn")
+            if (foldBtn) {
+                //當行的檢視按鈕
+                const targetUpdateBtn = document.getElementById(`updateBtn_${reportId}`)
+
+                //恢復檢視按鈕
+                if (targetUpdateBtn) {
+                    targetUpdateBtn.style.display = "inline-block";
+                } else {
+                    console.error(`Element with id updateBtn_${reportId} not found.`);
+                }
+                //刪掉展開的html
+                const expandedRow = document.querySelector(`.expanded-row-${reportId}`)
+                if (expandedRow) {
+                    expandedRow.remove();
+                    console.log("收起的id是" + reportId)
+                }
+            } else {
+                console.error("Button with class 'foldBtn' not found.");
+            }
+        }
+
+    </script>
+</body>
+
+</html>

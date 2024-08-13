@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Gymnity - 首頁</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+		integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet" th:href="@{/css/front/FrontHomePage.css}">
+	<link rel="stylesheet" th:href="@{/css/front/HomePageAnimation.css}">
+</head>
+
+<body>
+	<!-- 開場動畫 -->
+	<section class="animationWrapper">
+		<section class="animation">
+			<div class="hero">
+				<img th:src="@{/images/front/gym-background.jpg}" alt="math img">
+			</div>
+		</section>
+		<div class="slider"></div>
+	</section>
+
+	<div class="content">
+		<header class="forHeader">
+			<img th:src="@{/images/front/Logo.png}" class="logo">
+		</header>
+		<article class="container">
+			<div class="shadow"></div>
+			<div class="message">
+				<h1 class="en">WELCOME TO GYMNITY</h1>
+				<a href="loginregister.controller">
+					<button class="login en">Login / Register</button>
+				</a>
+			</div>
+			<div class="another-shadow"></div>
+		</article>
+		<footer class="forFooter">
+			<ul class="icons">
+				<li class="item">
+					<a href="">
+						<i class="fa-brands fa-instagram"></i>
+					</a>
+				</li>
+				<li class="item">
+					<a href="">
+						<i class="fa-brands fa-facebook"></i>
+					</a>
+				</li>
+				<li class="item">
+					<a href="">
+						<i class="fa-brands fa-line"></i>
+					</a>
+				</li>
+				<li class="item">
+					<a href="">
+						<i class="fa-brands fa-youtube"></i>
+					</a>
+				</li>
+			</ul>
+			<div class="en">COPYRIGHT © XXX. ALL RIGHTS RESERVED.</div>
+		</footer>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TimelineMax.min.js"
+		integrity="sha512-0xrMWUXzEAc+VY7k48pWd5YT6ig03p4KARKxs4Bqxb9atrcn2fV41fWs+YXTKb8lD2sbPAmZMjKENiyzM/Gagw=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js"
+		integrity="sha512-DkPsH9LzNzZaZjCszwKrooKwgjArJDiEjA5tTgr3YX4E6TYv93ICS8T41yFHJnnSmGpnf0Mvb5NhScYbwvhn2w=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script>
+		let hero = document.querySelector(".hero");
+		let slider = document.querySelector(".slider");
+		let animation = document.querySelector("section.animationWrapper");
+
+		const time_line = new TimelineMax();
+
+
+		time_line.fromTo(
+			hero, 1, { height: "0%" },
+			{ height: "100%", ease: Power2.easeInOut }
+		)
+			.fromTo(
+				hero, 1, { width: "80%" },
+				{ width: "100%", ease: Power2.easeInOut }
+			)
+			.fromTo(
+				slider, 1, { x: "-100%" },
+				{ x: "0%", ease: Power2.easeInOut },
+				"-=1"
+			)
+			.fromTo(
+				animation, 0.3, { opacity: 1 },
+				{ opacity: 0 }
+			);
+
+		setTimeout(() => {
+			animation.style.pointerEvents = "none";
+		}, 2400);
+
+		document.addEventListener("DOMContentLoaded", function () {
+
+			setTimeout(function () {
+
+				document.body.classList.add('loaded');
+			}, 2300);
+		});
+	</script>
+</body>
+
+</html>

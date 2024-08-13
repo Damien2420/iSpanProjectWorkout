@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org/">
+
+<head>
+    <meta charset="UTF-8">
+    <title>商品管理系統 - 更新商品圖片</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+	<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/products/management/ui-checkbox.css}">
+    <link rel="stylesheet" th:href="@{/css/products/management/UpdateImages.css}">
+    <th:block th:replace="~{back/NavBar :: navBarCss}"></th:block>
+
+    <style>
+        .swalConfirmBtn {
+            color: #383737;
+
+        }
+
+        .swalCancelBtn {
+            color: #d9d9d9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <nav th:replace="~{back/NavBar :: #layout-menu}"></nav>
+            <div class="layout-page">
+                <header th:replace="~{back/NavBar :: #layout-navbar}"></header>
+                <div class="content-wrapper">
+                    <main class="container-xxl flex-grow-1 container-p-y">
+                        <div class="row mb-3">
+                            <div class="col text-end">
+								<a th:href="@{/admin/products/allList}">
+									<button class="functionBtn main-menu"><i class="fa-solid fa-house"></i> 回商品列表</button>
+								</a>
+							</div>
+                            <div class="col text-center">
+								<a th:href="@{/admin/products/updateInfo?(productID=${id})}">
+									<button class="functionBtn update"><i class="fa-solid fa-wrench"></i> 商品資訊更新</button>
+								</a>
+							</div>
+							<div class="col text-start">
+								<a th:href="@{/admin/products/fullDetail?(productID=${id})}">
+									<button class="functionBtn detail-page"><i class="fa-solid fa-circle-info"></i> 商品詳細資訊</button>
+								</a>
+							</div>
+                        </div>
+                        <div class="img-card row card p-3 d-flex justify-content-center align-items-center">
+                            <h5 class="text-center fs-4">商品編號 : <span class="pid">[[${id}]]</span></h5>
+                            <hr>
+                            <div th:if="${images.size() < 4}" class="row mb-3">
+                                <div class="col text-center">
+                                    <a href="#">
+                                        <button class="functionBtn newImg"><i class="fa-solid fa-circle-plus"></i> 新增圖片</button>
+                                    </a>
+                                </div>
+                            </div>
+                            <h5 class="text-center fw-bold">請選擇要更新的圖片</h5>
+                            <div class="row d-flex justify-content-center align-items-center" id="img-block">
+                                <div th:each="image : ${images}" class="col-6 img-container">
+                                    <div class="img-box">
+                                        <button><i class="fa-solid fa-trash-can"></i></button>
+                                        <img class="img" th:src="@{/image?(id=${image.imageID})}" alt="" th:data-sequence="${image.imageSequence}" th:data-pid="${image.product.productID}">
+                                        <input type="checkbox" class="ui-checkbox" name="imgID" id="image-checkbox" th:value="${image.imageID}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="update-button-row row my-1">
+                                <div class="col d-flex justify-content-center align-items-center">
+                                    <button class="functionBtn update-checked" disabled>上傳圖片</button>
+                                </div>
+                            </div>
+                            <div class="upload row mt-3 disappear">
+                                <div class="filepond-container col d-flex justify-content-center align-items-center">
+                                    <input type="file" class="filepond w-50" name="image" multiple>
+                                    <p class="filepond--warning"></p>
+                                </div>
+                            </div>
+                            <div class="submit-row row my-1 disappear">
+                                <div class="col d-flex justify-content-center align-items-center">
+                                    <button class="functionBtn update-submit">更新圖片</button>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:replace="~{back/NavBar :: js}"></th:block>
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+	<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+	<script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+    <script th:src="@{/js/axios/axios.min.js}"></script>
+    <script>
+        FilePond.registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateSize);
+
+        const uploadButton =  document.querySelector('.update-checked');
+        let filePond = null;
+
+        //checkbox選擇更新的圖片
+        let updateList = [];
+        document.querySelectorAll('#image-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const imageID = checkbox.value;
+                if (checkbox.checked) {
+                    updateList.push(imageID);
+                } else {
+                    updateList.splice(updateList.indexOf(imageID), 1);
+                }
+                disableButton();
+            });
+        });
+
+        //disable按鈕
+        function disableButton() {
+            const anyChecked = document.querySelectorAll('input[type="checkbox"]:checked').length > 0;
+            uploadButton.disabled = !anyChecked;
+        };
+
+        if(document.querySelectorAll('.img-container').length < 4) {
+            document.querySelector('.newImg').addEventListener('click', () => {
+                document.querySelector('.upload').classList.remove('disappear');
+                uploadImage('save');
+            });
+        };
+        
+        //上傳圖片按鈕觸發選擇圖片
+        uploadButton.addEventListener('click', () => {
+            document.querySelector('.upload').classList.remove('disappear');
+            uploadImage('update');
+        });
+        //更新圖片傳送上傳的圖片資料到server
+        document.querySelector('.update-submit').addEventListener('click', () => {
+            updateImage();
+        });
+
+        //上傳圖片
+        function uploadImage(action) {
+            const length = action.includes('update') ? Number(updateList.length) : Number(4 - document.querySelectorAll('.img-container').length);
+
+            const imgContainer = document.querySelector('#img-block');
+            const lastChild = imgContainer.lastElementChild;
+            let maxSequence = Number(imgContainer.childElementCount > 0 ? lastChild.querySelector('.img-box img').dataset.sequence : 0) + 1;
+
+            const imgUpload = document.querySelector('.filepond');
+            filePond = FilePond.create(imgUpload, {
+                allowMultiple: true,
+                instantUpload: false,
+                credits: false,
+                maxFiles: length,
+                maxFileSize: '10MB',
+                required:  true,
+                maxParallelUploads: 4,
+                labelIdle: `
+                <span class="filepond--label-action">拖曳或點擊此處上傳圖片<br>
+                    最多可以上傳<span class="filepond-msg">${length}</span>個檔案<br>
+                    單個檔案上限為<span class="filepond-msg">10MB</span></span>
+                `,
+                labelTapToUndo: ''
+            });
+
+            scrollToBottom();
+
+            filePond.on('warning', (error) => {
+                const container = filePond.element.parentNode;
+                container.classList.add('filepond-padding');
+                let warningElement = container.querySelector('p.filepond--warning');
+                warningElement.textContent = `已超過${length}個檔案上限，請重新上傳！`;
+
+                requestAnimationFrame(() => {
+                    warningElement.style.opacity = '1';
+                    warningElement.style.zIndex = 'auto';
+                });
+                
+                setTimeout(() => {
+                    warningElement.style.opacity = '0';
+                    warningElement.style.zIndex = '-1';
+                    container.classList.remove('filepond-padding');
+                }, 5000);
+            });
+
+            filePond.on('addfile', (error, file) => {
+                const container = filePond.element.parentNode;
+                const warningElement = container.querySelector('p.filepond--warning');
+                if (warningElement) {
+                    warningElement.style.opacity = '0';
+                    warningElement.style.zIndex = '-1';
+                    container.classList.remove('filepond-padding');
+                }
+                document.querySelector('.submit-row').classList.remove('disappear');
+                switch(action){
+                    case 'update':
+                        file.setMetadata('id', updateList.shift());
+                        break;
+                    case 'save':
+                        file.setMetadata('sequence', maxSequence++);
+                } 
+                scrollToBottom();
+            });
+
+            filePond.on('removefile', () => {
+                const fileCount = filePond.getFiles().length;
+                if(fileCount == 0) {
+                    document.querySelector('.submit-row').classList.add('disappear');
+                }
+            })
+
+            filePond.setOptions({
+                server: {
+                    process: (fieldName, file, metadata, load, error, progress, abort, transfer, options) => {
+                        const formData = new FormData();
+                        formData.append('image', file);
+
+                        switch(action){
+                            case 'update':
+                                const id = metadata.id;
+                                formData.append('metadata', id);
+                                break;
+                            case 'save':
+                                const sequence = metadata.sequence;
+                                formData.append('metadata', sequence);
+                                formData.append('productID', document.querySelector('.pid').innerText);
+                                break;
+                        } 
+            
+                        const request = new XMLHttpRequest();
+                        request.upload.onprogress = (event) => {
+                            progress(event.lengthComputable, event.loaded, event.total);
+                        };
+                        request.onload = () => {
+                            if (request.status >= 200 && request.status < 300) {
+                                load(request.responseText); // 上傳完成
+                            } else {
+                                error('Upload failed with status: ' + request.status);
+                            }
+                        };
+                        request.onerror = () => {
+                            error('Upload failed');
+                        };
+                        request.onabort = () => {
+                            abort();
+                        };
+                        switch(action) {
+                            case 'update':
+                                request.open('POST', 'updateImg', true);
+                                break;
+                            case 'save':
+                                request.open('POST', 'saveImg', true);
+                                break;
+                        }
+                        request.send(formData);
+                        return {
+                            abort: () => {
+                                request.abort();
+                                abort();
+                            }
+                        };
+                    }
+                }
+            });
+        };
+
+        function updateImage() {
+            filePond.processFiles().then( () => {
+                const productID = document.querySelector('.pid').innerText;
+                window.location.href = `fullDetail?productID=${productID}`
+			});
+        };
+
+        //刪除button Event
+        document.querySelectorAll('.img-box button').forEach(button => {
+            button.addEventListener('click', () => {
+                const box = button.parentNode;
+                const input = box.querySelector('input');
+                const img = box.querySelector('img');
+                const imgID = input.value;
+                const sequence = img.dataset.sequence;
+                const productID = img.dataset.pid;
+                const imgUrl = img.src;
+                deleteImages(box, imgUrl, imgID, productID, sequence);
+            })
+        })
+        
+        function deleteImages(element, url, imageID, productID, sequence) {
+            Swal.fire({
+                title: '確定要刪除這張圖片嗎？',
+                html: `<img class="swal-img" src="${url}">`,
+                footer: '<h3 class="warning fw-bold">刪除後無法復原！</h3>',
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonText: "確定",
+                cancelButtonText: "取消",
+                reverseButtons: true,
+                confirmButtonColor: "#13AE85",
+                cancelButtonColor: "#FB1846",
+            }).then(result => {
+                if(result.isConfirmed) {
+                    console.log(`pid = ${productID} imageID = ${imageID} sequence = ${sequence}`);
+                    axios.delete('deleteImages', {
+                        data:{
+                            sequence: sequence,
+                            imageID: imageID,
+                            productID: productID
+                        }
+                    })
+                    .then(() => {
+                       const imgContainer = element.parentNode;
+                       imgContainer.outerHTML = '';
+                       Swal.fire({
+                            icon: 'success',
+                            title: '成功刪除',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            toast: true,
+                            showConfirmButton: false,
+                            position: 'top'
+                        });
+                    })
+                    .catch(err => {
+                        console.error(err); 
+                    })
+                }
+            });
+        }
+
+        function scrollToBottom() {
+            $('html, body').animate({
+                scrollTop: $(document).height()
+            }, 400);
+        }
+    </script>
+</body>
+
+</html>
