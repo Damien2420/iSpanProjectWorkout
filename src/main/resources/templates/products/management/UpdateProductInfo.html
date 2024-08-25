@@ -98,8 +98,8 @@
                                                 class="update-input validate">
                                         </div>
                                         <div class="info-block">
-                                            <label for="listingDate"><span>*</span>新增日期：</label>
-                                            <input id="listingDate" th:value="${selectedProduct.addedDate}" type="date"
+                                            <label for="addedDate"><span>*</span>新增日期：</label>
+                                            <input id="addedDate" th:value="${selectedProduct.addedDate}" type="date"
                                                 class="update-input validate">
                                         </div>
                                         <div class="info-block">
@@ -107,6 +107,7 @@
                                             <textarea id="feature" th:utext="${selectedProduct.productFeatures}"
                                                 class="update-input"></textarea>
                                         </div>
+                                        <input id="launchStatus" th:value="${selectedProduct.launchStatus}" type="hidden">
                                         <div class="d-flex justify-content-center">
                                             <button class="functionBtn update-submit text-center">送出資料</button>
                                         </div>

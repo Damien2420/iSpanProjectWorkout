@@ -341,6 +341,7 @@
                 $('.search-form .inp-form').val('');
                 await getProductData($(this), 1);
                 regeneratePagination();
+                disablePrevNext();
                 $('.category-list li button.active').removeClass('active');
                 $(this).children().addClass('active');
             });
@@ -432,14 +433,14 @@
             let template = '';
             data.forEach(function(item) {
                 template += `
-                    <div class="product-item" data-stock="${item.stock}" data-date="${item.listingDate}" data-category="${item.productCategory.categoryID}">
+                    <div class="product-item" data-stock="${item.stock}" data-date="${item.addedDate}" data-category="${item.productCategory.categoryID}">
                         <a href="mall/productDetails?&id=${item.productID}">
                             <img src="image/product?id=${item.productID}" class="p-img" alt="">
                         </a>
                         <a href="mall/productDetails?&id=${item.productID}">
                             <h3 class="pName text-center mt-3">${item.productName}</h3>
                         </a>
-                        <h5 class="price text-center my-3">$${item.price}</h5>
+                        <h5 class="price text-center my-3">NT$${item.price}</h5>
                     </div>`;
             });
             $('.product-container').html(template);
@@ -484,44 +485,46 @@
         }
 
         function paginationButtonEvent() {
-            $('.item-prev').on('click', function(event) {
+            $('.item-prev').on('click', async function(event) {
                 event.preventDefault();
                 const currentPageButton = $('.pagination-item.active');
                 const currentPageNum = Number(currentPageButton.text().trim());
                 if(currentPageNum != 1) {
                     if(isSearch){
-
+                        const response = await axios.get(`mall/search?key=${keyword}`);
+                        updateProductsContainer(response.data);
                     }else {
                         getProductData($('.category-list li button.active').parent(), currentPageNum - 1);
-                        changePageButton(currentPageButton, currentPageButton.prev());
                     }
+                    changePageButton(currentPageButton, currentPageButton.prev());
                 }
             });
 
-            $('.page-num-btn').on('click', function(){
+            $('.page-num-btn').on('click', async function(){
                 event.preventDefault();
                 const targetPage = Number($(this).text().trim());
                 if(isSearch) {
-
+                    const response = await axios.get(`mall/search?key=${keyword}`);
+                    updateProductsContainer(response.data);
                 }else {
                     getProductData($('.category-list li button.active').parent(), targetPage);
-                    changePageButton($('.page-num-btn.active'), $(this));
                 }
+                changePageButton($('.page-num-btn.active'), $(this));
             });
 
-            $('.item-next').on('click', function(event) {
+            $('.item-next').on('click', async function(event) {
                 event.preventDefault();
                 const currentPageButton = $('.pagination-item.active');
                 const currentPageNum = Number(currentPageButton.text().trim());
                 const maximumPage = Number($('#total-page').text());
                 if(currentPageNum != maximumPage) {
                     if(isSearch) {
-
+                        const response = await axios.get(`mall/search?key=${keyword}`);
+                        updateProductsContainer(response.data);
                     }else {
                         getProductData($('.category-list li button.active').parent(), currentPageNum + 1);
-                        changePageButton(currentPageButton, currentPageButton.next());
                     }
-                    
+                    changePageButton(currentPageButton, currentPageButton.next());
                 }
             });
         }
@@ -570,7 +573,8 @@
         async function searchRequest(keyword) {
             isSearch = true;
             try {
-                const response = await axios.get(`search?key=${keyword}`);
+                const response = await axios.get(`mall/search?key=${keyword}`);
+                $('.category-list li button.active').removeClass('active');
                 if(response.data._embedded != null) {
                     updateProductsContainer(response.data);
                     setPageInfo(response.data.page);

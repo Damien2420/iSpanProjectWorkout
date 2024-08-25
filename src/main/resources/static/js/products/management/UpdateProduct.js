@@ -47,9 +47,10 @@ function updateAjax() {
         'productCategory': productCategory,
         'productName': document.querySelector('#productName').value,
         'price': document.querySelector('#price').value,
-        'listingDate': document.querySelector('#listingDate').value,
+        'addedDate': document.querySelector('#addedDate').value,
         'stock': document.querySelector('#stock').value,
-        'productFeatures': document.querySelector('#feature').value
+        'productFeatures': document.querySelector('#feature').value,
+        'launchStatus': document.querySelector('#launchStatus').value
     }
 
     axios.post('update', JSON.stringify(updateProduct), {

@@ -69,7 +69,7 @@ function deleteRow() {
         })
         const deleteButton = document.querySelector('.delete');
         cancelDeleteEvent(deleteButton);
-        deleteButton.style.backgroundColor = 'lightgreen';
+        deleteButton.style.backgroundColor = '#13AE85';
         const deleteConfirmButton = document.querySelector('.delete-confirmed');
         deleteConfirmButton.addEventListener('click', () => {
             deleteAlert();
@@ -77,7 +77,7 @@ function deleteRow() {
     } else {
         buttons.innerHTML = originalButtonContent;
         const deleteButton = document.querySelector('.delete');
-        deleteButton.style.backgroundColor = 'lightcoral';
+        deleteButton.style.backgroundColor = '#DC143C';
         cancelDeleteEvent(deleteButton);
         document.querySelectorAll('.delete-column').forEach(function (element) {
             element.style.display = 'none';
