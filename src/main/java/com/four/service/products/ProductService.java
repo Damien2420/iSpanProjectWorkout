@@ -17,9 +17,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.four.model.products.CartDTO;
 import com.four.model.products.Product;
 import com.four.model.products.ProductRepository;
-import com.four.utils.CartDTO;
 
 @Service
 @Transactional

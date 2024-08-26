@@ -1,7 +1,4 @@
-package com.four.utils;
-
-import com.four.model.products.Product;
-import com.four.model.products.ProductImage;
+package com.four.model.products;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

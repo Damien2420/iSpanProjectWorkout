@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.four.model.memberAdm.MemberBean;
 import com.four.model.order.Order;
+import com.four.model.products.CartDTO;
 import com.four.model.products.Product;
 import com.four.model.products.ProductCategory;
 import com.four.model.products.ProductImage;
@@ -34,7 +35,6 @@ import com.four.service.products.ProductCategoryService;
 import com.four.service.products.ProductImageService;
 import com.four.service.products.ProductReviewService;
 import com.four.service.products.ProductService;
-import com.four.utils.CartDTO;
 import com.four.utils.HeaderSetter;
 
 import jakarta.servlet.http.HttpSession;

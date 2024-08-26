@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.four.model.order.Order;
 import com.four.model.order.OrderDetail;
 import com.four.model.order.OrderDetailID;
+import com.four.model.products.CartDTO;
 import com.four.model.products.Product;
-import com.four.utils.CartDTO;
 
 @Service
 @Transactional

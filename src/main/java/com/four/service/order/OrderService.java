@@ -8,8 +8,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import javax.xml.crypto.Data;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +21,7 @@ import com.four.model.order.Order;
 import com.four.model.order.OrderRepository;
 import com.four.model.order.OrderStatus;
 import com.four.model.order.ShippingMethods;
-import com.four.utils.CartDTO;
+import com.four.model.products.CartDTO;
 import com.four.utils.OrderSpecification;
 import com.four.utils.OrderStatusStrategyUtils;
 
